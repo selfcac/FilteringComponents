@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanelServer", "Contr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanelClient", "ControlPanelClient\ControlPanelClient.csproj", "{3834E06C-3608-4B1B-9472-DA8991BF463B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{1ED24440-1C8E-4187-A7C7-E685F967FB14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{3834E06C-3608-4B1B-9472-DA8991BF463B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3834E06C-3608-4B1B-9472-DA8991BF463B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3834E06C-3608-4B1B-9472-DA8991BF463B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ED24440-1C8E-4187-A7C7-E685F967FB14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ED24440-1C8E-4187-A7C7-E685F967FB14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ED24440-1C8E-4187-A7C7-E685F967FB14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ED24440-1C8E-4187-A7C7-E685F967FB14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
