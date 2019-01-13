@@ -25,6 +25,47 @@ namespace Common
             LOCK,
         }
 
+        class TaskInfo
+        {         
+            public bool success;
+            public string error;
+
+            public static TaskInfo Fail(string reason)
+            {
+                return new TaskInfo()
+                {
+                    success = false, error = reason
+                };
+            }
+
+            public static TaskInfo Success()
+            {
+                return new TaskInfo()
+                {
+                    success = true,
+                };
+            }
+
+            public static implicit operator bool(TaskInfo e)
+            {
+                return e.success;
+            }
+        }
+
+        class TaskInfoResult<T> : TaskInfo
+        {
+            public T result;
+
+            public static TaskInfoResult<V> Result<V>(V resultData)
+            {
+                return new TaskInfoResult<V>()
+                {
+                    success = true,
+                    result = resultData
+                };
+            }
+        }
+
         public const byte CMD_SEPERATOR = 0xAB;
 
         int ParseCommandHeader(byte[] headerBuffer, out CommandType cmd , int startIndex =0)
@@ -97,10 +138,9 @@ namespace Common
             for (int i = 0; i < dataBytes.Length; i++) dataBuffer[1 + i] = dataBytes[i];
         }
 
-        async Task<bool> SendCommand(CommandType cmd, string Data, TcpClient client, out string ErrorMsg)
+        async Task<TaskInfo> SendCommand(CommandType cmd, string Data, TcpClient client)
         {
-            bool result = false;
-            ErrorMsg = "";
+            TaskInfo result;
 
             try
             {
@@ -111,19 +151,29 @@ namespace Common
 
                 await client.GetStream().WriteAsync(commandBytes, 0, commandBytes.Length);
 
-                result = true;
+                result = TaskInfo.Success();
             }
             catch (Exception ex)
             {
-                ErrorMsg = ex.ToString();
+                result = TaskInfo.Fail(ex.ToString());
             }
 
             return result;
         }
 
-        void RecieveCommand(TcpClient client)
+        async Task<TaskInfo> RecieveCommandHeader(TcpClient client)
         {
-            // if data length > 1024 or header not valid, just close the client.
+            // if data length > 1024 or header not valid, just close the client (not here, in the algo!).
+            TaskInfo result = null;
+
+            return result;
+        }
+
+        async Task<TaskInfo> RecieveCommandData(TcpClient client)
+        {
+            TaskInfo result = null;
+
+            return result;
         }
     }
 }
