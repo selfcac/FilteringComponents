@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,82 +13,71 @@ namespace Common
         {
             ERROR,
 
-            // No data:
+            // Events with no data:
             PROXY_START, PROXY_END,
             BLOCKLOG_SHOW, BLOCKLOG_DELETE,
             LOCKED_CHECK,
 
-            // Has data:
+            // Events with extra data:
             ECHO,
             ADD_URL,
             CHANGE_PASSWORD,
             LOCK,
         }
 
-        struct CommandInfo
-        {
-            public CommandType cmd;
-            public string data;
-        }
-
         public const byte CMD_SEPERATOR = 0xAB;
 
-        CommandInfo errorInfo(string Error)
+        int ParseCommandHeader(byte[] headerBuffer, out CommandType cmd , int startIndex =0)
         {
-            return new CommandInfo()
-            {
-                cmd = CommandType.ERROR,
-                data = Error
-            };
-        }
+            int result;
 
-        CommandInfo ReadCommandBytes(
-            byte[] headerBuffer, byte[] dataBuffer,
-            int startHeaderIndex = 0, int startDataBuffer = 0)
-        {
-            CommandInfo result = errorInfo("Init value");
-
-            if (headerBuffer.Length < (2+5) ||
-                headerBuffer[startHeaderIndex] != CMD_SEPERATOR ||
-                headerBuffer[startHeaderIndex + 6] != CMD_SEPERATOR)
+            if (headerBuffer.Length < (2 + 5) ||
+                headerBuffer[startIndex] != CMD_SEPERATOR ||
+                headerBuffer[startIndex + 6] != CMD_SEPERATOR)
             {
-                result = errorInfo("Unrecognized header format.");
+                result = -1;
+                cmd = CommandType.ERROR;
             }
             else
             {
-                CommandType cmd = (CommandType)headerBuffer[startHeaderIndex];
-                int dataLength = BitConverter.ToInt32(headerBuffer, startHeaderIndex + 1);
-
-                if (dataBuffer.Length < (2+ dataLength) ||
-                    dataBuffer[startDataBuffer] != CMD_SEPERATOR ||
-                    dataBuffer[startDataBuffer + dataLength + 1] != CMD_SEPERATOR)
-                {
-                    result = errorInfo("Unrecognized data format. Expected length: " + dataLength);
-                }
-                else
-                {
-                    if (dataLength > 1024)
-                    {
-                        result = errorInfo("Data length more than 1024, got:" + dataLength);
-                    }
-                    else
-                    {
-                        result = new CommandInfo()
-                        {
-                            cmd = cmd,
-                            data = Encoding.UTF8.GetString(dataBuffer, startDataBuffer + 1, dataLength)
-                        };
-                    }
-                }
+                cmd = (CommandType)headerBuffer[startIndex + 1 ];
+                result = BitConverter.ToInt32(headerBuffer, startIndex + 2);
             }
+
             return result;
         }
 
-        void BytesOfCommand(CommandInfo cmdInfo, out byte[] headerBuffer, out byte[] dataBuffer)
+        bool ParseCommandData(int dataLength, byte[] dataBuffer, out string dataResult, int startDataBuffer = 0)
+        {
+            bool result = false;
+
+            try
+            {
+                if (dataBuffer.Length < (2 + dataLength) ||
+                            dataBuffer[startDataBuffer] != CMD_SEPERATOR ||
+                            dataBuffer[startDataBuffer + dataLength + 1] != CMD_SEPERATOR)
+                {
+                    dataResult = "Unrecognized data format. Expected length: " + dataLength;
+                }
+                else
+                {
+                    dataResult = Encoding.UTF8.GetString(dataBuffer, startDataBuffer + 1, dataLength);
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                dataResult = ex.ToString();
+            }
+
+            return result;
+        }
+
+        void CommandSerialize(CommandType cmd, string Data, out byte[] headerBuffer, out byte[] dataBuffer)
         {
             headerBuffer = new byte[2+5];
 
-            byte[] dataBytes = Encoding.UTF8.GetBytes(cmdInfo.data);
+            byte[] dataBytes = Encoding.UTF8.GetBytes(Data);
             dataBuffer = new byte[2 + dataBytes.Length];
 
             // Seperators:
@@ -98,15 +88,42 @@ namespace Common
             // Dataheader:
             // ============================================
 
-            headerBuffer[1] = (byte)cmdInfo.cmd;
-            byte[] datalengthBytes = BitConverter.GetBytes(cmdInfo.data.Length);
+            headerBuffer[1] = (byte)cmd;
+            byte[] datalengthBytes = BitConverter.GetBytes(dataBytes.Length);
             for (int i = 0; i < 4; i++) headerBuffer[1 + i] = datalengthBytes[i];
 
             // Data:
             // ============================================
+            for (int i = 0; i < dataBytes.Length; i++) dataBuffer[1 + i] = dataBytes[i];
+        }
 
+        async Task<bool> SendCommand(CommandType cmd, string Data, TcpClient client, out string ErrorMsg)
+        {
+            bool result = false;
+            ErrorMsg = "";
 
+            try
+            {
+                byte[] headerBytes, commandBytes;
+                CommandSerialize(cmd, Data, out headerBytes, out commandBytes);
 
+                await client.GetStream().WriteAsync(headerBytes, 0, headerBytes.Length);
+
+                await client.GetStream().WriteAsync(commandBytes, 0, commandBytes.Length);
+
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                ErrorMsg = ex.ToString();
+            }
+
+            return result;
+        }
+
+        void RecieveCommand(TcpClient client)
+        {
+            // if data length > 1024 or header not valid, just close the client.
         }
     }
 }
