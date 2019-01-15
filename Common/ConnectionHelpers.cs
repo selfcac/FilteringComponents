@@ -9,6 +9,9 @@ namespace Common
 {
     public static class ConnectionHelpers
     {
+        public const int ProxyPort = 9011;
+        public const int ControlPanelPort = 9012;
+
         public enum CommandType
         {
             ERROR,
@@ -27,10 +30,10 @@ namespace Common
 
         public const byte CMD_SEPERATOR = 0xAB;
 
-        public struct CommandInfo
+        public class CommandInfo
         {
             public CommandType cmd;
-            public int dataLength;
+            public int dataLength = -1;
             public string data;
         }
 
@@ -144,14 +147,14 @@ namespace Common
             // Seperators:
             // ============================================
             headerBuffer[0] = headerBuffer[6] = CMD_SEPERATOR;
-            dataBytes[0] = dataBytes[1 + dataBytes.Length] = CMD_SEPERATOR;
+            dataBuffer[0] = dataBuffer[1 + dataBytes.Length] = CMD_SEPERATOR;
 
             // Dataheader:
             // ============================================
 
             headerBuffer[1] = (byte)cmd;
             byte[] datalengthBytes = BitConverter.GetBytes(dataBytes.Length);
-            for (int i = 0; i < 4; i++) headerBuffer[1 + i] = datalengthBytes[i];
+            for (int i = 0; i < 4; i++) headerBuffer[2 + i] = datalengthBytes[i];
 
             // Data:
             // ============================================

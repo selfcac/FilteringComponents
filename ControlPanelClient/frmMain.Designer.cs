@@ -260,6 +260,7 @@
             this.btnEcho.TabIndex = 18;
             this.btnEcho.Text = "Echo Check";
             this.btnEcho.UseVisualStyleBackColor = true;
+            this.btnEcho.Click += new System.EventHandler(this.btnEcho_Click);
             // 
             // frmMain
             // 

@@ -14,6 +14,13 @@ namespace ControlPanelForSafeControl
         {
             Logger log = new Logger("main");
             log.i("Starting Control panel server...");
+
+            TcpServer myServer = new TcpServer();
+            myServer.StartServer(Common.ConnectionHelpers.ControlPanelPort);
+
+            Console.Read();
+
+            myServer.StopServer();
         }
     }
 }

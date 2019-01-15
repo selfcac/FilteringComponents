@@ -25,9 +25,12 @@ namespace ControlPanelForSafeControl
                 if (task)
                 {
                     C.CommandInfo cmdInfo = (task as C.TaskInfoResult<C.CommandInfo>).result;
+                    if (cmdInfo.dataLength < 0)
+                        throw new Exception("Task is corrupted (data length is -1)");
+
                     if (cmdInfo.dataLength > 1024)
                     {
-                        log.e("Command data is more than 1KB\n" + task.error);
+                        log.e("Command data is more than 1KB\n Got:" + cmdInfo.dataLength);
                     }
                     else
                     {
@@ -38,7 +41,10 @@ namespace ControlPanelForSafeControl
                             log.i("[OK] " + cmdInfo.cmd.ToString() + ": " + cmdInfo.data);
 
                             // Return echo of command:
-                            await C.SendCommand(cmdInfo.cmd, "OK", client);
+                            // TODO: handle each command:
+                            await C.SendCommand(cmdInfo.cmd, cmdInfo.data + " " + DateTime.Now, client);
+
+                            await Task.Delay(5000); // wait for client to read response;
                         }
                         else
                         {
