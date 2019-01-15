@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public class ConnectionHelpers
+    public static class ConnectionHelpers
     {
-        enum CommandType
+        public enum CommandType
         {
             ERROR,
 
@@ -27,15 +27,16 @@ namespace Common
 
         public const byte CMD_SEPERATOR = 0xAB;
 
-        struct CommandInfo
+        public struct CommandInfo
         {
             public CommandType cmd;
             public int dataLength;
             public string data;
         }
 
+        // ========= ========= ========= Task helpers
 
-        class TaskInfo
+        public class TaskInfo
         {         
             public bool success;
             public string error;
@@ -62,7 +63,7 @@ namespace Common
             }         
         }
 
-        class TaskInfoResult<T> : TaskInfo
+        public class TaskInfoResult<T> : TaskInfo
         {
             public T result;
 
@@ -81,7 +82,9 @@ namespace Common
             }
         }
 
-        TaskInfo ParseCommandHeader(byte[] headerBuffer, int startIndex =0)
+        // ========= ========= ========= Parsers
+
+        static TaskInfo ParseCommandHeader(byte[] headerBuffer, int startIndex =0)
         {
             TaskInfo result = null;
 
@@ -104,7 +107,7 @@ namespace Common
             return result;
         }
 
-        TaskInfo ParseCommandData(int dataLength, byte[] dataBuffer, int startDataBuffer = 0)
+        static TaskInfo ParseCommandData(int dataLength, byte[] dataBuffer, int startDataBuffer = 0)
         {
             TaskInfo result = null;
 
@@ -131,7 +134,7 @@ namespace Common
             return result;
         }
 
-        void CommandSerialize(CommandType cmd, string Data, out byte[] headerBuffer, out byte[] dataBuffer)
+        static void CommandSerialize(CommandType cmd, string Data, out byte[] headerBuffer, out byte[] dataBuffer)
         {
             headerBuffer = new byte[2+5];
 
@@ -155,7 +158,9 @@ namespace Common
             for (int i = 0; i < dataBytes.Length; i++) dataBuffer[1 + i] = dataBytes[i];
         }
 
-        async Task<TaskInfo> SendCommand(CommandType cmd, string Data, TcpClient client)
+        // ========= ========= ========= High level 
+
+        public static async Task<TaskInfo> SendCommand(CommandType cmd, string Data, TcpClient client)
         {
             TaskInfo result;
 
@@ -179,7 +184,7 @@ namespace Common
         }
 
         // if data length > 1024 or header not valid, just close the client (not here, in the algo!).
-        async Task<TaskInfo> RecieveCommandHeader(TcpClient client)
+        public static async Task<TaskInfo> RecieveCommandHeader(TcpClient client)
         {
             TaskInfo result = null;
 
@@ -200,7 +205,7 @@ namespace Common
             return result;
         }
 
-        async Task<TaskInfo> RecieveCommandData(TcpClient client, CommandInfo cmd)
+        public static async Task<TaskInfo> RecieveCommandData(TcpClient client, CommandInfo cmd)
         {
             TaskInfo result = null;
 
@@ -211,6 +216,9 @@ namespace Common
                 await client.GetStream().ReadAsync(dataBytes, 0, dataBytes.Length);
 
                 result = ParseCommandData(cmd.dataLength, dataBytes);
+
+                if (result)
+                    cmd.data = (result as TaskInfoResult<string>).result;
 
             }
             catch (Exception ex)

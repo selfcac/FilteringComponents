@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace ControlPanelForSafeControl
 {
@@ -10,6 +12,8 @@ namespace ControlPanelForSafeControl
     {
         static void Main(string[] args)
         {
+            Logger log = new Logger("main");
+            log.i("Starting Control panel server...");
         }
     }
 }
