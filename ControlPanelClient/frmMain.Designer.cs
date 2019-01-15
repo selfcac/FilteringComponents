@@ -170,6 +170,7 @@
             this.btnLockAdmin.TabIndex = 11;
             this.btnLockAdmin.Text = "Lock";
             this.btnLockAdmin.UseVisualStyleBackColor = true;
+            this.btnLockAdmin.Click += new System.EventHandler(this.btnLockAdmin_Click);
             // 
             // btnOpenBlockLog
             // 
@@ -213,6 +214,7 @@
             this.grpAdmin.Controls.Add(this.dateLockUntil);
             this.grpAdmin.Controls.Add(this.btnChangePassword);
             this.grpAdmin.Controls.Add(this.label4);
+            this.grpAdmin.Enabled = false;
             this.grpAdmin.Location = new System.Drawing.Point(20, 214);
             this.grpAdmin.Margin = new System.Windows.Forms.Padding(5);
             this.grpAdmin.Name = "grpAdmin";
@@ -259,7 +261,7 @@
             this.btnEcho.Text = "Echo Check";
             this.btnEcho.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -272,7 +274,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(5);
             this.MaximizeBox = false;
-            this.Name = "Form1";
+            this.Name = "frmMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Safe ControlPanel Client";
             this.grpAdmin.ResumeLayout(false);
             this.grpAdmin.PerformLayout();

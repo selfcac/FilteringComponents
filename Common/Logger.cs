@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleHTTPSProxyFilter
+namespace Common
 {
-    class Logger
+    public class Logger
     {
         private static object _WriteSyncLock = new object();
 

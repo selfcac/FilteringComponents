@@ -16,5 +16,10 @@ namespace ControlPanelClient
         {
             InitializeComponent();
         }
+
+        private void btnLockAdmin_Click(object sender, EventArgs e)
+        {
+            grpAdmin.Enabled = false;
+        }
     }
 }
