@@ -25,6 +25,16 @@ namespace Common
             LOCK,
         }
 
+        public const byte CMD_SEPERATOR = 0xAB;
+
+        struct CommandInfo
+        {
+            public CommandType cmd;
+            public int dataLength;
+            public string data;
+        }
+
+
         class TaskInfo
         {         
             public bool success;
@@ -49,48 +59,54 @@ namespace Common
             public static implicit operator bool(TaskInfo e)
             {
                 return e.success;
-            }
+            }         
         }
 
         class TaskInfoResult<T> : TaskInfo
         {
             public T result;
 
-            public static TaskInfoResult<V> Result<V>(V resultData)
+            public static TaskInfoResult<T> Result(T resultData)
             {
-                return new TaskInfoResult<V>()
+                return new TaskInfoResult<T>()
                 {
                     success = true,
                     result = resultData
                 };
             }
+
+            public static implicit operator T(TaskInfoResult<T> o)
+            {
+                return o.result;
+            }
         }
 
-        public const byte CMD_SEPERATOR = 0xAB;
-
-        int ParseCommandHeader(byte[] headerBuffer, out CommandType cmd , int startIndex =0)
+        TaskInfo ParseCommandHeader(byte[] headerBuffer, int startIndex =0)
         {
-            int result;
+            TaskInfo result = null;
 
             if (headerBuffer.Length < (2 + 5) ||
                 headerBuffer[startIndex] != CMD_SEPERATOR ||
                 headerBuffer[startIndex + 6] != CMD_SEPERATOR)
             {
-                result = -1;
-                cmd = CommandType.ERROR;
+                result =  TaskInfo.Fail("Invalid header structure");
             }
             else
             {
-                cmd = (CommandType)headerBuffer[startIndex + 1 ];
-                result = BitConverter.ToInt32(headerBuffer, startIndex + 2);
+                CommandInfo o = new CommandInfo();
+
+                o.cmd = (CommandType)headerBuffer[startIndex + 1 ];
+                o.dataLength = BitConverter.ToInt32(headerBuffer, startIndex + 2);
+
+                result = TaskInfoResult<CommandInfo>.Result(o);
             }
 
             return result;
         }
 
-        bool ParseCommandData(int dataLength, byte[] dataBuffer, out string dataResult, int startDataBuffer = 0)
+        TaskInfo ParseCommandData(int dataLength, byte[] dataBuffer, int startDataBuffer = 0)
         {
-            bool result = false;
+            TaskInfo result = null;
 
             try
             {
@@ -98,17 +114,18 @@ namespace Common
                             dataBuffer[startDataBuffer] != CMD_SEPERATOR ||
                             dataBuffer[startDataBuffer + dataLength + 1] != CMD_SEPERATOR)
                 {
-                    dataResult = "Unrecognized data format. Expected length: " + dataLength;
+                    result = TaskInfo.Fail("Unrecognized data format. Expected length: " + dataLength);
                 }
                 else
                 {
-                    dataResult = Encoding.UTF8.GetString(dataBuffer, startDataBuffer + 1, dataLength);
-                    result = true;
+                    result = TaskInfoResult<string>.Result(
+                        Encoding.UTF8.GetString(dataBuffer, startDataBuffer + 1, dataLength)
+                        );
                 }
             }
             catch (Exception ex)
             {
-                dataResult = ex.ToString();
+                result = TaskInfo.Fail(ex.ToString());
             }
 
             return result;
@@ -161,17 +178,45 @@ namespace Common
             return result;
         }
 
+        // if data length > 1024 or header not valid, just close the client (not here, in the algo!).
         async Task<TaskInfo> RecieveCommandHeader(TcpClient client)
         {
-            // if data length > 1024 or header not valid, just close the client (not here, in the algo!).
             TaskInfo result = null;
+
+            try
+            {
+                byte[] headerBytes = new byte[2 + 5];
+
+                await client.GetStream().ReadAsync(headerBytes, 0, headerBytes.Length);
+
+                result = ParseCommandHeader(headerBytes);
+
+            }
+            catch (Exception ex)
+            {
+                result = TaskInfo.Fail(ex.ToString());
+            }
 
             return result;
         }
 
-        async Task<TaskInfo> RecieveCommandData(TcpClient client)
+        async Task<TaskInfo> RecieveCommandData(TcpClient client, CommandInfo cmd)
         {
             TaskInfo result = null;
+
+            try
+            {
+                byte[] dataBytes = new byte[2 + cmd.dataLength];
+
+                await client.GetStream().ReadAsync(dataBytes, 0, dataBytes.Length);
+
+                result = ParseCommandData(cmd.dataLength, dataBytes);
+
+            }
+            catch (Exception ex)
+            {
+                result = TaskInfo.Fail(ex.ToString());
+            }
 
             return result;
         }
