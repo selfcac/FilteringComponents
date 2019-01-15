@@ -20,6 +20,14 @@ namespace ControlPanelClient
             return client;
         }
 
+        public static string evilPayLoad()
+        {
+            string s20 = "01234567890123456789";
+            string result = "";
+            for (int i = 0; i < 100; i++) result += s20;
+            return result;
+        }
+
         async public static Task<string> Echo()
         {
             using (TcpClient client = getClient())
@@ -27,7 +35,7 @@ namespace ControlPanelClient
                 string result = "";
                 try
                 {
-                    C.TaskInfo task = await C.SendCommand(C.CommandType.ECHO, "PING", client);
+                    C.TaskInfo task = await C.SendCommand(C.CommandType.ECHO, "ECHO", client);
                     if (task)
                     {
                         C.TaskInfo headerTask = await C.RecieveCommandHeader(client);
