@@ -71,6 +71,7 @@
             this.btnStartProxy.TabIndex = 1;
             this.btnStartProxy.Text = "Start";
             this.btnStartProxy.UseVisualStyleBackColor = true;
+            this.btnStartProxy.Click += new System.EventHandler(this.btnStartProxy_Click);
             // 
             // btnStopProxy
             // 
@@ -81,6 +82,7 @@
             this.btnStopProxy.TabIndex = 2;
             this.btnStopProxy.Text = "Stop";
             this.btnStopProxy.UseVisualStyleBackColor = true;
+            this.btnStopProxy.Click += new System.EventHandler(this.btnStopProxy_Click);
             // 
             // label2
             // 

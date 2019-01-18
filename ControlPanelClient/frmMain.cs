@@ -48,10 +48,24 @@ namespace ControlPanelClient
         {
             await doCommand(async () =>
             {
-                return await Common.Scenarios.Echo_Start();
+                return await Common.Scenarios.Echo_Client();
             });
         }
 
+        private async void btnStartProxy_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.ProxyStart_Client();
+            });
+        }
 
+        private async void btnStopProxy_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.ProxyEnd_Client();
+            });
+        }
     }
 }

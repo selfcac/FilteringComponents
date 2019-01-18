@@ -10,7 +10,7 @@ namespace Common
 {
     public static class Scenarios
     {
-        public static TcpClient getClient()
+        public static TcpClient getTcpClient()
         {
             TcpClient client = new TcpClient("127.0.0.1", ControlPanelPort);
             client.ReceiveTimeout = 1000;
@@ -21,7 +21,7 @@ namespace Common
 
         async public static Task<string> runCommand(CommandType type, string Data)
         {
-            using (TcpClient client = getClient())
+            using (TcpClient client = getTcpClient())
             {
                 string result = "";
                 try
@@ -96,29 +96,72 @@ namespace Common
         */
 
         public delegate string endCommandMethod(CommandInfo cmd);
-        public static Dictionary<CommandType, endCommandMethod> endHelpers = new Dictionary<CommandType, endCommandMethod>()
+        public static Dictionary<CommandType, endCommandMethod> serverHelpers = 
+            new Dictionary<CommandType, endCommandMethod>()
         {
-            { CommandType.ECHO, Echo_End }
+            { CommandType.ECHO, Echo_Server },
+            { CommandType.PROXY_START, ProxyStart_Server},
+            { CommandType.PROXY_END, ProxyEnd_Server},
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
         {
-            if (endHelpers.ContainsKey(type))
-                return endHelpers[type];
+            if (serverHelpers.ContainsKey(type))
+                return serverHelpers[type];
             else
                 throw new Exception("No helper to end event " + type.ToString());
         }
 
+        public static string chopString(string source, int maxLen = 1024)
+        {
+            if (source.Length > maxLen)
+            {
+                return source.Substring(0, 1024 - 3) + "...";
+            }
+            else
+            {
+                return source;
+            }
+        }
 
-        public async static Task<string> Echo_Start()
+
+
+        public async static Task<string> Echo_Client()
         {
             return await runCommand(CommandType.ECHO, "~Echo~");
         }
 
-        public static string Echo_End(CommandInfo cmdInfo)
+        public static string Echo_Server(CommandInfo cmdInfo)
         {
             return cmdInfo.data + " " + DateTime.Now;
         }
+
+
+
+        public const string PROXY_SERVICE_NAME = "w3logsvc";
+
+        public async static Task<string> ProxyStart_Client()
+        {
+            return await runCommand(CommandType.PROXY_START, "");
+        }
+
+        public static string ProxyStart_Server(CommandInfo cmdInfo)
+        {
+            TaskInfo result = SystemUtils.StartService(PROXY_SERVICE_NAME);
+            return chopString("Sucess? " + result.success.ToString() + ", Reason:" + result.eventReason);
+        }
+
+        public async static Task<string> ProxyEnd_Client()
+        {
+            return await runCommand(CommandType.PROXY_END, "");
+        }
+
+        public static string ProxyEnd_Server(CommandInfo cmdInfo)
+        {
+            TaskInfo result = SystemUtils.StopService(PROXY_SERVICE_NAME);
+            return chopString("Sucess? " + result.success.ToString() + ", Reason:" + result.eventReason);
+        }
+
     }
 
 }
