@@ -42,21 +42,21 @@ namespace Common
         public class TaskInfo
         {         
             public bool success;
-            public string error;
+            public string eventReason;
 
             public static TaskInfo Fail(string reason)
             {
                 return new TaskInfo()
                 {
-                    success = false, error = reason
+                    success = false, eventReason = reason
                 };
             }
 
-            public static TaskInfo Success()
+            public static TaskInfo Success(string reason)
             {
                 return new TaskInfo()
                 {
-                    success = true,
+                    success = true,eventReason = reason
                 };
             }
 
@@ -176,7 +176,7 @@ namespace Common
 
                 await client.GetStream().WriteAsync(commandBytes, 0, commandBytes.Length);
 
-                result = TaskInfo.Success();
+                result = TaskInfo.Success("Command sent.");
             }
             catch (Exception ex)
             {

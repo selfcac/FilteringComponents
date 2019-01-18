@@ -47,13 +47,13 @@ namespace ControlPanelForSafeControl
                         }
                         else
                         {
-                            log.e("Can't read command data\n" + dataTask.error);
+                            log.e("Can't read command data\n" + dataTask.eventReason);
                         }
                     }
                 }
                 else
                 {
-                    log.e("Can't read header\n" + task.error);
+                    log.e("Can't read header\n" + task.eventReason);
                 }
             }
             catch (Exception ex)

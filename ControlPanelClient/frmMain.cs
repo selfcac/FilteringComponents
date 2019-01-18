@@ -30,12 +30,12 @@ namespace ControlPanelClient
             return result;
         }
 
-        private async void btnEcho_Click(object sender, EventArgs e)
+        async Task doCommand(Func<Task<string>> action)
         {
             string result = "";
             try
             {
-               result = await Common.Scenarios.Echo_Start();
+                result = await action();
             }
             catch (Exception ex)
             {
@@ -43,5 +43,15 @@ namespace ControlPanelClient
             }
             MessageBox.Show(result);
         }
+
+        private async void btnEcho_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.Echo_Start();
+            });
+        }
+
+
     }
 }

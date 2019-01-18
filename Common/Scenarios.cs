@@ -49,18 +49,18 @@ namespace Common
                                 }
                                 else
                                 {
-                                    result = "Can't read command data\n" + dataTask.error;
+                                    result = "Can't read command data\n" + dataTask.eventReason;
                                 }
                             }
                         }
                         else
                         {
-                            result = "Header could not recieved\n" + headerTask.error;
+                            result = "Header could not recieved\n" + headerTask.eventReason;
                         }
                     }
                     else
                     {
-                        result = "Task not sent\n" + task.error;
+                        result = "Task not sent\n" + task.eventReason;
                     }
 
                 }
@@ -77,6 +77,23 @@ namespace Common
             }
         }
 
+        /*
+         * public enum CommandType
+        {
+            ERROR,
+
+            // Events with no data:
+            PROXY_START, PROXY_END,
+            BLOCKLOG_SHOW, BLOCKLOG_DELETE,
+            LOCKED_CHECK,
+
+            // Events with extra data:
+            ECHO,
+            ADD_URL,
+            CHANGE_PASSWORD,
+            LOCK,
+        }
+        */
 
         public delegate string endCommandMethod(CommandInfo cmd);
         public static Dictionary<CommandType, endCommandMethod> endHelpers = new Dictionary<CommandType, endCommandMethod>()
