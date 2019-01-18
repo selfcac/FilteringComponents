@@ -156,7 +156,7 @@
             // 
             // dateLockUntil
             // 
-            this.dateLockUntil.CustomFormat = "dd/MM/yyyy hh:mm";
+            this.dateLockUntil.CustomFormat = "dd/MM/yyyy hh:mm tt";
             this.dateLockUntil.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dateLockUntil.Location = new System.Drawing.Point(18, 188);
             this.dateLockUntil.Margin = new System.Windows.Forms.Padding(5);
@@ -233,7 +233,7 @@
             this.btnTryUnlockAdmin.Name = "btnTryUnlockAdmin";
             this.btnTryUnlockAdmin.Size = new System.Drawing.Size(187, 35);
             this.btnTryUnlockAdmin.TabIndex = 16;
-            this.btnTryUnlockAdmin.Text = "Try unlocking admin";
+            this.btnTryUnlockAdmin.Text = "When Unlocking";
             this.btnTryUnlockAdmin.UseVisualStyleBackColor = true;
             // 
             // grpUser
