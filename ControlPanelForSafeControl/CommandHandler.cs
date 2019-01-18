@@ -39,7 +39,6 @@ namespace ControlPanelForSafeControl
                         if (dataTask)
                         {
                             log.i("[OK] " + cmdInfo.cmd.ToString() + ": " + cmdInfo.data);
-
                             string command_result = Scenarios.HandleCommand(cmdInfo.cmd)(cmdInfo);
                             await C.SendCommand(cmdInfo.cmd, command_result, client);
 

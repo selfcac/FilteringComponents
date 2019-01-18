@@ -67,5 +67,13 @@ namespace ControlPanelClient
                 return await Common.Scenarios.ProxyEnd_Client();
             });
         }
+
+        private async void btnChangePassword_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.ChangePass_Client(txtNewPassword.Text);
+            });
+        }
     }
 }

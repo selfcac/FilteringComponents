@@ -95,6 +95,10 @@ namespace Common
         }
         */
 
+        //TODO: Config
+        public const string PROXY_SERVICE_NAME = "w3logsvc";
+        public const string ADMIN_USERNAME = "YoniH";
+
         public delegate string endCommandMethod(CommandInfo cmd);
         public static Dictionary<CommandType, endCommandMethod> serverHelpers = 
             new Dictionary<CommandType, endCommandMethod>()
@@ -102,6 +106,7 @@ namespace Common
             { CommandType.ECHO, Echo_Server },
             { CommandType.PROXY_START, ProxyStart_Server},
             { CommandType.PROXY_END, ProxyEnd_Server},
+            { CommandType.CHANGE_PASSWORD, ChangePass_Server},
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
@@ -109,7 +114,7 @@ namespace Common
             if (serverHelpers.ContainsKey(type))
                 return serverHelpers[type];
             else
-                throw new Exception("No helper to end event " + type.ToString());
+                return Default_Server;
         }
 
         public static string chopString(string source, int maxLen = 1024)
@@ -124,7 +129,12 @@ namespace Common
             }
         }
 
+        public static string Default_Server(CommandInfo cmdInfo)
+        {
+            return "Server Handler for command not found! Define in Scenarios.cs";
+        }
 
+        // === === === === === ECHO === === === === === === 
 
         public async static Task<string> Echo_Client()
         {
@@ -136,9 +146,7 @@ namespace Common
             return cmdInfo.data + " " + DateTime.Now;
         }
 
-
-
-        public const string PROXY_SERVICE_NAME = "w3logsvc";
+        // === === === === === PROXY_START === === === === === === 
 
         public async static Task<string> ProxyStart_Client()
         {
@@ -148,8 +156,10 @@ namespace Common
         public static string ProxyStart_Server(CommandInfo cmdInfo)
         {
             TaskInfo result = SystemUtils.StartService(PROXY_SERVICE_NAME);
-            return chopString("Sucess? " + result.success.ToString() + ", Reason:" + result.eventReason);
+            return chopString("Sucess? " + result.success.ToString() + ", " + result.eventReason);
         }
+
+        // === === === === === PROXY_END === === === === === === 
 
         public async static Task<string> ProxyEnd_Client()
         {
@@ -159,7 +169,23 @@ namespace Common
         public static string ProxyEnd_Server(CommandInfo cmdInfo)
         {
             TaskInfo result = SystemUtils.StopService(PROXY_SERVICE_NAME);
-            return chopString("Sucess? " + result.success.ToString() + ", Reason:" + result.eventReason);
+            return chopString("Sucess? " + result.success.ToString() + ", " + result.eventReason);
+        }
+
+        // === === === === === CHANGE_PASSWORD === === === === === === 
+
+        public async static Task<string> ChangePass_Client(string password)
+        {
+            return await runCommand(CommandType.CHANGE_PASSWORD, password);
+        }
+
+        public static string ChangePass_Server(CommandInfo cmdInfo)
+        {
+            TaskInfo result = TaskInfo.Fail("Can't change to empty password");
+            if (!string.IsNullOrEmpty(cmdInfo.data))
+                result = SystemUtils.ChangeUserPassword(ADMIN_USERNAME, cmdInfo.data);
+
+            return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
         }
 
     }

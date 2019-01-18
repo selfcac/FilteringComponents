@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
@@ -68,6 +69,34 @@ namespace Common
                 else
                 {
                     result = C.TaskInfo.Fail("Service not in running mode! Mode: " + service.Status.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                result = C.TaskInfo.Fail(ex.Message);
+            }
+
+            return result;
+        }
+
+        public static C.TaskInfo ChangeUserPassword(string username, string newPassword)
+        {
+            C.TaskInfo result = C.TaskInfo.Fail("Init");
+
+            try
+            {
+                DirectoryEntry AD = new DirectoryEntry("WinNT://" + Environment.MachineName + ",computer");
+                DirectoryEntry grp;
+                grp = AD.Children.Find(username, schemaClassName: "user");
+                if (grp != null)
+                {
+                    grp.Invoke("SetPassword", new object[] { newPassword });
+                    grp.CommitChanges();
+                    result = C.TaskInfo.Success("User password changed!");
+                }
+                else
+                {
+                    result = C.TaskInfo.Fail("Can't find username.");
                 }
             }
             catch (Exception ex)

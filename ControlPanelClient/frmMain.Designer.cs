@@ -133,6 +133,7 @@
             this.btnChangePassword.TabIndex = 8;
             this.btnChangePassword.Text = "Change";
             this.btnChangePassword.UseVisualStyleBackColor = true;
+            this.btnChangePassword.Click += new System.EventHandler(this.btnChangePassword_Click);
             // 
             // txtNewPassword
             // 
@@ -202,7 +203,7 @@
             this.btnDeleteLog.Name = "btnDeleteLog";
             this.btnDeleteLog.Size = new System.Drawing.Size(125, 35);
             this.btnDeleteLog.TabIndex = 14;
-            this.btnDeleteLog.Text = "Delete";
+            this.btnDeleteLog.Text = "Clear";
             this.btnDeleteLog.UseVisualStyleBackColor = true;
             // 
             // grpAdmin
@@ -216,7 +217,6 @@
             this.grpAdmin.Controls.Add(this.dateLockUntil);
             this.grpAdmin.Controls.Add(this.btnChangePassword);
             this.grpAdmin.Controls.Add(this.label4);
-            this.grpAdmin.Enabled = false;
             this.grpAdmin.Location = new System.Drawing.Point(20, 214);
             this.grpAdmin.Margin = new System.Windows.Forms.Padding(5);
             this.grpAdmin.Name = "grpAdmin";
