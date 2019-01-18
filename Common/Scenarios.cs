@@ -4,44 +4,35 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
-using Common;
-using C = Common.ConnectionHelpers;
+using static Common.ConnectionHelpers;
 
-namespace ControlPanelClient
+namespace Common
 {
-    public class TcpCommands
+    public static class Scenarios
     {
         public static TcpClient getClient()
         {
-            TcpClient client = new TcpClient("127.0.0.1", C.ControlPanelPort);
+            TcpClient client = new TcpClient("127.0.0.1", ControlPanelPort);
             client.ReceiveTimeout = 1000;
             client.SendTimeout = 1000;
 
             return client;
         }
 
-        public static string evilPayLoad()
-        {
-            string s20 = "01234567890123456789";
-            string result = "";
-            for (int i = 0; i < 100; i++) result += s20;
-            return result;
-        }
-
-        async public static Task<string> Echo()
+        async public static Task<string> runCommand(CommandType type, string Data)
         {
             using (TcpClient client = getClient())
             {
                 string result = "";
                 try
                 {
-                    C.TaskInfo task = await C.SendCommand(C.CommandType.ECHO, "ECHO", client);
+                    TaskInfo task = await SendCommand(type, Data, client);
                     if (task)
                     {
-                        C.TaskInfo headerTask = await C.RecieveCommandHeader(client);
+                        TaskInfo headerTask = await RecieveCommandHeader(client);
                         if (headerTask)
                         {
-                            C.CommandInfo cmdInfo = (headerTask as C.TaskInfoResult<C.CommandInfo>).result;
+                            CommandInfo cmdInfo = (headerTask as TaskInfoResult<CommandInfo>).result;
                             if (cmdInfo.dataLength < 0)
                                 throw new Exception("Task is corrupted (data length is -1)");
 
@@ -51,7 +42,7 @@ namespace ControlPanelClient
                             }
                             else
                             {
-                                C.TaskInfo dataTask = await C.RecieveCommandData(client, cmdInfo);
+                                TaskInfo dataTask = await RecieveCommandData(client, cmdInfo);
                                 if (dataTask)
                                 {
                                     result = cmdInfo.data;
@@ -85,5 +76,32 @@ namespace ControlPanelClient
                 return result;
             }
         }
+
+
+        public delegate string endCommandMethod(CommandInfo cmd);
+        public static Dictionary<CommandType, endCommandMethod> endHelpers = new Dictionary<CommandType, endCommandMethod>()
+        {
+            { CommandType.ECHO, Echo_End }
+        };
+
+        public static endCommandMethod HandleCommand(CommandType type)
+        {
+            if (endHelpers.ContainsKey(type))
+                return endHelpers[type];
+            else
+                throw new Exception("No helper to end event " + type.ToString());
+        }
+
+
+        public async static Task<string> Echo_Start()
+        {
+            return await runCommand(CommandType.ECHO, "~Echo~");
+        }
+
+        public static string Echo_End(CommandInfo cmdInfo)
+        {
+            return cmdInfo.data + " " + DateTime.Now;
+        }
     }
+
 }

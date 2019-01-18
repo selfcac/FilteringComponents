@@ -40,9 +40,8 @@ namespace ControlPanelForSafeControl
                         {
                             log.i("[OK] " + cmdInfo.cmd.ToString() + ": " + cmdInfo.data);
 
-                            // Return echo of command:
-                            // TODO: handle each command:
-                            await C.SendCommand(cmdInfo.cmd, cmdInfo.data + " " + DateTime.Now, client);
+                            string command_result = Scenarios.HandleCommand(cmdInfo.cmd)(cmdInfo);
+                            await C.SendCommand(cmdInfo.cmd, command_result, client);
 
                             await Task.Delay(5000); // wait for client to read response;
                         }

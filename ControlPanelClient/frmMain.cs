@@ -22,12 +22,20 @@ namespace ControlPanelClient
             grpAdmin.Enabled = false;
         }
 
+        public static string evilPayLoad()
+        {
+            string s20 = "01234567890123456789";
+            string result = "";
+            for (int i = 0; i < 100; i++) result += s20;
+            return result;
+        }
+
         private async void btnEcho_Click(object sender, EventArgs e)
         {
             string result = "";
             try
             {
-               result = await TcpCommands.Echo();
+               result = await Common.Scenarios.Echo_Start();
             }
             catch (Exception ex)
             {
