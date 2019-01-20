@@ -13,6 +13,7 @@ namespace ControlPanelForSafeControl
         static void Main(string[] args)
         {
             Logger log = new Logger("main");
+            log.i("Using config created " + Common.Config.Instance.created);
             log.i("Starting Control panel server...");
 
             TcpServer myServer = new TcpServer();
