@@ -16,7 +16,7 @@ namespace SimpleHTTPSProxyFilter
 
 
             TcpServerThread myServer = new TcpServerThread();
-            myServer.StartServer(Common.ConnectionHelpers.ProxyPort);
+            myServer.StartServer(Common.Config.Instance.ProxyPort);
 
             Console.Read();
 

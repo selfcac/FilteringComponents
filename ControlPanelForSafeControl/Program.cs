@@ -16,7 +16,7 @@ namespace ControlPanelForSafeControl
             log.i("Starting Control panel server...");
 
             TcpServer myServer = new TcpServer();
-            myServer.StartServer(Common.ConnectionHelpers.ControlPanelPort);
+            myServer.StartServer(Common.Config.Instance.ControlPanelPort);
 
             Console.Read();
 
