@@ -17,6 +17,9 @@ namespace Common
         static FileInfo unlockFile = new FileInfo("unlock.json");
         static FileInfo auditFile = new FileInfo("log_audit.txt");
 
+        static FileInfo whitelistFile = new FileInfo("whitelist.txt");
+        static FileInfo blocklogFile = new FileInfo("log_block.txt");
+
         public static Config Instance {
             get
             {
@@ -52,7 +55,6 @@ namespace Common
                
         public int ProxyPort = 9011;
         public int ControlPanelPort = 9012;
-
        
     }
 }

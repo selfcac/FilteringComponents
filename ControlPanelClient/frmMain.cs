@@ -74,6 +74,12 @@ namespace ControlPanelClient
             {
                 return await Common.Scenarios.ChangePass_Client(txtNewPassword.Text);
             });
+            txtNewPassword.Text = "";
+        }
+
+        private void btnAddWhiteList_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -104,6 +104,7 @@ namespace Common
             { CommandType.ECHO, Echo_Server },
             { CommandType.PROXY_START, ProxyStart_Server},
             { CommandType.PROXY_END, ProxyEnd_Server},
+
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
         };
 

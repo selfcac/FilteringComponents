@@ -112,6 +112,7 @@
             this.btnAddWhiteList.TabIndex = 5;
             this.btnAddWhiteList.Text = "add";
             this.btnAddWhiteList.UseVisualStyleBackColor = true;
+            this.btnAddWhiteList.Click += new System.EventHandler(this.btnAddWhiteList_Click);
             // 
             // label3
             // 
@@ -182,7 +183,7 @@
             this.btnOpenBlockLog.Name = "btnOpenBlockLog";
             this.btnOpenBlockLog.Size = new System.Drawing.Size(125, 35);
             this.btnOpenBlockLog.TabIndex = 12;
-            this.btnOpenBlockLog.Text = "Open";
+            this.btnOpenBlockLog.Text = "View";
             this.btnOpenBlockLog.UseVisualStyleBackColor = true;
             // 
             // label5
