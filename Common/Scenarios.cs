@@ -12,7 +12,7 @@ namespace Common
     {
         public static TcpClient getTcpClient()
         {
-            TcpClient client = new TcpClient("127.0.0.1", ControlPanelPort);
+            TcpClient client = new TcpClient("127.0.0.1", Config.ControlPanelPort);
             client.ReceiveTimeout = 1000;
             client.SendTimeout = 1000;
 
@@ -95,9 +95,7 @@ namespace Common
         }
         */
 
-        //TODO: Config
-        public const string PROXY_SERVICE_NAME = "w3logsvc";
-        public const string ADMIN_USERNAME = "YoniH";
+       
 
         public delegate string endCommandMethod(CommandInfo cmd);
         public static Dictionary<CommandType, endCommandMethod> serverHelpers = 
@@ -155,7 +153,7 @@ namespace Common
 
         public static string ProxyStart_Server(CommandInfo cmdInfo)
         {
-            TaskInfo result = SystemUtils.StartService(PROXY_SERVICE_NAME);
+            TaskInfo result = SystemUtils.StartService(Config.PROXY_SERVICE_NAME);
             return chopString("Sucess? " + result.success.ToString() + ", " + result.eventReason);
         }
 
@@ -168,7 +166,7 @@ namespace Common
 
         public static string ProxyEnd_Server(CommandInfo cmdInfo)
         {
-            TaskInfo result = SystemUtils.StopService(PROXY_SERVICE_NAME);
+            TaskInfo result = SystemUtils.StopService(Config.PROXY_SERVICE_NAME);
             return chopString("Sucess? " + result.success.ToString() + ", " + result.eventReason);
         }
 
@@ -183,7 +181,7 @@ namespace Common
         {
             TaskInfo result = TaskInfo.Fail("Can't change to empty password");
             if (!string.IsNullOrEmpty(cmdInfo.data))
-                result = SystemUtils.ChangeUserPassword(ADMIN_USERNAME, cmdInfo.data);
+                result = SystemUtils.ChangeUserPassword(Config.ADMIN_USERNAME, cmdInfo.data);
 
             return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
         }

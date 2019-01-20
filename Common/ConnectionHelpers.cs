@@ -9,10 +9,6 @@ namespace Common
 {
     public static class ConnectionHelpers
     {
-        //TODO: Config
-        public const int ProxyPort = 9011;
-        public const int ControlPanelPort = 9012;
-
         public enum CommandType
         {
             ERROR,
