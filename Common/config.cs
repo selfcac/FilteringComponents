@@ -14,7 +14,7 @@ namespace Common
         static Config _instance = null;
 
         static FileInfo configFile = new FileInfo("config.json");
-        static FileInfo unlockFile = new FileInfo("unlock.json");
+        static FileInfo unlockFile = new FileInfo("lock.txt");
         static FileInfo auditFile = new FileInfo("log_audit.txt");
 
         static FileInfo whitelistFile = new FileInfo("whitelist.txt");
@@ -52,6 +52,7 @@ namespace Common
 
         public string PROXY_SERVICE_NAME = "w3logsvc";
         public string ADMIN_USERNAME = "YoniH";
+
                
         public int ProxyPort = 9011;
         public int ControlPanelPort = 9012;

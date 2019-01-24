@@ -44,9 +44,14 @@
             this.label5 = new System.Windows.Forms.Label();
             this.btnDeleteLog = new System.Windows.Forms.Button();
             this.grpAdmin = new System.Windows.Forms.GroupBox();
-            this.btnTryUnlockAdmin = new System.Windows.Forms.Button();
             this.grpUser = new System.Windows.Forms.GroupBox();
             this.btnEcho = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.btnStopFireWall = new System.Windows.Forms.Button();
+            this.btnStartFirewall = new System.Windows.Forms.Button();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btnIsLocked = new System.Windows.Forms.Button();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
             this.SuspendLayout();
@@ -55,7 +60,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.Color.Blue;
-            this.label1.Location = new System.Drawing.Point(10, 35);
+            this.label1.Location = new System.Drawing.Point(8, 115);
             this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(108, 20);
@@ -64,7 +69,7 @@
             // 
             // btnStartProxy
             // 
-            this.btnStartProxy.Location = new System.Drawing.Point(150, 28);
+            this.btnStartProxy.Location = new System.Drawing.Point(148, 108);
             this.btnStartProxy.Margin = new System.Windows.Forms.Padding(5);
             this.btnStartProxy.Name = "btnStartProxy";
             this.btnStartProxy.Size = new System.Drawing.Size(125, 35);
@@ -75,7 +80,7 @@
             // 
             // btnStopProxy
             // 
-            this.btnStopProxy.Location = new System.Drawing.Point(307, 28);
+            this.btnStopProxy.Location = new System.Drawing.Point(305, 108);
             this.btnStopProxy.Margin = new System.Windows.Forms.Padding(5);
             this.btnStopProxy.Name = "btnStopProxy";
             this.btnStopProxy.Size = new System.Drawing.Size(125, 35);
@@ -167,7 +172,7 @@
             // 
             // btnLockAdmin
             // 
-            this.btnLockAdmin.Location = new System.Drawing.Point(442, 179);
+            this.btnLockAdmin.Location = new System.Drawing.Point(442, 186);
             this.btnLockAdmin.Margin = new System.Windows.Forms.Padding(5);
             this.btnLockAdmin.Name = "btnLockAdmin";
             this.btnLockAdmin.Size = new System.Drawing.Size(125, 35);
@@ -178,19 +183,20 @@
             // 
             // btnOpenBlockLog
             // 
-            this.btnOpenBlockLog.Location = new System.Drawing.Point(150, 72);
+            this.btnOpenBlockLog.Location = new System.Drawing.Point(148, 152);
             this.btnOpenBlockLog.Margin = new System.Windows.Forms.Padding(5);
             this.btnOpenBlockLog.Name = "btnOpenBlockLog";
             this.btnOpenBlockLog.Size = new System.Drawing.Size(125, 35);
             this.btnOpenBlockLog.TabIndex = 12;
             this.btnOpenBlockLog.Text = "View";
             this.btnOpenBlockLog.UseVisualStyleBackColor = true;
+            this.btnOpenBlockLog.Click += new System.EventHandler(this.btnOpenBlockLog_Click);
             // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.ForeColor = System.Drawing.Color.Blue;
-            this.label5.Location = new System.Drawing.Point(13, 80);
+            this.label5.Location = new System.Drawing.Point(11, 160);
             this.label5.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(83, 20);
@@ -199,13 +205,14 @@
             // 
             // btnDeleteLog
             // 
-            this.btnDeleteLog.Location = new System.Drawing.Point(307, 72);
+            this.btnDeleteLog.Location = new System.Drawing.Point(305, 152);
             this.btnDeleteLog.Margin = new System.Windows.Forms.Padding(5);
             this.btnDeleteLog.Name = "btnDeleteLog";
             this.btnDeleteLog.Size = new System.Drawing.Size(125, 35);
             this.btnDeleteLog.TabIndex = 14;
             this.btnDeleteLog.Text = "Clear";
             this.btnDeleteLog.UseVisualStyleBackColor = true;
+            this.btnDeleteLog.Click += new System.EventHandler(this.btnDeleteLog_Click);
             // 
             // grpAdmin
             // 
@@ -218,28 +225,24 @@
             this.grpAdmin.Controls.Add(this.dateLockUntil);
             this.grpAdmin.Controls.Add(this.btnChangePassword);
             this.grpAdmin.Controls.Add(this.label4);
-            this.grpAdmin.Location = new System.Drawing.Point(20, 214);
+            this.grpAdmin.Location = new System.Drawing.Point(20, 317);
             this.grpAdmin.Margin = new System.Windows.Forms.Padding(5);
             this.grpAdmin.Name = "grpAdmin";
             this.grpAdmin.Padding = new System.Windows.Forms.Padding(5);
-            this.grpAdmin.Size = new System.Drawing.Size(584, 233);
+            this.grpAdmin.Size = new System.Drawing.Size(584, 232);
             this.grpAdmin.TabIndex = 15;
             this.grpAdmin.TabStop = false;
-            this.grpAdmin.Text = "Admin actions";
-            // 
-            // btnTryUnlockAdmin
-            // 
-            this.btnTryUnlockAdmin.Location = new System.Drawing.Point(20, 165);
-            this.btnTryUnlockAdmin.Margin = new System.Windows.Forms.Padding(5);
-            this.btnTryUnlockAdmin.Name = "btnTryUnlockAdmin";
-            this.btnTryUnlockAdmin.Size = new System.Drawing.Size(187, 35);
-            this.btnTryUnlockAdmin.TabIndex = 16;
-            this.btnTryUnlockAdmin.Text = "When Unlocking";
-            this.btnTryUnlockAdmin.UseVisualStyleBackColor = true;
+            this.grpAdmin.Text = "Time locked actions";
             // 
             // grpUser
             // 
+            this.grpUser.Controls.Add(this.textBox1);
+            this.grpUser.Controls.Add(this.label7);
+            this.grpUser.Controls.Add(this.label6);
+            this.grpUser.Controls.Add(this.btnEcho);
             this.grpUser.Controls.Add(this.label1);
+            this.grpUser.Controls.Add(this.btnStartFirewall);
+            this.grpUser.Controls.Add(this.btnStopFireWall);
             this.grpUser.Controls.Add(this.btnStartProxy);
             this.grpUser.Controls.Add(this.btnStopProxy);
             this.grpUser.Controls.Add(this.btnDeleteLog);
@@ -249,30 +252,92 @@
             this.grpUser.Margin = new System.Windows.Forms.Padding(5);
             this.grpUser.Name = "grpUser";
             this.grpUser.Padding = new System.Windows.Forms.Padding(5);
-            this.grpUser.Size = new System.Drawing.Size(454, 128);
+            this.grpUser.Size = new System.Drawing.Size(454, 244);
             this.grpUser.TabIndex = 17;
             this.grpUser.TabStop = false;
-            this.grpUser.Text = "User actions";
+            this.grpUser.Text = "Unlocked actions";
             // 
             // btnEcho
             // 
-            this.btnEcho.Location = new System.Drawing.Point(217, 165);
+            this.btnEcho.Location = new System.Drawing.Point(148, 197);
             this.btnEcho.Margin = new System.Windows.Forms.Padding(5);
             this.btnEcho.Name = "btnEcho";
-            this.btnEcho.Size = new System.Drawing.Size(187, 35);
+            this.btnEcho.Size = new System.Drawing.Size(282, 35);
             this.btnEcho.TabIndex = 18;
             this.btnEcho.Text = "Echo Check";
             this.btnEcho.UseVisualStyleBackColor = true;
             this.btnEcho.Click += new System.EventHandler(this.btnEcho_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(8, 74);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(422, 26);
+            this.textBox1.TabIndex = 19;
+            this.textBox1.Text = "netsh advfirewall show allprofiles";
+            // 
+            // btnStopFireWall
+            // 
+            this.btnStopFireWall.Location = new System.Drawing.Point(305, 31);
+            this.btnStopFireWall.Margin = new System.Windows.Forms.Padding(5);
+            this.btnStopFireWall.Name = "btnStopFireWall";
+            this.btnStopFireWall.Size = new System.Drawing.Size(125, 35);
+            this.btnStopFireWall.TabIndex = 2;
+            this.btnStopFireWall.Text = "Stop";
+            this.btnStopFireWall.UseVisualStyleBackColor = true;
+            this.btnStopFireWall.Click += new System.EventHandler(this.btnStopFireWall_Click);
+            // 
+            // btnStartFirewall
+            // 
+            this.btnStartFirewall.Location = new System.Drawing.Point(148, 31);
+            this.btnStartFirewall.Margin = new System.Windows.Forms.Padding(5);
+            this.btnStartFirewall.Name = "btnStartFirewall";
+            this.btnStartFirewall.Size = new System.Drawing.Size(125, 35);
+            this.btnStartFirewall.TabIndex = 1;
+            this.btnStartFirewall.Text = "Start";
+            this.btnStartFirewall.UseVisualStyleBackColor = true;
+            this.btnStartFirewall.Click += new System.EventHandler(this.btnStartFirewall_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.ForeColor = System.Drawing.Color.Blue;
+            this.label6.Location = new System.Drawing.Point(8, 38);
+            this.label6.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(72, 20);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "Firewall:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.ForeColor = System.Drawing.Color.Blue;
+            this.label7.Location = new System.Drawing.Point(11, 204);
+            this.label7.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(52, 20);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "Echo:";
+            // 
+            // btnIsLocked
+            // 
+            this.btnIsLocked.Location = new System.Drawing.Point(20, 272);
+            this.btnIsLocked.Margin = new System.Windows.Forms.Padding(5);
+            this.btnIsLocked.Name = "btnIsLocked";
+            this.btnIsLocked.Size = new System.Drawing.Size(125, 35);
+            this.btnIsLocked.TabIndex = 12;
+            this.btnIsLocked.Text = "Is Unlocked?";
+            this.btnIsLocked.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(609, 462);
-            this.Controls.Add(this.btnEcho);
+            this.ClientSize = new System.Drawing.Size(622, 567);
+            this.Controls.Add(this.btnIsLocked);
             this.Controls.Add(this.grpUser);
-            this.Controls.Add(this.btnTryUnlockAdmin);
             this.Controls.Add(this.grpAdmin);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -307,9 +372,14 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnDeleteLog;
         private System.Windows.Forms.GroupBox grpAdmin;
-        private System.Windows.Forms.Button btnTryUnlockAdmin;
         private System.Windows.Forms.GroupBox grpUser;
         private System.Windows.Forms.Button btnEcho;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button btnStartFirewall;
+        private System.Windows.Forms.Button btnStopFireWall;
+        private System.Windows.Forms.Button btnIsLocked;
     }
 }
 

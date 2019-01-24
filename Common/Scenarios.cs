@@ -12,18 +12,18 @@ namespace Common
     {
         public enum CommandType
         {
-            ERROR,
-
-            // Events with no data:
-            PROXY,
-            FIREWALL,
-            BLOCKLOG,
-
-            // Events with extra data:
-            ECHO,
-            ADD_URL,
-            CHANGE_PASSWORD,
-            LOCK,
+            ERROR,                      
+                                        
+            // Events with no data:     
+            PROXY,                      // (V)
+            FIREWALL,                   // (V)
+            BLOCKLOG,                   // (X)
+                                        
+            // Events with extra data:  
+            ECHO,                       // (V)
+            ADD_URL,                    // (X)
+            CHANGE_PASSWORD,            // (\) -> Save to log
+            LOCK,                       // (X) -> Save to log
         }
 
         public enum CommandActions
@@ -106,7 +106,6 @@ namespace Common
         {
             { CommandType.ECHO, Echo_Server },
             { CommandType.PROXY, Proxy_Server},
-
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
         };
 
@@ -159,6 +158,22 @@ namespace Common
             TaskInfo result = (cmdInfo.data == CommandActions.START.ToString()) ?
                 SystemUtils.StartService(Config.Instance.PROXY_SERVICE_NAME) :
                 SystemUtils.StopService(Config.Instance.PROXY_SERVICE_NAME);
+
+            return chopString("OP:" + cmdInfo.data + "->" + result.success.ToString() + ", " + result.eventReason);
+        }
+
+
+        // === === === === === FIREWALL === === === === === === 
+
+        public async static Task<string> Firewall_client(bool start)
+        {
+            return await runCommand(CommandType.FIREWALL, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
+        }
+
+        public static string Firewall_Server(CommandInfo cmdInfo)
+        {
+            TaskInfo result = (cmdInfo.data == CommandActions.START.ToString()) ?
+                SystemUtils.StartFirewall() : SystemUtils.StopFirewall();
 
             return chopString("OP:" + cmdInfo.data + "->" + result.success.ToString() + ", " + result.eventReason);
         }

@@ -77,9 +77,38 @@ namespace ControlPanelClient
             txtNewPassword.Text = "";
         }
 
+        private async void btnStartFirewall_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.Firewall_client(start: true);
+            });
+        }
+
+        private async void btnStopFireWall_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.Firewall_client(start: false);
+            });
+        }
+
         private void btnAddWhiteList_Click(object sender, EventArgs e)
         {
 
         }
+
+       
+        private void btnOpenBlockLog_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDeleteLog_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.DirectoryServices;
 using System.Linq;
 using System.ServiceProcess;
@@ -106,5 +107,49 @@ namespace Common
 
             return result;
         }
+
+        static void runCmdProcess(string process, string arguments) 
+        {
+            Process proc = new Process();
+            proc.StartInfo.FileName = process;
+            proc.StartInfo.Arguments = arguments;
+            //proc.StartInfo.UseShellExecute = false;
+            //proc.StartInfo.RedirectStandardOutput = true;
+            //proc.StartInfo.CreateNoWindow = true;
+            proc.Start();
+        }
+
+        public static C.TaskInfo StartFirewall()
+        {
+            C.TaskInfo result = C.TaskInfo.Fail("Init");
+            try
+            {
+                runCmdProcess("netsh.exe", "advfirewall set allprofiles state on");
+                result = C.TaskInfo.Success("Firewall started...");
+            }
+            catch (Exception ex)
+            {
+                result = C.TaskInfo.Fail(ex.Message);
+            }
+
+            return result;
+        }
+
+        public static C.TaskInfo StopFirewall()
+        {
+            C.TaskInfo result = C.TaskInfo.Fail("Init");
+            try
+            {
+                runCmdProcess("netsh.exe", "advfirewall set allprofiles state off");
+                result = C.TaskInfo.Success("Firewall started...");
+            }
+            catch (Exception ex)
+            {
+                result = C.TaskInfo.Fail(ex.Message);
+            }
+
+            return result;
+        }
+
     }
 }
