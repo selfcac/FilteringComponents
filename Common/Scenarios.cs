@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Common
             ECHO,                       // (V)
             ADD_URL,                    // (X)
             CHANGE_PASSWORD,            // (\) -> Save to log
-            LOCK,                       // (X) -> Save to log
+            LOCK,                       // (\) -> Save to log
         }
 
         public enum CommandActions
@@ -194,6 +195,88 @@ namespace Common
 
             return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
         }
+
+        // === === === === === LOCK            === === === === === === 
+
+        static TaskInfo isLocked()
+        {
+            TaskInfo isLocked = TaskInfo.Fail("Init"); // unlocked on error by default
+            try
+            {
+                if (File.Exists(Config.Instance.unlockFile.FullName))
+                {
+                    DateTime unlock = DateTime.Now.Subtract(TimeSpan.FromMinutes(1));
+                    if (DateTime.TryParse(File.ReadAllText(Config.Instance.unlockFile.FullName), out unlock))
+                    {
+                        if (unlock > DateTime.Now)
+                        {
+                            isLocked = TaskInfoResult<DateTime>.Result(unlock);
+                        }
+                    } 
+                }
+                else
+                {
+                    isLocked = TaskInfo.Fail("No file exist");
+                }
+            }
+            catch (Exception ex)
+            {
+                isLocked = TaskInfo.Fail(ex.ToString());
+            }
+            return isLocked;
+        }
+
+        public async static Task<string> Lock_Client(bool check, DateTime lockTime)
+        {
+            return await runCommand(CommandType.LOCK, check ? CommandActions.CHECK.ToString() : lockTime.ToString());
+        }
+
+        public static string Lock_Server(CommandInfo cmdInfo)
+        {
+            string result = "Unkown lock result";
+
+            if (cmdInfo.data == CommandActions.CHECK.ToString())
+            {
+                TaskInfo task = isLocked();
+                if (task)
+                {
+                    result = "Locked until " + (task as TaskInfoResult<DateTime>).result;
+                }
+                else
+                {
+                    result = "Unlocked!, " + task.eventReason;
+                }
+            }
+            else
+            {
+                // Lock it!
+                try
+                {
+                    DateTime date = DateTime.Now.Subtract(TimeSpan.FromMinutes(1));
+                    if (DateTime.TryParse(cmdInfo.data, out date))
+                    {
+                        string unlockPath = Config.Instance.unlockFile.FullName;
+                        if (File.Exists(unlockPath))
+                            File.Delete(unlockPath);
+                        File.WriteAllText(unlockPath, date.ToString());
+                        result = "Locked to " + date.ToString();
+                    }
+                    else
+                    {
+                        result = "not locked. got: " + cmdInfo.data;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result = "Failed lock: " + ex.Message;
+                }
+                
+            }
+
+            return chopString(result);
+        }
+
+
 
     }
 

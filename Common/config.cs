@@ -13,12 +13,12 @@ namespace Common
     {
         static Config _instance = null;
 
-        static FileInfo configFile = new FileInfo("config.json");
-        static FileInfo unlockFile = new FileInfo("lock.txt");
-        static FileInfo auditFile = new FileInfo("log_audit.txt");
+        public static FileInfo configFile = new FileInfo("config.json");
+        public FileInfo unlockFile = new FileInfo("lock.txt");
+        public FileInfo auditFile = new FileInfo("log_audit.txt");
 
-        static FileInfo whitelistFile = new FileInfo("whitelist.txt");
-        static FileInfo blocklogFile = new FileInfo("log_block.txt");
+        public FileInfo whitelistFile = new FileInfo("whitelist.txt");
+        public FileInfo blocklogFile = new FileInfo("log_block.txt");
 
         public static Config Instance {
             get
