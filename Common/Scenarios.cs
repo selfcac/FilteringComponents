@@ -190,11 +190,20 @@ namespace Common
 
         public static string ChangePass_Server(CommandInfo cmdInfo)
         {
-            TaskInfo result = TaskInfo.Fail("Can't change to empty password");
-            if (!string.IsNullOrEmpty(cmdInfo.data))
-                result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USERNAME, cmdInfo.data);
+            TaskInfo unlockedStatus = isLocked();
+            if (unlockedStatus)
+            {
+                return LockedFormat(unlockedStatus);
+            }
+            else
+            {
+                TaskInfo result = TaskInfo.Fail("Can't change to empty password");
+                if (!string.IsNullOrEmpty(cmdInfo.data))
+                    result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USERNAME, cmdInfo.data);
 
-            return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
+                return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
+            }
+
         }
 
         // === === === === === LOCK            === === === === === === 
@@ -213,6 +222,10 @@ namespace Common
                         {
                             isLocked = TaskInfoResult<DateTime>.Result(unlock);
                         }
+                        else
+                        {
+                            isLocked = TaskInfo.Fail("Lock expired");
+                        }
                     } 
                 }
                 else
@@ -225,6 +238,13 @@ namespace Common
                 isLocked = TaskInfo.Fail(ex.ToString());
             }
             return isLocked;
+        }
+
+        static string LockedFormat(TaskInfo unlockTask)
+        {
+            DateTime locked = (unlockTask as TaskInfoResult<DateTime>).result;
+            return "Locked until: " + locked.ToString() + ", Left: " +
+                string.Format("{0:%d}days {0:%h}h {0:%m}m {0:%s}sec", (locked - DateTime.Now));
         }
 
         public async static Task<string> Lock_Client(bool check, DateTime lockTime)
@@ -241,7 +261,7 @@ namespace Common
             {
                 if (unlockedStatus)
                 {
-                    result = "Locked until " + (unlockedStatus as TaskInfoResult<DateTime>).result;
+                    result = LockedFormat(unlockedStatus);
                 }
                 else
                 {
@@ -273,7 +293,7 @@ namespace Common
                         }
                         else
                         {
-                            result = "Locked until " + (unlockedStatus as TaskInfoResult<DateTime>).result;
+                            result = LockedFormat(unlockedStatus);
                         }
                     }
                     else
