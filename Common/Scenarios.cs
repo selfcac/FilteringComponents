@@ -10,6 +10,27 @@ namespace Common
 {
     public static class Scenarios
     {
+        public enum CommandType
+        {
+            ERROR,
+
+            // Events with no data:
+            PROXY,
+            FIREWALL,
+            BLOCKLOG,
+
+            // Events with extra data:
+            ECHO,
+            ADD_URL,
+            CHANGE_PASSWORD,
+            LOCK,
+        }
+
+        public enum CommandActions
+        {
+            START, STOP, SHOW, DELETE, CHECK
+        }
+
         public static TcpClient getTcpClient()
         {
             TcpClient client = new TcpClient("127.0.0.1", Config.Instance.ControlPanelPort);
@@ -77,24 +98,6 @@ namespace Common
             }
         }
 
-        /*
-         * public enum CommandType
-        {
-            ERROR,
-
-            // Events with no data:
-            PROXY_START, PROXY_END,
-            BLOCKLOG_SHOW, BLOCKLOG_DELETE,
-            LOCKED_CHECK,
-
-            // Events with extra data:
-            ECHO,
-            ADD_URL,
-            CHANGE_PASSWORD,
-            LOCK,
-        }
-        */
-
        
 
         public delegate string endCommandMethod(CommandInfo cmd);
@@ -102,8 +105,7 @@ namespace Common
             new Dictionary<CommandType, endCommandMethod>()
         {
             { CommandType.ECHO, Echo_Server },
-            { CommandType.PROXY_START, ProxyStart_Server},
-            { CommandType.PROXY_END, ProxyEnd_Server},
+            { CommandType.PROXY, Proxy_Server},
 
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
         };
@@ -145,31 +147,22 @@ namespace Common
             return cmdInfo.data + " " + DateTime.Now;
         }
 
-        // === === === === === PROXY_START === === === === === === 
+        // === === === === === PROXY === === === === === === 
 
-        public async static Task<string> ProxyStart_Client()
+        public async static Task<string> Proxy_Client(bool start)
         {
-            return await runCommand(CommandType.PROXY_START, "");
+            return await runCommand(CommandType.PROXY, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
         }
 
-        public static string ProxyStart_Server(CommandInfo cmdInfo)
+        public static string Proxy_Server(CommandInfo cmdInfo)
         {
-            TaskInfo result = SystemUtils.StartService(Config.Instance.PROXY_SERVICE_NAME);
-            return chopString("Sucess? " + result.success.ToString() + ", " + result.eventReason);
+            TaskInfo result = (cmdInfo.data == CommandActions.START.ToString()) ?
+                SystemUtils.StartService(Config.Instance.PROXY_SERVICE_NAME) :
+                SystemUtils.StopService(Config.Instance.PROXY_SERVICE_NAME);
+
+            return chopString("OP:" + cmdInfo.data + "->" + result.success.ToString() + ", " + result.eventReason);
         }
 
-        // === === === === === PROXY_END === === === === === === 
-
-        public async static Task<string> ProxyEnd_Client()
-        {
-            return await runCommand(CommandType.PROXY_END, "");
-        }
-
-        public static string ProxyEnd_Server(CommandInfo cmdInfo)
-        {
-            TaskInfo result = SystemUtils.StopService(Config.Instance.PROXY_SERVICE_NAME);
-            return chopString("Sucess? " + result.success.ToString() + ", " + result.eventReason);
-        }
 
         // === === === === === CHANGE_PASSWORD === === === === === === 
 

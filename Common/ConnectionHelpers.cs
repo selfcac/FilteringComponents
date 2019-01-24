@@ -9,27 +9,13 @@ namespace Common
 {
     public static class ConnectionHelpers
     {
-        public enum CommandType
-        {
-            ERROR,
-
-            // Events with no data:
-            PROXY_START, PROXY_END,
-            BLOCKLOG_SHOW, BLOCKLOG_DELETE,
-            LOCKED_CHECK,
-
-            // Events with extra data:
-            ECHO,
-            ADD_URL,
-            CHANGE_PASSWORD,
-            LOCK,
-        }
+       
 
         public const byte CMD_SEPERATOR = 0xAB;
 
         public class CommandInfo
         {
-            public CommandType cmd;
+            public Scenarios.CommandType cmd;
             public int dataLength = -1;
             public string data;
         }
@@ -98,7 +84,7 @@ namespace Common
             {
                 CommandInfo o = new CommandInfo();
 
-                o.cmd = (CommandType)headerBuffer[startIndex + 1 ];
+                o.cmd = (Scenarios.CommandType)headerBuffer[startIndex + 1 ];
                 o.dataLength = BitConverter.ToInt32(headerBuffer, startIndex + 2);
 
                 result = TaskInfoResult<CommandInfo>.Result(o);
@@ -134,7 +120,7 @@ namespace Common
             return result;
         }
 
-        static void CommandSerialize(CommandType cmd, string Data, out byte[] headerBuffer, out byte[] dataBuffer)
+        static void CommandSerialize(Scenarios.CommandType cmd, string Data, out byte[] headerBuffer, out byte[] dataBuffer)
         {
             headerBuffer = new byte[2+5];
 
@@ -160,7 +146,7 @@ namespace Common
 
         // ========= ========= ========= High level 
 
-        public static async Task<TaskInfo> SendCommand(CommandType cmd, string Data, TcpClient client)
+        public static async Task<TaskInfo> SendCommand(Scenarios.CommandType cmd, string Data, TcpClient client)
         {
             TaskInfo result;
 

@@ -56,7 +56,7 @@ namespace ControlPanelClient
         {
             await doCommand(async () =>
             {
-                return await Common.Scenarios.ProxyStart_Client();
+                return await Common.Scenarios.Proxy_Client(start: true);
             });
         }
 
@@ -64,7 +64,7 @@ namespace ControlPanelClient
         {
             await doCommand(async () =>
             {
-                return await Common.Scenarios.ProxyEnd_Client();
+                return await Common.Scenarios.Proxy_Client(start: false);
             });
         }
 
