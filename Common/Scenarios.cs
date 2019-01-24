@@ -108,6 +108,7 @@ namespace Common
             { CommandType.ECHO, Echo_Server },
             { CommandType.PROXY, Proxy_Server},
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
+            { CommandType.LOCK, Lock_Server},
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
@@ -235,16 +236,16 @@ namespace Common
         {
             string result = "Unkown lock result";
 
+            TaskInfo unlockedStatus = isLocked();
             if (cmdInfo.data == CommandActions.CHECK.ToString())
             {
-                TaskInfo task = isLocked();
-                if (task)
+                if (unlockedStatus)
                 {
-                    result = "Locked until " + (task as TaskInfoResult<DateTime>).result;
+                    result = "Locked until " + (unlockedStatus as TaskInfoResult<DateTime>).result;
                 }
                 else
                 {
-                    result = "Unlocked!, " + task.eventReason;
+                    result = "Unlocked!, " + unlockedStatus.eventReason;
                 }
             }
             else
@@ -255,11 +256,25 @@ namespace Common
                     DateTime date = DateTime.Now.Subtract(TimeSpan.FromMinutes(1));
                     if (DateTime.TryParse(cmdInfo.data, out date))
                     {
-                        string unlockPath = Config.Instance.unlockFile.FullName;
-                        if (File.Exists(unlockPath))
-                            File.Delete(unlockPath);
-                        File.WriteAllText(unlockPath, date.ToString());
-                        result = "Locked to " + date.ToString();
+                        if (!unlockedStatus) // Only if not already locked!
+                        {
+                            if (date > DateTime.Now)
+                            {
+                                string unlockPath = Config.Instance.unlockFile.FullName;
+                                if (File.Exists(unlockPath))
+                                    File.Delete(unlockPath);
+                                File.WriteAllText(unlockPath, date.ToString());
+                                result = "Locked to " + date.ToString();
+                            }
+                            else
+                            {
+                                result = "Please choose *future* time";
+                            }
+                        }
+                        else
+                        {
+                            result = "Locked until " + (unlockedStatus as TaskInfoResult<DateTime>).result;
+                        }
                     }
                     else
                     {

@@ -17,10 +17,7 @@ namespace ControlPanelClient
             InitializeComponent();
         }
 
-        private void btnLockAdmin_Click(object sender, EventArgs e)
-        {
-            grpAdmin.Enabled = false;
-        }
+       
 
         public static string evilPayLoad()
         {
@@ -93,6 +90,22 @@ namespace ControlPanelClient
             });
         }
 
+        private async void btnIsLocked_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.Lock_Client(true, DateTime.Now);
+            });
+        }
+
+        private async void btnLockAdmin_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.Lock_Client(false, dateLockUntil.Value);
+            });
+        }
+
         private void btnAddWhiteList_Click(object sender, EventArgs e)
         {
 
@@ -108,6 +121,8 @@ namespace ControlPanelClient
         {
 
         }
+
+
 
         
     }

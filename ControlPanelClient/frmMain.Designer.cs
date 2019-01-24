@@ -330,6 +330,7 @@
             this.btnIsLocked.TabIndex = 12;
             this.btnIsLocked.Text = "Is Unlocked?";
             this.btnIsLocked.UseVisualStyleBackColor = true;
+            this.btnIsLocked.Click += new System.EventHandler(this.btnIsLocked_Click);
             // 
             // frmMain
             // 
