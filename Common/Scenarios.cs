@@ -108,6 +108,7 @@ namespace Common
             { CommandType.ECHO, Echo_Server },
             { CommandType.PROXY, Proxy_Server},
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
+            { CommandType.FIREWALL, Firewall_Server},
             { CommandType.LOCK, Lock_Server},
         };
 
