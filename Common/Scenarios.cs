@@ -18,7 +18,6 @@ namespace Common
             // Events with no data:     
             PROXY,                      // (V)
             FIREWALL,                   // (V)
-            BLOCKLOG,                   // (X)
                                         
             // Events with extra data:  
             ECHO,                       // (V)
