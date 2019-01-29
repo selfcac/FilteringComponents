@@ -108,7 +108,6 @@ namespace SimpleHTTPSProxyFilter
             }
         }
 
-
         static void HandlePlain(Bundle b)
         {
             try
@@ -116,18 +115,37 @@ namespace SimpleHTTPSProxyFilter
                 // In http the url is full url (because we are proxy)
                 Uri uri = new Uri(b.HEADER[(int)HEADER_INFO.HOST_URL]);
 
-                // Open TCP to remote 
-                MakeRemoteConnection(b, uri.Authority);
+                if (uri.Authority == "127.0.0.1:" + Common.Config.Instance.ProxyPort)
+                {
+                    string proxyFile = uri.AbsolutePath.Substring(1); // removes '/'
+                    if (proxyFile == "blocklog")
+                    {
 
-                byte[] HeadersBytes = Encoding.ASCII.GetBytes(b.ReqHeaders);
+                    }
+                    else if (proxyFile == "deletelog")
+                    {
 
-                // Send headers to remote server
-                b.log.i("Sending plain headers");
-                b.cStream.Write(HeadersBytes, 0, HeadersBytes.Length);
+                    }
+                    else
+                    {
 
-                //  Remote ==> Proxy ==> Client
-                b.rStream.BeginRead(b.remoteBuffer, 0, bufferSize,
-                    forwardToClient, b);
+                    }
+                }
+                else
+                { 
+                    // Open TCP to remote 
+                    MakeRemoteConnection(b, uri.Host); // authority may contain ports! --> <host>:<port>
+
+                    byte[] HeadersBytes = Encoding.ASCII.GetBytes(b.ReqHeaders);
+
+                    // Send headers to remote server
+                    b.log.i("Sending plain headers");
+                    b.cStream.Write(HeadersBytes, 0, HeadersBytes.Length);
+
+                    //  Remote ==> Proxy ==> Client
+                    b.rStream.BeginRead(b.remoteBuffer, 0, bufferSize,
+                        forwardToClient, b); 
+                }
             }
             catch (Exception ex)
             {
@@ -227,5 +245,25 @@ namespace SimpleHTTPSProxyFilter
             }
         }
 
+
+
+        static void SendHttpResponse(Bundle b, string TextContent)
+        {
+            /*
+             * HTTP/1.1 200 OK
+Server: SimpleHTTPSProxyFilter
+Last-Modified: Wed, 22 Jul 2009 19:15:56 GMT
+Content-Length: 88
+Content-Type: text/plain
+Connection: Closed
+            */
+            
+
+        }
+
+        static void SendHttpBody(IAsyncResult ar)
+        {
+
+        }
     }
 }
