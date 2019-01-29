@@ -40,7 +40,7 @@ namespace SimpleHTTPSProxyFilter
             try
             {
                 client = listener.EndAcceptTcpClient(ar);
-                log.i("Got new client");
+                log.i("Got new client @" + ((IPEndPoint)client.Client.RemoteEndPoint).Port);
 
                 // Start processing:
                 TcpSession.Start(client);

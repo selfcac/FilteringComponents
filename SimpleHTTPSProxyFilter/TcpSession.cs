@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -31,8 +32,14 @@ namespace SimpleHTTPSProxyFilter
             public NetworkStream rStream;
             public byte[] remoteBuffer = new byte[bufferSize];
 
+            // Proxy Commands:
+            public byte[] commandBuffer;
+            public int commandIndex = 0;
+
             public void CleanAfter(TcpClient toClose)
             {
+                log.i("Cleaning up");
+
                 isClosed = true;
                 toClose.Close();
 
@@ -43,6 +50,7 @@ namespace SimpleHTTPSProxyFilter
 
                 clientBuffer = null;
                 remoteBuffer = null;
+                commandBuffer = null;
 
                 ReqHeaders = null;
             }
@@ -55,23 +63,24 @@ namespace SimpleHTTPSProxyFilter
 
         public static void Start(TcpClient client)
         {
-            Bundle clientBundle = new Bundle()
+            Bundle b = new Bundle()
             {
                 log = new Logger("c-" + ((IPEndPoint)client.Client.RemoteEndPoint).Port),
                 client = client,
                 cStream = client.GetStream(),
             };
 
-            clientBundle.cStream.BeginRead(
-                clientBundle.clientBuffer, 0, bufferSize,
-                FirstHeaderReadAsync, clientBundle);
+            b.log.i("Waiting for headers data.");
+            b.cStream.BeginRead(
+                b.clientBuffer, 0, bufferSize,
+                FirstHeaderReadAsync, b);
         }
 
 
         static void FirstHeaderReadAsync(IAsyncResult ar)
         {
             Bundle b = ar.AsyncState as Bundle;
-
+            b.log.i("Reading request");
             try
             {
                 int bytesRead = b.cStream.EndRead(ar);
@@ -113,26 +122,60 @@ namespace SimpleHTTPSProxyFilter
             try
             {
                 // In http the url is full url (because we are proxy)
-                Uri uri = new Uri(b.HEADER[(int)HEADER_INFO.HOST_URL]);
+                // O.W (direct access) we get relative path
+                string requestPath = b.HEADER[(int)HEADER_INFO.HOST_URL];
 
-                if (uri.Authority == "127.0.0.1:" + Common.Config.Instance.ProxyPort)
+                if (requestPath.StartsWith("/"))
                 {
-                    string proxyFile = uri.AbsolutePath.Substring(1); // removes '/'
-                    if (proxyFile == "blocklog")
-                    {
+                    b.log.i("Got command: '" + requestPath + "'");
+                    string result = "<Init command response>";
+                    FileInfo blocklog = Common.Config.Instance.blocklogFile;
 
+                    if (requestPath == "/blocklog")
+                    {
+                        try
+                        {
+                            if (blocklog.Exists)
+                            {
+                                result = File.ReadAllText(blocklog.FullName);
+                            }
+                            else
+                            {
+                                result = "Block log doesn't exist.";
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            result = ex.Message;
+                        }
                     }
-                    else if (proxyFile == "deletelog")
+                    else if (requestPath == "/clearlog")
                     {
-
+                        result = "Log cleared.";
+                        try
+                        {
+                            if (blocklog.Exists)
+                                blocklog.Delete();
+                            File.WriteAllText(
+                                blocklog.FullName,
+                                "Log cleared at " + DateTime.Now.ToString() + Environment.NewLine);
+                        }
+                        catch (Exception ex)
+                        {
+                            result = ex.Message;                            
+                        }
                     }
                     else
                     {
-
+                        result = "Allowd paths: '/blocklog' and '/clearlog'.";
                     }
+                    SendHttpResponse(b, result);
                 }
                 else
-                { 
+                {
+                    b.log.i("Got requst: '" + requestPath + "'");
+                    Uri uri = new Uri(requestPath);
+
                     // Open TCP to remote 
                     MakeRemoteConnection(b, uri.Host); // authority may contain ports! --> <host>:<port>
 
@@ -245,25 +288,29 @@ namespace SimpleHTTPSProxyFilter
             }
         }
 
-
-
         static void SendHttpResponse(Bundle b, string TextContent)
         {
-            /*
-             * HTTP/1.1 200 OK
-Server: SimpleHTTPSProxyFilter
-Last-Modified: Wed, 22 Jul 2009 19:15:56 GMT
-Content-Length: 88
-Content-Type: text/plain
-Connection: Closed
-            */
-            
+            b.commandBuffer = Encoding.ASCII.GetBytes(TextContent);
 
+            string headers = "HTTP/1.1 200 OK\r\n" +
+                "Server: SimpleHTTPSProxyFilter\r\n" +
+                "Content-Type: text/plain\r\n" +
+                "Connection: Closed\r\n" +
+                "Content-Length: $\r\n\r\n".Replace("$", b.commandBuffer.Length.ToString());
+
+            byte[] headersBytes = Encoding.ASCII.GetBytes(headers);
+
+            b.cStream.Write(headersBytes, 0, headersBytes.Length);
+
+            b.cStream.BeginWrite(b.commandBuffer, 0, b.commandBuffer.Length, SendHttpBody, b);
         }
 
         static void SendHttpBody(IAsyncResult ar)
         {
+            Bundle b = ar.AsyncState as Bundle;
+            b.cStream.EndWrite(ar);
 
+            b.CleanAfter(b.client);
         }
     }
 }
