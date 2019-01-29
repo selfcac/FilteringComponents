@@ -76,7 +76,6 @@ namespace SimpleHTTPSProxyFilter
                 FirstHeaderReadAsync, b);
         }
 
-
         static void FirstHeaderReadAsync(IAsyncResult ar)
         {
             Bundle b = ar.AsyncState as Bundle;
