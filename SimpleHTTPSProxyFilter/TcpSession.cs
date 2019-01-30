@@ -175,6 +175,24 @@ namespace SimpleHTTPSProxyFilter
                     b.log.i("Got requst: '" + requestPath + "'");
                     Uri uri = new Uri(requestPath);
 
+                    bool blocked, mapped;
+
+                    if (blocked && !mapped)
+                    {
+                        // return blocked response
+                    }
+                    else 
+                    {
+                        if (mapped  || !blocked)
+                        {
+                            
+                        }
+                        else // blocked
+                        {
+
+                        }
+                    }
+
                     // Open TCP to remote 
                     MakeRemoteConnection(b, uri.Host); // authority may contain ports! --> <host>:<port>
 

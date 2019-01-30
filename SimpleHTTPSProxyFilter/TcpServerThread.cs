@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -14,8 +15,17 @@ namespace SimpleHTTPSProxyFilter
         Logger log = new Logger("server");
         TcpListener tcpHttpServer;
 
+        public static object blockLogLock = new object();
+        public static string whitelist;
+
         public void StartServer(int port)
         {
+            FileInfo whitelistFile = Common.Config.Instance.whitelistFile;
+            if (whitelistFile.Exists)
+            {
+                whitelist = File.ReadAllText(whitelistFile.FullName);
+            }
+
             tcpHttpServer = new TcpListener(IPAddress.Any, port);
             tcpHttpServer.Start();
             log.i("Started tcp server, port " + port);
