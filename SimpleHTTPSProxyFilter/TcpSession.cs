@@ -10,11 +10,12 @@ using Common;
 
 namespace SimpleHTTPSProxyFilter
 {
-    static class TcpSession
+    class TcpSession
     {
         const int bufferSize = 5 * 1024 * 1024;
         public class Bundle
         {
+            public TcpServerThread parent;
             public Logger log;
 
             public bool isSSL = false;
@@ -61,10 +62,11 @@ namespace SimpleHTTPSProxyFilter
             METHOD = 0, HOST_URL = 1, HTTP_VERSION=2
         }
 
-        public static void Start(TcpClient client)
+        public static void Start(TcpClient client, TcpServerThread parent)
         {
             Bundle b = new Bundle()
             {
+                parent = parent,
                 log = new Logger("c-" + ((IPEndPoint)client.Client.RemoteEndPoint).Port),
                 client = client,
                 cStream = client.GetStream(),
@@ -148,6 +150,26 @@ namespace SimpleHTTPSProxyFilter
                             result = ex.Message;
                         }
                     }
+                    else if (requestPath == "/distinctlog")
+                    {
+                        try
+                        {
+                            if (blocklog.Exists)
+                            {
+                                string[] data = File.ReadAllLines(blocklog.FullName);
+                                result = string.Join(Environment.NewLine, data.Distinct());
+
+                            }
+                            else
+                            {
+                                result = "Block log doesn't exist.";
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            result = ex.Message;
+                        }
+                    }
                     else if (requestPath == "/clearlog")
                     {
                         result = "Log cleared.";
@@ -157,7 +179,7 @@ namespace SimpleHTTPSProxyFilter
                                 blocklog.Delete();
                             File.WriteAllText(
                                 blocklog.FullName,
-                                "Log cleared at " + DateTime.Now.ToString() + Environment.NewLine);
+                                "(*) Log cleared at " + DateTime.Now.ToString() + Environment.NewLine);
                         }
                         catch (Exception ex)
                         {
@@ -166,45 +188,45 @@ namespace SimpleHTTPSProxyFilter
                     }
                     else
                     {
-                        result = "Allowd paths: '/blocklog' and '/clearlog'.";
+                        result = "Allowd paths: '/blocklog' '/clearlog' '/distinctlog'";
                     }
                     SendHttpResponse(b, result);
                 }
                 else
                 {
-                    b.log.i("Got requst: '" + requestPath + "'");
+                    b.log.i("Got HTTP requst: '" + requestPath + "'");
                     Uri uri = new Uri(requestPath);
 
-                    bool blocked, mapped;
+                    bool blocked = !b.parent.IsWhitelisted(uri.Host), mapping = b.parent.mappingMode;
 
-                    if (blocked && !mapped)
+                    if (!blocked || (blocked && mapping))
                     {
-                        // return blocked response
+                        if (mapping)
+                        {
+                            b.parent.LogBlocked(uri.Host);
+                        }
+
+                        // Open TCP to remote 
+                        MakeRemoteConnection(b, uri.Host); // authority may contain ports! --> <host>:<port>
+
+                        byte[] HeadersBytes = Encoding.ASCII.GetBytes(b.ReqHeaders);
+
+                        // Send headers to remote server
+                        b.log.i("Sending plain headers");
+                        b.cStream.Write(HeadersBytes, 0, HeadersBytes.Length);
+
+                        //  Remote ==> Proxy ==> Client
+                        b.rStream.BeginRead(b.remoteBuffer, 0, bufferSize,
+                            forwardToClient, b);
                     }
-                    else 
+                    else
                     {
-                        if (mapped  || !blocked)
-                        {
-                            
-                        }
-                        else // blocked
-                        {
+                        b.parent.LogBlocked(uri.Host);
 
-                        }
+                        // Block!
+                        b.log.i("Sending Block response");
+                        SendHttpResponse(b, "Domain blocked");
                     }
-
-                    // Open TCP to remote 
-                    MakeRemoteConnection(b, uri.Host); // authority may contain ports! --> <host>:<port>
-
-                    byte[] HeadersBytes = Encoding.ASCII.GetBytes(b.ReqHeaders);
-
-                    // Send headers to remote server
-                    b.log.i("Sending plain headers");
-                    b.cStream.Write(HeadersBytes, 0, HeadersBytes.Length);
-
-                    //  Remote ==> Proxy ==> Client
-                    b.rStream.BeginRead(b.remoteBuffer, 0, bufferSize,
-                        forwardToClient, b); 
                 }
             }
             catch (Exception ex)
@@ -217,25 +239,45 @@ namespace SimpleHTTPSProxyFilter
         {
             try
             {
-                // Send OK, we are ready to secure the connection.
-                b.log.i("Sending CONNECT ok");
-                byte[] CONNECT_RESPONSE =
-                    Encoding.ASCII.GetBytes("HTTP/1.1 200 OK\r\n\r\n");
-                b.cStream.Write(CONNECT_RESPONSE, 0, CONNECT_RESPONSE.Length);
-
                 // In connect the url is "<domain>:443"
                 string remoteHost = b.HEADER[(int)HEADER_INFO.HOST_URL].Split(':').First();
+                b.log.i("Got HTTP/S requst: '" + remoteHost + "'");
+                bool blocked = !b.parent.IsWhitelisted(remoteHost), mapping = b.parent.mappingMode;
 
-                // Open TCP to remote 
-                MakeRemoteConnection(b, remoteHost);
+                if (!blocked || (blocked && mapping))
+                {
+                    if (mapping)
+                    {
+                        b.parent.LogBlocked(remoteHost);
+                    }
 
-                // Client ==> Proxy ==> Remote
-                b.cStream.BeginRead(b.clientBuffer, 0, bufferSize,
-                    forwardToRemote, b);
+                    // Send OK, we are ready to secure the connection.
+                    b.log.i("Sending CONNECT ok");
+                    byte[] CONNECT_RESPONSE =
+                        Encoding.ASCII.GetBytes("HTTP/1.1 200 OK\r\n\r\n");
+                    b.cStream.Write(CONNECT_RESPONSE, 0, CONNECT_RESPONSE.Length);
 
-                // Remote ==> Proxy ==> Client
-                b.rStream.BeginRead(b.remoteBuffer, 0, bufferSize,
-                   forwardToClient, b);
+
+                    // Open TCP to remote 
+                    MakeRemoteConnection(b, remoteHost);
+
+                    // Client ==> Proxy ==> Remote
+                    b.cStream.BeginRead(b.clientBuffer, 0, bufferSize,
+                        forwardToRemote, b);
+
+                    // Remote ==> Proxy ==> Client
+                    b.rStream.BeginRead(b.remoteBuffer, 0, bufferSize,
+                       forwardToClient, b);
+                }
+                else
+                {
+                    b.parent.LogBlocked(remoteHost);
+
+                    // Block!
+                    b.log.i("Sending Block response");
+                    SendHttpResponse(b, "Domain blocked",404);
+                }
+                
             }
             catch (Exception ex)
             {
@@ -305,11 +347,11 @@ namespace SimpleHTTPSProxyFilter
             }
         }
 
-        static void SendHttpResponse(Bundle b, string TextContent)
+        static void SendHttpResponse(Bundle b, string TextContent, int responseCode = 200)
         {
             b.commandBuffer = Encoding.ASCII.GetBytes(TextContent);
 
-            string headers = "HTTP/1.1 200 OK\r\n" +
+            string headers = "HTTP/1.1 " + responseCode + "\r\n" +
                 "Server: SimpleHTTPSProxyFilter\r\n" +
                 "Content-Type: text/plain\r\n" +
                 "Connection: Closed\r\n" +

@@ -56,6 +56,8 @@ namespace Common
                
         public int ProxyPort = 9011;
         public int ControlPanelPort = 9012;
+
+        public bool proxyMappingMode = false;
        
     }
 }
