@@ -58,6 +58,27 @@ namespace Common
         public int ControlPanelPort = 9012;
 
         public bool proxyMappingMode = false;
+
+        public TimeBlock[] blockedTimes = new TimeBlock[] { new TimeBlock( 23, 00, TimeSpan.FromHours(8)) };
        
+    }
+
+    public class TimeBlock
+    {
+        public int startTotalMinutes = 0;
+        public int endTotalMinutes = 0;
+
+        public TimeBlock(int hStart, int mStart, TimeSpan length)
+        {
+            startTotalMinutes = ((hStart % 24) * 60 + mStart);
+            endTotalMinutes = startTotalMinutes + (int)length.TotalMinutes;
+        }
+
+        public bool ContainTime(int hour, int minute)
+        {
+            int time = ((hour % 24) * 60 + minute);
+            return time >= startTotalMinutes &&
+                (time <= endTotalMinutes || time <= endTotalMinutes % (24*60));
+        }
     }
 }
