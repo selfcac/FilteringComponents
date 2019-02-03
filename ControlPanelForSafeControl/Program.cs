@@ -19,9 +19,10 @@ namespace ControlPanelForSafeControl
             TcpServer myServer = new TcpServer();
             myServer.StartServer(Common.Config.Instance.ControlPanelPort);
 
-            Console.Read();
+            while(true)
+                Console.Read();
 
-            myServer.StopServer();
+            //myServer.StopServer();
         }
     }
 }
