@@ -106,24 +106,25 @@ namespace ControlPanelClient
             });
         }
 
-        private void btnAddWhiteList_Click(object sender, EventArgs e)
+        private async void btnAddWhiteList_Click(object sender, EventArgs e)
         {
-
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.ADDURL_Client(txtWhitelist.Text);
+            });
         }
 
-       
-        private void btnOpenBlockLog_Click(object sender, EventArgs e)
+        private void frmMain_Load(object sender, EventArgs e)
         {
-
+            string port = Common.Config.Instance.ProxyPort.ToString();
+            cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_SHOW);
+            cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_CLEAR);
+            cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_DISTINCT);
         }
 
         private void btnDeleteLog_Click(object sender, EventArgs e)
         {
-
+            System.Diagnostics.Process.Start(cbUrlBlock.SelectedItem.ToString());
         }
-
-
-
-        
     }
 }

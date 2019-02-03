@@ -40,17 +40,17 @@
             this.label4 = new System.Windows.Forms.Label();
             this.dateLockUntil = new System.Windows.Forms.DateTimePicker();
             this.btnLockAdmin = new System.Windows.Forms.Button();
-            this.btnOpenBlockLog = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.btnDeleteLog = new System.Windows.Forms.Button();
             this.grpAdmin = new System.Windows.Forms.GroupBox();
             this.grpUser = new System.Windows.Forms.GroupBox();
-            this.btnEcho = new System.Windows.Forms.Button();
+            this.cbUrlBlock = new System.Windows.Forms.ComboBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.btnStopFireWall = new System.Windows.Forms.Button();
-            this.btnStartFirewall = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.btnEcho = new System.Windows.Forms.Button();
+            this.btnStartFirewall = new System.Windows.Forms.Button();
+            this.btnStopFireWall = new System.Windows.Forms.Button();
             this.btnIsLocked = new System.Windows.Forms.Button();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
@@ -115,7 +115,7 @@
             this.btnAddWhiteList.Name = "btnAddWhiteList";
             this.btnAddWhiteList.Size = new System.Drawing.Size(125, 35);
             this.btnAddWhiteList.TabIndex = 5;
-            this.btnAddWhiteList.Text = "add";
+            this.btnAddWhiteList.Text = "Add";
             this.btnAddWhiteList.UseVisualStyleBackColor = true;
             this.btnAddWhiteList.Click += new System.EventHandler(this.btnAddWhiteList_Click);
             // 
@@ -181,17 +181,6 @@
             this.btnLockAdmin.UseVisualStyleBackColor = true;
             this.btnLockAdmin.Click += new System.EventHandler(this.btnLockAdmin_Click);
             // 
-            // btnOpenBlockLog
-            // 
-            this.btnOpenBlockLog.Location = new System.Drawing.Point(148, 152);
-            this.btnOpenBlockLog.Margin = new System.Windows.Forms.Padding(5);
-            this.btnOpenBlockLog.Name = "btnOpenBlockLog";
-            this.btnOpenBlockLog.Size = new System.Drawing.Size(125, 35);
-            this.btnOpenBlockLog.TabIndex = 12;
-            this.btnOpenBlockLog.Text = "View";
-            this.btnOpenBlockLog.UseVisualStyleBackColor = true;
-            this.btnOpenBlockLog.Click += new System.EventHandler(this.btnOpenBlockLog_Click);
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -205,12 +194,12 @@
             // 
             // btnDeleteLog
             // 
-            this.btnDeleteLog.Location = new System.Drawing.Point(305, 152);
+            this.btnDeleteLog.Location = new System.Drawing.Point(449, 153);
             this.btnDeleteLog.Margin = new System.Windows.Forms.Padding(5);
             this.btnDeleteLog.Name = "btnDeleteLog";
             this.btnDeleteLog.Size = new System.Drawing.Size(125, 35);
             this.btnDeleteLog.TabIndex = 14;
-            this.btnDeleteLog.Text = "Clear";
+            this.btnDeleteLog.Text = "Open";
             this.btnDeleteLog.UseVisualStyleBackColor = true;
             this.btnDeleteLog.Click += new System.EventHandler(this.btnDeleteLog_Click);
             // 
@@ -236,6 +225,7 @@
             // 
             // grpUser
             // 
+            this.grpUser.Controls.Add(this.cbUrlBlock);
             this.grpUser.Controls.Add(this.textBox1);
             this.grpUser.Controls.Add(this.label7);
             this.grpUser.Controls.Add(this.label6);
@@ -246,27 +236,23 @@
             this.grpUser.Controls.Add(this.btnStartProxy);
             this.grpUser.Controls.Add(this.btnStopProxy);
             this.grpUser.Controls.Add(this.btnDeleteLog);
-            this.grpUser.Controls.Add(this.btnOpenBlockLog);
             this.grpUser.Controls.Add(this.label5);
             this.grpUser.Location = new System.Drawing.Point(20, 18);
             this.grpUser.Margin = new System.Windows.Forms.Padding(5);
             this.grpUser.Name = "grpUser";
             this.grpUser.Padding = new System.Windows.Forms.Padding(5);
-            this.grpUser.Size = new System.Drawing.Size(454, 244);
+            this.grpUser.Size = new System.Drawing.Size(584, 244);
             this.grpUser.TabIndex = 17;
             this.grpUser.TabStop = false;
             this.grpUser.Text = "Unlocked actions";
             // 
-            // btnEcho
+            // cbUrlBlock
             // 
-            this.btnEcho.Location = new System.Drawing.Point(148, 197);
-            this.btnEcho.Margin = new System.Windows.Forms.Padding(5);
-            this.btnEcho.Name = "btnEcho";
-            this.btnEcho.Size = new System.Drawing.Size(282, 35);
-            this.btnEcho.TabIndex = 18;
-            this.btnEcho.Text = "Echo Check";
-            this.btnEcho.UseVisualStyleBackColor = true;
-            this.btnEcho.Click += new System.EventHandler(this.btnEcho_Click);
+            this.cbUrlBlock.FormattingEnabled = true;
+            this.cbUrlBlock.Location = new System.Drawing.Point(148, 157);
+            this.cbUrlBlock.Name = "cbUrlBlock";
+            this.cbUrlBlock.Size = new System.Drawing.Size(284, 28);
+            this.cbUrlBlock.TabIndex = 20;
             // 
             // textBox1
             // 
@@ -277,27 +263,16 @@
             this.textBox1.TabIndex = 19;
             this.textBox1.Text = "netsh advfirewall show allprofiles";
             // 
-            // btnStopFireWall
+            // label7
             // 
-            this.btnStopFireWall.Location = new System.Drawing.Point(305, 31);
-            this.btnStopFireWall.Margin = new System.Windows.Forms.Padding(5);
-            this.btnStopFireWall.Name = "btnStopFireWall";
-            this.btnStopFireWall.Size = new System.Drawing.Size(125, 35);
-            this.btnStopFireWall.TabIndex = 2;
-            this.btnStopFireWall.Text = "Stop";
-            this.btnStopFireWall.UseVisualStyleBackColor = true;
-            this.btnStopFireWall.Click += new System.EventHandler(this.btnStopFireWall_Click);
-            // 
-            // btnStartFirewall
-            // 
-            this.btnStartFirewall.Location = new System.Drawing.Point(148, 31);
-            this.btnStartFirewall.Margin = new System.Windows.Forms.Padding(5);
-            this.btnStartFirewall.Name = "btnStartFirewall";
-            this.btnStartFirewall.Size = new System.Drawing.Size(125, 35);
-            this.btnStartFirewall.TabIndex = 1;
-            this.btnStartFirewall.Text = "Start";
-            this.btnStartFirewall.UseVisualStyleBackColor = true;
-            this.btnStartFirewall.Click += new System.EventHandler(this.btnStartFirewall_Click);
+            this.label7.AutoSize = true;
+            this.label7.ForeColor = System.Drawing.Color.Blue;
+            this.label7.Location = new System.Drawing.Point(11, 204);
+            this.label7.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(52, 20);
+            this.label7.TabIndex = 19;
+            this.label7.Text = "Echo:";
             // 
             // label6
             // 
@@ -310,16 +285,38 @@
             this.label6.TabIndex = 0;
             this.label6.Text = "Firewall:";
             // 
-            // label7
+            // btnEcho
             // 
-            this.label7.AutoSize = true;
-            this.label7.ForeColor = System.Drawing.Color.Blue;
-            this.label7.Location = new System.Drawing.Point(11, 204);
-            this.label7.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(52, 20);
-            this.label7.TabIndex = 19;
-            this.label7.Text = "Echo:";
+            this.btnEcho.Location = new System.Drawing.Point(148, 197);
+            this.btnEcho.Margin = new System.Windows.Forms.Padding(5);
+            this.btnEcho.Name = "btnEcho";
+            this.btnEcho.Size = new System.Drawing.Size(282, 35);
+            this.btnEcho.TabIndex = 18;
+            this.btnEcho.Text = "Echo Check";
+            this.btnEcho.UseVisualStyleBackColor = true;
+            this.btnEcho.Click += new System.EventHandler(this.btnEcho_Click);
+            // 
+            // btnStartFirewall
+            // 
+            this.btnStartFirewall.Location = new System.Drawing.Point(148, 31);
+            this.btnStartFirewall.Margin = new System.Windows.Forms.Padding(5);
+            this.btnStartFirewall.Name = "btnStartFirewall";
+            this.btnStartFirewall.Size = new System.Drawing.Size(125, 35);
+            this.btnStartFirewall.TabIndex = 1;
+            this.btnStartFirewall.Text = "Start";
+            this.btnStartFirewall.UseVisualStyleBackColor = true;
+            this.btnStartFirewall.Click += new System.EventHandler(this.btnStartFirewall_Click);
+            // 
+            // btnStopFireWall
+            // 
+            this.btnStopFireWall.Location = new System.Drawing.Point(305, 31);
+            this.btnStopFireWall.Margin = new System.Windows.Forms.Padding(5);
+            this.btnStopFireWall.Name = "btnStopFireWall";
+            this.btnStopFireWall.Size = new System.Drawing.Size(125, 35);
+            this.btnStopFireWall.TabIndex = 2;
+            this.btnStopFireWall.Text = "Stop";
+            this.btnStopFireWall.UseVisualStyleBackColor = true;
+            this.btnStopFireWall.Click += new System.EventHandler(this.btnStopFireWall_Click);
             // 
             // btnIsLocked
             // 
@@ -347,6 +344,7 @@
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Safe ControlPanel Client";
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.grpAdmin.ResumeLayout(false);
             this.grpAdmin.PerformLayout();
             this.grpUser.ResumeLayout(false);
@@ -369,7 +367,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker dateLockUntil;
         private System.Windows.Forms.Button btnLockAdmin;
-        private System.Windows.Forms.Button btnOpenBlockLog;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button btnDeleteLog;
         private System.Windows.Forms.GroupBox grpAdmin;
@@ -381,6 +378,7 @@
         private System.Windows.Forms.Button btnStartFirewall;
         private System.Windows.Forms.Button btnStopFireWall;
         private System.Windows.Forms.Button btnIsLocked;
+        private System.Windows.Forms.ComboBox cbUrlBlock;
     }
 }
 

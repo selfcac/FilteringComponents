@@ -132,7 +132,7 @@ namespace SimpleHTTPSProxyFilter
                     string result = "<Init command response>";
                     FileInfo blocklog = Common.Config.Instance.blocklogFile;
 
-                    if (requestPath == "/blocklog")
+                    if (requestPath == Common.ProxyCommands.LOG_SHOW)
                     {
                         try
                         {
@@ -150,7 +150,7 @@ namespace SimpleHTTPSProxyFilter
                             result = ex.Message;
                         }
                     }
-                    else if (requestPath == "/distinctlog")
+                    else if (requestPath == Common.ProxyCommands.LOG_DISTINCT)
                     {
                         try
                         {
@@ -170,7 +170,7 @@ namespace SimpleHTTPSProxyFilter
                             result = ex.Message;
                         }
                     }
-                    else if (requestPath == "/clearlog")
+                    else if (requestPath == Common.ProxyCommands.LOG_CLEAR)
                     {
                         result = "Log cleared.";
                         try
