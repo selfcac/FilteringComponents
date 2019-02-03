@@ -52,6 +52,18 @@ namespace SimpleHTTPSProxyFilter
             return false;
         }
 
+        public bool isTimeBlocked()
+        {
+            DateTime now = DateTime.Now;
+
+            foreach(TimeBlock tb in Config.Instance.blockedTimes)
+            {
+                if (tb.ContainTime(now.Hour, now.Minute)) return true;
+            }
+
+            return false;
+        }
+
         public void StartServer(int port)
         {
             // Data about proxy filtering:

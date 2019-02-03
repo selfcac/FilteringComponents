@@ -197,7 +197,10 @@ namespace SimpleHTTPSProxyFilter
                     b.log.i("Got HTTP requst: '" + requestPath + "'");
                     Uri uri = new Uri(requestPath);
 
-                    bool blocked = !b.parent.IsWhitelisted(uri.Host), mapping = b.parent.mappingMode;
+                    bool blockeddomain = !b.parent.IsWhitelisted(uri.Host),
+                        blockedtime = b.parent.isTimeBlocked(),
+                        blocked = blockeddomain || blockedtime,
+                        mapping = b.parent.mappingMode;
 
                     if (!blocked || (blocked && mapping))
                     {
@@ -225,7 +228,7 @@ namespace SimpleHTTPSProxyFilter
 
                         // Block!
                         b.log.i("Sending Block response");
-                        SendHttpResponse(b, "Domain blocked");
+                        SendHttpResponse(b, blockeddomain ?  "Domain blocked" : "Time blocked");
                     }
                 }
             }
@@ -242,7 +245,10 @@ namespace SimpleHTTPSProxyFilter
                 // In connect the url is "<domain>:443"
                 string remoteHost = b.HEADER[(int)HEADER_INFO.HOST_URL].Split(':').First();
                 b.log.i("Got HTTP/S requst: '" + remoteHost + "'");
-                bool blocked = !b.parent.IsWhitelisted(remoteHost), mapping = b.parent.mappingMode;
+                bool blockeddomain = !b.parent.IsWhitelisted(remoteHost),
+                       blockedtime = b.parent.isTimeBlocked(),
+                       blocked = blockeddomain || blockedtime,
+                       mapping = b.parent.mappingMode;
 
                 if (!blocked || (blocked && mapping))
                 {
@@ -275,7 +281,7 @@ namespace SimpleHTTPSProxyFilter
 
                     // Block!
                     b.log.i("Sending Block response");
-                    SendHttpResponse(b, "Domain blocked",404);
+                    SendHttpResponse(b, blockeddomain ? "Domain blocked" : "Time blocked", 500);
                 }
                 
             }

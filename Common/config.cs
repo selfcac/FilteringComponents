@@ -66,19 +66,34 @@ namespace Common
     public class TimeBlock
     {
         public int startTotalMinutes = 0;
-        public int endTotalMinutes = 0;
+        public int endTotalMinutes = 0; // under 24hours
 
         public TimeBlock(int hStart, int mStart, TimeSpan length)
         {
-            startTotalMinutes = ((hStart % 24) * 60 + mStart);
-            endTotalMinutes = startTotalMinutes + (int)length.TotalMinutes;
+            startTotalMinutes = ((hStart % 24) * 60 + (mStart % 60));
+            endTotalMinutes = (startTotalMinutes + (int)length.TotalMinutes) % (24*60);
         }
 
         public bool ContainTime(int hour, int minute)
         {
             int time = ((hour % 24) * 60 + minute);
-            return time >= startTotalMinutes &&
-                (time <= endTotalMinutes || time <= endTotalMinutes % (24*60));
+            
+            if ( endTotalMinutes < startTotalMinutes ) // from one day to other
+            {
+                if (time  <= endTotalMinutes  ^ time >= startTotalMinutes)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (time >= startTotalMinutes && time <= endTotalMinutes)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
