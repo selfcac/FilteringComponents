@@ -21,9 +21,9 @@ namespace Common
                                         
             // Events with extra data:  
             ECHO,                       // (V)
-            ADD_URL,                    // (X)
-            CHANGE_PASSWORD,            // (\) -> Save to log
-            LOCK,                       // (\) -> Save to log
+            ADD_URL,                    // (V)
+            CHANGE_PASSWORD,            // (V)
+            LOCK,                       // (V)
         }
 
         public enum CommandActions
@@ -109,6 +109,7 @@ namespace Common
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
             { CommandType.FIREWALL, Firewall_Server},
             { CommandType.LOCK, Lock_Server},
+            {CommandType.ADD_URL, ADDURL_Server }
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
@@ -198,8 +199,18 @@ namespace Common
             else
             {
                 TaskInfo result = TaskInfo.Fail("Can't change to empty password");
-                if (!string.IsNullOrEmpty(cmdInfo.data))
-                    result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USERNAME, cmdInfo.data);
+                try
+                {
+                    if (!string.IsNullOrEmpty(cmdInfo.data))
+                    {
+                        File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + cmdInfo.data + "'");
+                        result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USERNAME, cmdInfo.data);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result = TaskInfo.Fail(ex.Message);
+                }
 
                 return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
             }
@@ -281,6 +292,7 @@ namespace Common
                             if (date > DateTime.Now)
                             {
                                 string unlockPath = Config.Instance.unlockFile.FullName;
+                                File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Locking until '" + date.ToString() + "'");
                                 if (File.Exists(unlockPath))
                                     File.Delete(unlockPath);
                                 File.WriteAllText(unlockPath, date.ToString());
@@ -298,7 +310,7 @@ namespace Common
                     }
                     else
                     {
-                        result = "not locked. got: " + cmdInfo.data;
+                        result = "bad_date_str. got: " + cmdInfo.data;
                     }
                 }
                 catch (Exception ex)
@@ -312,7 +324,36 @@ namespace Common
         }
 
 
+        // === === === === === ADD URL            === === === === === === 
 
+        public async static Task<string> ADDURL_Client(string url)
+        {
+            return await runCommand(CommandType.ADD_URL, url);
+        }
+
+        public static string ADDURL_Server(CommandInfo cmdInfo)
+        {
+            string result = "Unkown addurl result";
+
+            TaskInfo unlockedStatus = isLocked();
+            if (!unlockedStatus) // Only if not already locked!
+            {
+                try
+                {
+                    File.AppendAllText(Config.Instance.whitelistFile.FullName, cmdInfo.data);
+                }
+                catch (Exception ex)
+                {
+                    result = ex.Message;
+                }
+            }
+            else
+            {
+                result = LockedFormat(unlockedStatus);
+            }
+
+            return chopString(result);
+        }
     }
 
 }
