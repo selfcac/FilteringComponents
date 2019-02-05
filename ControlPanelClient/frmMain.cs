@@ -126,5 +126,27 @@ namespace ControlPanelClient
         {
             System.Diagnostics.Process.Start(cbUrlBlock.SelectedItem.ToString());
         }
+
+        string passSource = "abcdefghijklmnopqrstuvwxyz0123456789";
+        string randomPass(int len)
+        {
+            Random rnd = new Random();
+            string result = "";
+
+            for (int i=0;i<len;i++)
+            {
+                result += passSource[rnd.Next(0, passSource.Length)];
+            }
+
+            return result;
+        }
+
+        private async void btnRandom_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.ChangePass_Client(randomPass(20));
+            });
+        }
     }
 }

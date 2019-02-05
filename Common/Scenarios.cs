@@ -296,7 +296,7 @@ namespace Common
                                 if (File.Exists(unlockPath))
                                     File.Delete(unlockPath);
                                 File.WriteAllText(unlockPath, date.ToString());
-                                result = "Locked to " + date.ToString();
+                                result = "Sucess! Locked to " + date.ToString();
                             }
                             else
                             {
@@ -338,13 +338,21 @@ namespace Common
             TaskInfo unlockedStatus = isLocked();
             if (!unlockedStatus) // Only if not already locked!
             {
-                try
+                if (!string.IsNullOrEmpty(cmdInfo.data) && cmdInfo.data.IndexOf('.') > -1)
                 {
-                    File.AppendAllText(Config.Instance.whitelistFile.FullName, cmdInfo.data);
+                    try
+                    {
+                        File.AppendAllText(Config.Instance.whitelistFile.FullName, cmdInfo.data);
+                        result = "Sucess! restart proxy/use command!";
+                    }
+                    catch (Exception ex)
+                    {
+                        result = ex.Message;
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    result = ex.Message;
+                    result = "unkown url format '" + cmdInfo.data + "'";
                 }
             }
             else

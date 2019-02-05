@@ -52,6 +52,7 @@
             this.btnStartFirewall = new System.Windows.Forms.Button();
             this.btnStopFireWall = new System.Windows.Forms.Button();
             this.btnIsLocked = new System.Windows.Forms.Button();
+            this.btnRandom = new System.Windows.Forms.Button();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
             this.SuspendLayout();
@@ -132,7 +133,7 @@
             // 
             // btnChangePassword
             // 
-            this.btnChangePassword.Location = new System.Drawing.Point(442, 118);
+            this.btnChangePassword.Location = new System.Drawing.Point(307, 118);
             this.btnChangePassword.Margin = new System.Windows.Forms.Padding(5);
             this.btnChangePassword.Name = "btnChangePassword";
             this.btnChangePassword.Size = new System.Drawing.Size(125, 35);
@@ -146,7 +147,7 @@
             this.txtNewPassword.Location = new System.Drawing.Point(18, 122);
             this.txtNewPassword.Margin = new System.Windows.Forms.Padding(5);
             this.txtNewPassword.Name = "txtNewPassword";
-            this.txtNewPassword.Size = new System.Drawing.Size(414, 26);
+            this.txtNewPassword.Size = new System.Drawing.Size(279, 26);
             this.txtNewPassword.TabIndex = 7;
             // 
             // label4
@@ -205,6 +206,7 @@
             // 
             // grpAdmin
             // 
+            this.grpAdmin.Controls.Add(this.btnRandom);
             this.grpAdmin.Controls.Add(this.label2);
             this.grpAdmin.Controls.Add(this.txtWhitelist);
             this.grpAdmin.Controls.Add(this.btnAddWhiteList);
@@ -329,6 +331,17 @@
             this.btnIsLocked.UseVisualStyleBackColor = true;
             this.btnIsLocked.Click += new System.EventHandler(this.btnIsLocked_Click);
             // 
+            // btnRandom
+            // 
+            this.btnRandom.Location = new System.Drawing.Point(442, 118);
+            this.btnRandom.Margin = new System.Windows.Forms.Padding(5);
+            this.btnRandom.Name = "btnRandom";
+            this.btnRandom.Size = new System.Drawing.Size(125, 35);
+            this.btnRandom.TabIndex = 12;
+            this.btnRandom.Text = "Random (20)";
+            this.btnRandom.UseVisualStyleBackColor = true;
+            this.btnRandom.Click += new System.EventHandler(this.btnRandom_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -379,6 +392,7 @@
         private System.Windows.Forms.Button btnStopFireWall;
         private System.Windows.Forms.Button btnIsLocked;
         private System.Windows.Forms.ComboBox cbUrlBlock;
+        private System.Windows.Forms.Button btnRandom;
     }
 }
 
