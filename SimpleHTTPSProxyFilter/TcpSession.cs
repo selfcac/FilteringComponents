@@ -25,7 +25,7 @@ namespace SimpleHTTPSProxyFilter
             public TcpClient client;
             public NetworkStream cStream;
             public byte[] clientBuffer = new byte[bufferSize];
-            public string ReqHeaders = "";
+            public string Request = "";
             public string[] HEADER;
 
             // Proxy to server Connection :
@@ -53,7 +53,7 @@ namespace SimpleHTTPSProxyFilter
                 remoteBuffer = null;
                 commandBuffer = null;
 
-                ReqHeaders = null;
+                Request = null;
             }
         }
 
@@ -86,11 +86,11 @@ namespace SimpleHTTPSProxyFilter
             {
                 int bytesRead = b.cStream.EndRead(ar);
                 if (bytesRead == 0) return;
-                b.ReqHeaders += Encoding.ASCII.GetString(b.clientBuffer, 0, bytesRead);
+                b.Request += Encoding.ASCII.GetString(b.clientBuffer, 0, bytesRead);
 
-                if (b.ReqHeaders.EndsWith("\r\n\r\n"))
+                if (b.Request.Contains("\r\n\r\n"))
                 {
-                    string[] rows = b.ReqHeaders.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] rows = b.Request.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
                     b.HEADER = rows[0].Split(' ');
 
                     if (b.HEADER[(int)HEADER_INFO.METHOD] == "CONNECT")
@@ -212,11 +212,11 @@ namespace SimpleHTTPSProxyFilter
                         // Open TCP to remote 
                         MakeRemoteConnection(b, uri.Host); // authority may contain ports! --> <host>:<port>
 
-                        byte[] HeadersBytes = Encoding.ASCII.GetBytes(b.ReqHeaders);
+                        byte[] HeadersBytes = Encoding.ASCII.GetBytes(b.Request);
 
                         // Send headers to remote server
                         b.log.i("Sending plain headers");
-                        b.cStream.Write(HeadersBytes, 0, HeadersBytes.Length);
+                        b.rStream.Write(HeadersBytes, 0, HeadersBytes.Length);
 
                         //  Remote ==> Proxy ==> Client
                         b.rStream.BeginRead(b.remoteBuffer, 0, bufferSize,
@@ -281,7 +281,7 @@ namespace SimpleHTTPSProxyFilter
 
                     // Block!
                     b.log.i("Sending Block response");
-                    SendHttpResponse(b, blockeddomain ? "Domain blocked" : "Time blocked", 500);
+                    SendHttpResponse(b, blockeddomain ? "Domain blocked" : "Time blocked", 501);
                 }
                 
             }

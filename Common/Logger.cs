@@ -39,12 +39,12 @@ namespace Common
             return result;
         }
 
-        string _myTag;
+        public string myTag;
         bool _writeToConsole = false;
 
         public Logger(string tag, bool writeToConsole = true)
         {
-            _myTag = tag;
+            myTag = tag;
             _writeToConsole = writeToConsole;
         }
 
@@ -55,7 +55,7 @@ namespace Common
             {
                 lock (_WriteSyncLock)
                 {
-                    Console.Write("[{0}]\t{1}\t", DateTime.Now.ToString("HH:mm:ss"), _myTag);
+                    Console.Write("[{0}]\t{1}\t", DateTime.Now.ToString("HH:mm:ss"), myTag);
                     Console.ForegroundColor = (ConsoleColor)level;
                     Console.Write(lvlString(level));
                     Console.ResetColor();

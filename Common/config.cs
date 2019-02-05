@@ -59,23 +59,28 @@ namespace Common
 
         public bool proxyMappingMode = false;
 
-        public TimeBlock[] blockedTimes = new TimeBlock[] { new TimeBlock( 23, 00, TimeSpan.FromHours(8)) };
+        public TimeBlock[] blockedTimes = new TimeBlock[] { new TimeBlock( 23, 00,8 * 60) };
        
     }
 
     public class TimeBlock
     {
-        public int startTotalMinutes = 0;
-        public int endTotalMinutes = 0; // under 24hours
+        public int HourStart;
+        public int MinuteStart;
+        public int LengthMinutes;
 
-        public TimeBlock(int hStart, int mStart, TimeSpan length)
+        public TimeBlock(int hStart, int mStart, int length)
         {
-            startTotalMinutes = ((hStart % 24) * 60 + (mStart % 60));
-            endTotalMinutes = (startTotalMinutes + (int)length.TotalMinutes) % (24*60);
+            HourStart = hStart;
+            MinuteStart = mStart;
+            LengthMinutes = length;
         }
 
         public bool ContainTime(int hour, int minute)
         {
+            int startTotalMinutes = ((HourStart % 24) * 60 + (MinuteStart % 60));
+            int endTotalMinutes = (startTotalMinutes + LengthMinutes) % (24 * 60);
+
             int time = ((hour % 24) * 60 + minute);
             
             if ( endTotalMinutes < startTotalMinutes ) // from one day to other

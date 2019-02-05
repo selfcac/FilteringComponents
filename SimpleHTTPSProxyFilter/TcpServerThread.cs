@@ -31,22 +31,18 @@ namespace SimpleHTTPSProxyFilter
         {
             foreach (string line in whitelist)
             {
-                if (domain.Equals(line)) return true; // (exact case 2)
+                if (domain.Equals(line)) return true; // (exact case )
+
                 else if (!string.IsNullOrEmpty(line))
                 {
-                    int position = domain.IndexOf(line);
-                    if (position < 0)
-                        continue;
-
-                    int lengthDiff = domain.Length - line.Length;
-
-                    if (
-                        line[0] == '.' &&
-                        (
-                            (position == lengthDiff) ||         //  *  + ".domain" (subdomain)
-                            (position == 1 && lengthDiff == 1 ) // "domain" (exact case 1)
-                        ))
-                            return true; 
+                    if (line[0] == '.' && domain.EndsWith(line)) // (subdomain)
+                    {
+                        return true;
+                    }
+                    else if (line.Equals("." + domain)) // (exact case 2)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
