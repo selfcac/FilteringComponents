@@ -203,7 +203,7 @@ namespace Common
                 {
                     if (!string.IsNullOrEmpty(cmdInfo.data))
                     {
-                        File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + cmdInfo.data + "'");
+                        File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
                         result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USERNAME, cmdInfo.data);
                     }
                 }
@@ -292,7 +292,7 @@ namespace Common
                             if (date > DateTime.Now)
                             {
                                 string unlockPath = Config.Instance.unlockFile.FullName;
-                                File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Locking until '" + date.ToString() + "'");
+                                File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Locking until '" + date.ToString() + "'"  +Environment.NewLine);
                                 if (File.Exists(unlockPath))
                                     File.Delete(unlockPath);
                                 File.WriteAllText(unlockPath, date.ToString());
@@ -342,7 +342,7 @@ namespace Common
                 {
                     try
                     {
-                        File.AppendAllText(Config.Instance.whitelistFile.FullName, cmdInfo.data);
+                        File.AppendAllText(Config.Instance.whitelistFile.FullName, cmdInfo.data  +Environment.NewLine);
                         result = "Sucess! restart proxy/use command!";
                     }
                     catch (Exception ex)
