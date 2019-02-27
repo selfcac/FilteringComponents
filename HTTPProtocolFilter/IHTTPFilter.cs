@@ -21,6 +21,11 @@ namespace HTTPProtocolFilter
         EXACT = 0, SUBDOMAINS
     }
 
+    public enum WorkingMode
+    {
+        ENFORCE = 0, MAPPING
+    }
+
     public class PhaseFilter
     {
         public BlockPhraseType Type;
@@ -44,6 +49,7 @@ namespace HTTPProtocolFilter
         void BlockPhrase(PhaseFilter phase);
         void WhitelistEpOfDomain(AllowDomain domain, List<AllowEP> EPs);
         void allowEntireDomain(AllowDomain domain);
+        void setWorkingMode(WorkingMode mode);
 
         void ReloadPolicy(string filename);
         void SavePolicy(string filename);
