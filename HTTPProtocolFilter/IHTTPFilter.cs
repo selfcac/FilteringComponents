@@ -8,7 +8,7 @@ namespace HTTPProtocolFilter
 {
     public enum BlockPhraseType // CONTENT \ EP
     {
-        CONTAIN = 0, WORD, REGEX
+        CONTAIN = 0, EXACTWORD, WORDCONTAINING, REGEX
     }
 
     public enum AllowEPType //  EP
