@@ -26,7 +26,7 @@ namespace HTTPProtocolFilter
         ENFORCE = 0, MAPPING
     }
 
-    public class PhaseFilter
+    public class PhraseFilter
     {
         public BlockPhraseType Type;
         public string Phrase;
@@ -55,7 +55,7 @@ namespace HTTPProtocolFilter
 
     public interface IHTTPFilter
     {
-        void blockPhrase(PhaseFilter phase);
+        void blockPhrase(PhraseFilter phrase);
         void whitelistEpOfDomain(AllowDomain domain, List<AllowEP> EPs);
         void allowEntireDomain(AllowDomain domain);
         void setWorkingMode(WorkingMode mode);
