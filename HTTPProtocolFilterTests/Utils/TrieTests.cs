@@ -21,6 +21,7 @@ namespace HTTPProtocolFilter.Utils.Tests
             {
                 "reddit.com",  ".red.com"
             });
+            
 
             Assert.AreNotEqual(null, t.PostfixDomain("go.red.com"));
             Assert.AreNotEqual(null, t.PostfixDomain("a.b.c.go.red.com"));

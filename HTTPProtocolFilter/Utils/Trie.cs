@@ -44,7 +44,9 @@ namespace HTTPProtocolFilter.Utils
             if (resultNode == null)
             {
                 TrieNode<AllowDomain> postfix = t.PostfixDomain(d);
-                if (postfix != null && postfix.Value == '.') // Check if found subdomain rule
+                if (postfix != null 
+                    && postfix.Tag != null // not leaf
+                    && postfix.Tag.Type == AllowDomainType.SUBDOMAINS) // Check if found subdomain rule
                 {
                     resultNode = postfix;
                 }
@@ -143,10 +145,12 @@ namespace HTTPProtocolFilter.Utils
 
             for (var i = current.Depth; i < s.Length; i++)
             {
-                var newNode = new TrieNode<T>(s[i], tag, current.Depth + 1, current);
+                var newNode = new TrieNode<T>(s[i], default(T), current.Depth + 1, current);
                 current.Children.Add(newNode);
                 current = newNode;
             }
+
+            current.Tag = tag; // put our data only on leafs!
 
             current.Children.Add(new TrieNode<T>('$', default(T), current.Depth + 1, current));
         }
