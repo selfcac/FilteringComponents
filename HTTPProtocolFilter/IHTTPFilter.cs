@@ -42,6 +42,7 @@ namespace HTTPProtocolFilter
     {
         public AllowDomainType Type;
         public string DomainFormat;
+        public List<AllowEP> WhiteListEP = new List<AllowEP>();
 
         public static implicit operator AllowDomain (string input)
         {

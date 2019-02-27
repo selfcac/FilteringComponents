@@ -26,7 +26,7 @@ namespace HTTPProtocolFilter.Utils
                 t.InsertDomain(items[i]);
         }
 
-        public static bool SearchDomain(this Trie<AllowDomain> t, string d)
+        public static TrieNode<AllowDomain> SearchDomain(this Trie<AllowDomain> t, string d)
         {
             return t.Search(Reverse(d.ToLower()));
         }
@@ -36,22 +36,20 @@ namespace HTTPProtocolFilter.Utils
             return t.Prefix(Reverse(d.ToLower()));
         }
 
-        public static bool CheckDomain(this Trie<AllowDomain> t, string d)
+        public static TrieNode<AllowDomain> CheckDomain(this Trie<AllowDomain> t, string d)
         {
-            bool result = false;
-            if (t.SearchDomain(d) || t.SearchDomain("." + d))
-            {
-                result = true;
-            }
-            else
+            TrieNode<AllowDomain> resultNode = null;
+            resultNode = t.SearchDomain(d) ?? t.SearchDomain("." + d);
+
+            if (resultNode == null)
             {
                 TrieNode<AllowDomain> postfix = t.PostfixDomain(d);
                 if (postfix != null && postfix.Value == '.') // Check if found subdomain rule
                 {
-                    result = true;
+                    resultNode = postfix;
                 }
             }
-            return result;
+            return resultNode;
         }
     }
 
@@ -122,10 +120,14 @@ namespace HTTPProtocolFilter.Utils
             return result;
         }
 
-        public bool Search(string s)
+        public TrieNode<T> Search(string s)
         {
             var prefix = Prefix(s);
-            return prefix.Depth == s.Length && prefix.FindChildNode('$') != null;
+            if (prefix.Depth == s.Length && prefix.FindChildNode('$') != null)
+            {
+                return prefix;
+            }
+            return null;
         }
 
         public void InsertRange<K>(List<K> items, Func<K,string> getValue, Func<K,T> getTag)
@@ -149,20 +151,7 @@ namespace HTTPProtocolFilter.Utils
             current.Children.Add(new TrieNode<T>('$', default(T), current.Depth + 1, current));
         }
 
-        public void Delete(string s)
-        {
-            if (Search(s))
-            {
-                var node = Prefix(s).FindChildNode('$');
-
-                while (node.IsLeaf())
-                {
-                    var parent = node.Parent;
-                    parent.DeleteChildNode(node.Value);
-                    node = parent;
-                }
-            }
-        }
+       
 
     }
 }

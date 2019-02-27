@@ -11,6 +11,8 @@ namespace HTTPProtocolFilter.Utils.Tests
     [TestClass()]
     public class TrieTests
     {
+        
+
         [TestMethod()]
         public void TrieTest()
         {
@@ -22,17 +24,17 @@ namespace HTTPProtocolFilter.Utils.Tests
 
             Assert.AreNotEqual(null, t.PostfixDomain("go.red.com"));
             Assert.AreNotEqual(null, t.PostfixDomain("a.b.c.go.red.com"));
-            Assert.AreEqual(true, t.SearchDomain("reddit.com"));
+            Assert.AreNotEqual(null, t.SearchDomain("reddit.com"));
 
-            Assert.AreEqual(true, t.CheckDomain("reddit.com"));
-            Assert.AreEqual(false, t.CheckDomain("go.reddit.com"));
-            Assert.AreEqual(false, t.CheckDomain("a.b.c.go.reddit.com"));
-            Assert.AreEqual(false, t.CheckDomain("hack-reddit.com"));
+            Assert.AreNotEqual(null, t.CheckDomain("reddit.com"));
+            Assert.AreEqual(null, t.CheckDomain("go.reddit.com"));
+            Assert.AreEqual(null, t.CheckDomain("a.b.c.go.reddit.com"));
+            Assert.AreEqual(null, t.CheckDomain("hack-reddit.com"));
 
-            Assert.AreEqual(true, t.CheckDomain("red.com"));
-            Assert.AreEqual(true, t.CheckDomain("go.red.com"));
-            Assert.AreEqual(true, t.CheckDomain("a.b.c.d.go.red.com"));
-            Assert.AreEqual(false, t.CheckDomain("hack-red.com"));
+            Assert.AreNotEqual(null, t.CheckDomain("red.com"));
+            Assert.AreNotEqual(null, t.CheckDomain("go.red.com"));
+            Assert.AreNotEqual(null, t.CheckDomain("a.b.c.d.go.red.com"));
+            Assert.AreEqual(null, t.CheckDomain("hack-red.com"));
         }
 
        
