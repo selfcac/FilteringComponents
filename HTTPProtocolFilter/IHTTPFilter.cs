@@ -46,12 +46,12 @@ namespace HTTPProtocolFilter
 
     public interface IHTTPFilter
     {
-        void BlockPhrase(PhaseFilter phase);
-        void WhitelistEpOfDomain(AllowDomain domain, List<AllowEP> EPs);
+        void blockPhrase(PhaseFilter phase);
+        void whitelistEpOfDomain(AllowDomain domain, List<AllowEP> EPs);
         void allowEntireDomain(AllowDomain domain);
         void setWorkingMode(WorkingMode mode);
 
-        void ReloadPolicy(string filename);
-        void SavePolicy(string filename);
+        void reloadPolicy(string filename);
+        void savePolicy(string filename);
     }
 }
