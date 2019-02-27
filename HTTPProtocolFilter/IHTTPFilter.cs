@@ -42,6 +42,14 @@ namespace HTTPProtocolFilter
     {
         public AllowDomainType Type;
         public string DomainFormat;
+
+        public static implicit operator AllowDomain (string input)
+        {
+            return new AllowDomain() {
+                DomainFormat = input,
+                Type = ((input[0] == '.') ? AllowDomainType.SUBDOMAINS : AllowDomainType.EXACT)
+                };
+        }
     }
 
     public interface IHTTPFilter

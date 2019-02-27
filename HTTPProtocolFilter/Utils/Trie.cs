@@ -6,17 +6,70 @@ using System.Threading.Tasks;
 
 namespace HTTPProtocolFilter.Utils
 {
-    public class TrieNode
+    public static class TrieDomainExtentions
+    {
+        public static string Reverse(string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
+
+        public static void InsertDomain(this Trie<AllowDomain> t, AllowDomain d)
+        {
+            t.Insert(Reverse(d.DomainFormat.ToLower()), d);
+        }
+
+        public static void InsertDomainRange(this Trie<AllowDomain> t, List<AllowDomain> items)
+        {
+            for (int i = 0; i < items.Count; i++)
+                t.InsertDomain(items[i]);
+        }
+
+        public static bool SearchDomain(this Trie<AllowDomain> t, string d)
+        {
+            return t.Search(Reverse(d.ToLower()));
+        }
+
+        public static TrieNode<AllowDomain> PostfixDomain(this Trie<AllowDomain> t, string d)
+        {
+            return t.Prefix(Reverse(d.ToLower()));
+        }
+
+        public static bool CheckDomain(this Trie<AllowDomain> t, string d)
+        {
+            bool result = false;
+            if (t.SearchDomain(d) || t.SearchDomain("." + d))
+            {
+                result = true;
+            }
+            else
+            {
+                TrieNode<AllowDomain> postfix = t.PostfixDomain(d);
+                if (postfix != null && postfix.Value == '.') // Check if found subdomain rule
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
+    }
+
+    public class TrieNode<T>
     {
         public char Value { get; set; }
-        public List<TrieNode> Children { get; set; }
-        public TrieNode Parent { get; set; }
+        public T Tag { get; set; }
+
+        public List<TrieNode<T>> Children { get; set; }
+        public TrieNode<T> Parent { get; set; }
         public int Depth { get; set; }
 
-        public TrieNode(char value, int depth, TrieNode parent)
+        public TrieNode(char value, T tag, int depth, TrieNode<T> parent)
         {
             Value = value;
-            Children = new List<TrieNode>();
+            Tag = tag;
+
+            Children = new List<TrieNode<T>>();
             Depth = depth;
             Parent = parent;
         }
@@ -26,7 +79,7 @@ namespace HTTPProtocolFilter.Utils
             return Children.Count == 0;
         }
 
-        public TrieNode FindChildNode(char c)
+        public TrieNode<T> FindChildNode(char c)
         {
             foreach (var child in Children)
                 if (child.Value == c)
@@ -43,17 +96,17 @@ namespace HTTPProtocolFilter.Utils
         }
     }
 
-    public class Trie
+    public class Trie<T>
     {
         //https://visualstudiomagazine.com/Articles/2015/10/20/Text-Pattern-Search-Trie-Class-NET.aspx?Page=1
-        private readonly TrieNode _root;
+        private readonly TrieNode<T> _root;
 
         public Trie()
         {
-            _root = new TrieNode('^', 0, null);
+            _root = new TrieNode<T>('^', default(T), 0, null);
         }
 
-        public TrieNode Prefix(string s)
+        public TrieNode<T> Prefix(string s)
         {
             var currentNode = _root;
             var result = currentNode;
@@ -75,25 +128,25 @@ namespace HTTPProtocolFilter.Utils
             return prefix.Depth == s.Length && prefix.FindChildNode('$') != null;
         }
 
-        public void InsertRange(List<string> items)
+        public void InsertRange<K>(List<K> items, Func<K,string> getValue, Func<K,T> getTag)
         {
             for (int i = 0; i < items.Count; i++)
-                Insert(items[i]);
+                Insert(getValue(items[i]), getTag(items[i]));
         }
 
-        public void Insert(string s)
+        public void Insert(string s, T tag)
         {
             var commonPrefix = Prefix(s);
             var current = commonPrefix;
 
             for (var i = current.Depth; i < s.Length; i++)
             {
-                var newNode = new TrieNode(s[i], current.Depth + 1, current);
+                var newNode = new TrieNode<T>(s[i], tag, current.Depth + 1, current);
                 current.Children.Add(newNode);
                 current = newNode;
             }
 
-            current.Children.Add(new TrieNode('$', current.Depth + 1, current));
+            current.Children.Add(new TrieNode<T>('$', default(T), current.Depth + 1, current));
         }
 
         public void Delete(string s)
