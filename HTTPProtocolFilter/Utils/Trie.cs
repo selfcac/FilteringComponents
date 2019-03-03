@@ -36,6 +36,12 @@ namespace HTTPProtocolFilter.Utils
             return t.Prefix(Reverse(d.ToLower()));
         }
 
+        /// <summary>
+        /// Find domains that either exect or allowed under subdomain
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="d">The hostname (no prefix '.')</param>
+        /// <returns>Null if not found a match that is a result of a rule</returns>
         public static TrieNode<AllowDomain> CheckDomain(this Trie<AllowDomain> t, string d)
         {
             TrieNode<AllowDomain> resultNode = null;

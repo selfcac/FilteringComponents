@@ -55,10 +55,14 @@ namespace HTTPProtocolFilter
 
     public interface IHTTPFilter
     {
-        void blockPhrase(PhraseFilter phrase);
-        void whitelistEpOfDomain(AllowDomain domain, List<AllowEP> EPs);
-        void allowEntireDomain(AllowDomain domain);
-        void setWorkingMode(WorkingMode mode);
+        WorkingMode getMode();
+
+        bool isWhitelistedURL(Uri uri);
+        bool isWhitelistedHost(string host);
+        AllowDomain getDomain(string host);
+        bool isWhitelistedEP(AllowDomain domainObj, string ep);
+
+        bool hasPhrase(string Content);
 
         void reloadPolicy(string filename);
         void savePolicy(string filename);
