@@ -59,10 +59,10 @@ namespace HTTPProtocolFilter
 
         bool isWhitelistedURL(Uri uri);
         bool isWhitelistedHost(string host);
-        AllowDomain getDomain(string host);
+        AllowDomain findDomain(string host);
         bool isWhitelistedEP(AllowDomain domainObj, string ep);
 
-        bool hasPhrase(string Content);
+        bool checkPhrase(string Content);
 
         void reloadPolicy(string filename);
         void savePolicy(string filename);

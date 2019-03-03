@@ -26,16 +26,17 @@ namespace HTTPProtocolFilter
             // Fast search
 
             allowedDomainsTrie = new Utils.Trie<AllowDomain>();
-            foreach(AllowDomain domain in _allDomains)
+            foreach (AllowDomain domain in _allDomains)
             {
                 allowedDomainsTrie.Insert(domain.DomainFormat, domain);
             }
         }
 
         private List<AllowDomain> _allDomains = new List<AllowDomain>();
-        List<AllowDomain> AllowedDomains 
+        List<AllowDomain> AllowedDomains
         {
-            get {
+            get
+            {
                 return _allDomains;
             }
             set
@@ -44,10 +45,10 @@ namespace HTTPProtocolFilter
             }
         }
 
-        public AllowDomain getDomain(string host)
+        public AllowDomain findDomain(string host)
         {
             TrieNode<AllowDomain> result = allowedDomainsTrie.CheckDomain(host);
-            if ( result == null)
+            if (result == null)
             {
                 return null;
             }
@@ -56,11 +57,13 @@ namespace HTTPProtocolFilter
 
         public static List<string> getWords(string text)
         {
+            text = text.ToLower(); // all compares are done in little case
+
             List<string> words = new List<string>();
             bool insideWord = char.IsLetter(text[0]);
             StringBuilder currentWord = new StringBuilder();
 
-            for(int i=0;i<text.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
                 if (char.IsLetter(text[i]))
                 {
@@ -96,7 +99,7 @@ namespace HTTPProtocolFilter
             return words;
         }
 
-        public bool checkPhraseFound(string Content, PhraseFilter filter)
+        public bool checkPhraseFoundSimple(string Content, PhraseFilter filter)
         {
             bool found = false;
             switch (filter.Type)
@@ -107,23 +110,53 @@ namespace HTTPProtocolFilter
                 case BlockPhraseType.REGEX:
                     found = Regex.IsMatch(Content, filter.Phrase);
                     break;
+            }
+            return found;
+        }
+
+        public bool checkPhraseFoundWord(List<string> words, PhraseFilter filter)
+        {
+            bool found = false;
+            switch (filter.Type)
+            {
                 case BlockPhraseType.EXACTWORD:
+                    found = words.Contains(filter.Phrase.ToLower());
                     break;
                 case BlockPhraseType.WORDCONTAINING:
+                    found = words.FindIndex((word) => word.Contains(filter.Phrase.ToLower())) > -1;
                     break;
             }
             return found;
         }
 
-        public bool hasPhrase(string Content)
+        public bool checkPhrase(string Content)
         {
             bool allowed = true;
-            for (int i=0; i< BlockedPhrases.Count; i++)
+            List<string> Words = getWords(Content);
+
+            for (int i = 0; i < BlockedPhrases.Count; i++)
             {
-                if (checkPhraseFound(Content, BlockedPhrases[i]))
+                switch (BlockedPhrases[i].Type)
                 {
-                    allowed = false;
-                    break;
+                    case BlockPhraseType.CONTAIN:
+                    case BlockPhraseType.REGEX:
+                        if (checkPhraseFoundSimple(Content, BlockedPhrases[i]))
+                        {
+                            allowed = false;
+                        }
+                        break;
+
+                    case BlockPhraseType.EXACTWORD:
+                    case BlockPhraseType.WORDCONTAINING:
+                        if (checkPhraseFoundWord(Words, BlockedPhrases[i]))
+                        {
+                            allowed = false;
+                        }
+                        break;
+
+
+                    default:
+                        break;
                 }
             }
             return allowed;
