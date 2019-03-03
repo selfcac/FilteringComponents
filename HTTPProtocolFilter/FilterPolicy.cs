@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
 using HTTPProtocolFilter.Utils;
 
 namespace HTTPProtocolFilter
 {
-    class FilterPolicy : JSONBaseClass, IHTTPFilter
+    public class FilterPolicy : JSONBaseClass, IHTTPFilter
     {
         WorkingMode proxyMode = WorkingMode.ENFORCE;
 
@@ -53,12 +54,62 @@ namespace HTTPProtocolFilter
             return result.Tag;
         }
 
+        public static List<string> getWords(string text)
+        {
+            List<string> words = new List<string>();
+            bool insideWord = char.IsLetter(text[0]);
+            StringBuilder currentWord = new StringBuilder();
+
+            for(int i=0;i<text.Length; i++)
+            {
+                if (char.IsLetter(text[i]))
+                {
+                    if (insideWord)
+                    {
+                    }
+                    else
+                    {
+                        insideWord = true;
+                    }
+                    currentWord.Append(text[i]);
+                }
+                else // Not char
+                {
+                    if (insideWord)
+                    {
+                        insideWord = false;
+                        words.Add(currentWord.ToString());
+                        currentWord.Clear();
+                    }
+                    else
+                    {
+                        // Nothing
+                    }
+                }
+            }
+
+            if (insideWord) // Word at the end of text
+            {
+                words.Add(currentWord.ToString());
+            }
+
+            return words;
+        }
+
         public bool checkPhraseFound(string Content, PhraseFilter filter)
         {
             bool found = false;
             switch (filter.Type)
             {
                 case BlockPhraseType.CONTAIN:
+                    found = Content.IndexOf(filter.Phrase) > -1;
+                    break;
+                case BlockPhraseType.REGEX:
+                    found = Regex.IsMatch(Content, filter.Phrase);
+                    break;
+                case BlockPhraseType.EXACTWORD:
+                    break;
+                case BlockPhraseType.WORDCONTAINING:
                     break;
             }
             return found;
