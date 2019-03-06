@@ -105,7 +105,7 @@ namespace HTTPProtocolFilter
             return words;
         }
 
-        public bool checkPhraseFoundSimple(string Content, PhraseFilter filter)
+        public static bool checkPhraseFoundSimple(string Content, PhraseFilter filter)
         {
             bool found = false;
             switch (filter.Type)
@@ -120,7 +120,7 @@ namespace HTTPProtocolFilter
             return found;
         }
 
-        public bool checkPhraseFoundWord(List<string> words, PhraseFilter filter)
+        public static bool checkPhraseFoundWord(List<string> words, PhraseFilter filter)
         {
             bool found = false;
             switch (filter.Type)

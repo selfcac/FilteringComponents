@@ -11,7 +11,8 @@ namespace HTTPProtocolFilter.Utils.Tests
     [TestClass()]
     public class TrieTests
     {
-        
+        public void Found(object o) { Assert.AreNotEqual(null, o); }
+        public void NotFound(object o) { Assert.AreEqual(null, o); }
 
         [TestMethod()]
         public void TrieTest()
@@ -38,23 +39,24 @@ namespace HTTPProtocolFilter.Utils.Tests
             t.InsertDomain(ad);
             
 
-            Assert.AreNotEqual(null, t.PostfixDomain("go.red.com"));
-            Assert.AreNotEqual(null, t.PostfixDomain("a.b.c.go.red.com"));
-            Assert.AreNotEqual(null, t.SearchDomain("reddit.com"));
+            Found(t.PostfixDomain("go.red.com"));
+            Found(t.PostfixDomain("a.b.c.go.red.com"));
+            Found(t.SearchDomain("reddit.com"));
 
-            Assert.AreNotEqual(null, t.CheckDomain("reddit.com"));
-            Assert.AreEqual(null, t.CheckDomain("go.reddit.com"));
-            Assert.AreEqual(null, t.CheckDomain("a.b.c.go.reddit.com"));
-            Assert.AreEqual(null, t.CheckDomain("hack-reddit.com"));
+            Found( t.CheckDomain("reddit.com"));
+            NotFound( t.CheckDomain("go.reddit.com"));
+            NotFound( t.CheckDomain("a.b.c.go.reddit.com"));
+            NotFound( t.CheckDomain("hack-reddit.com"));
 
-            Assert.AreNotEqual(null, t.CheckDomain("red.com"));
-            Assert.AreNotEqual(null, t.CheckDomain("go.red.com"));
-            Assert.AreNotEqual(null, t.CheckDomain("a.b.c.d.go.red.com"));
-            Assert.AreEqual(null, t.CheckDomain("hack-red.com"));
+            Found( t.CheckDomain("red.com"));
+            Found( t.CheckDomain("go.red.com"));
+            Found( t.CheckDomain("a.b.c.d.go.red.com"));
+            NotFound( t.CheckDomain("hack-red.com"));
 
-            Assert.AreEqual(null, t.CheckDomain("rrrred.com"));
-            Assert.AreEqual(null, t.CheckDomain("rrrreddit.com"));
+            NotFound( t.CheckDomain("rrrred.com"));
+            NotFound( t.CheckDomain("rrrreddit.com"));
 
+            // Check tag contain the info.
             Assert.AreEqual(AllowEPType.CONTAIN, t.CheckDomain("go.gogo.com").Tag.WhiteListEP[0].Type);
         }
 
