@@ -18,15 +18,15 @@ namespace HTTPProtocolFilter
             return proxyMode;
         }
 
-        List<PhraseFilter> BlockedPhrases = new List<PhraseFilter>();
+        #region DomainsFilter
 
-        Utils.Trie<AllowDomain> allowedDomainsTrie;
-        private void initDomains()
+        private Utils.Trie<AllowDomain> allowedDomainsTrie;
+        private void initDomains(List<AllowDomain> newDomains)
         {
             // Fast search
 
             allowedDomainsTrie = new Utils.Trie<AllowDomain>();
-            foreach (AllowDomain domain in _allDomains)
+            foreach (AllowDomain domain in newDomains)
             {
                 allowedDomainsTrie.Insert(domain.DomainFormat, domain);
             }
@@ -41,7 +41,7 @@ namespace HTTPProtocolFilter
             }
             set
             {
-                _allDomains = value;
+                initDomains(value);
             }
         }
 
@@ -54,6 +54,12 @@ namespace HTTPProtocolFilter
             }
             return result.Tag;
         }
+
+        #endregion
+
+        #region Phrases
+
+        List<PhraseFilter> BlockedPhrases = new List<PhraseFilter>();
 
         public static List<string> getWords(string text)
         {
@@ -161,6 +167,8 @@ namespace HTTPProtocolFilter
             }
             return allowed;
         }
+
+        #endregion 
 
         public bool isWhitelistedEP(AllowDomain domainObj, string ep)
         {
