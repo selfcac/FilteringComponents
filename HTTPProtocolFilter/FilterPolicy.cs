@@ -45,14 +45,9 @@ namespace HTTPProtocolFilter
             }
         }
 
-        public AllowDomain findDomain(string host)
+        public AllowDomain findAllowedDomain(string host)
         {
-            TrieNode<AllowDomain> result = allowedDomainsTrie.CheckDomain(host);
-            if (result == null)
-            {
-                return null;
-            }
-            return result.Tag;
+            return allowedDomainsTrie.CheckDomain(host)?.Tag;
         }
 
         #endregion
@@ -229,7 +224,7 @@ namespace HTTPProtocolFilter
         public bool isWhitelistedHost(string host)
         {
             AllowDomain domain = allowedDomainsTrie.CheckDomain(host)?.Tag;
-
+            return domain != null;
         }
 
         public bool isWhitelistedURL(Uri uri)
