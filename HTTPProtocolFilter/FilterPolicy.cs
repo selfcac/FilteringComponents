@@ -108,6 +108,7 @@ namespace HTTPProtocolFilter
         public static bool checkPhraseFoundSimple(string Content, PhraseFilter filter)
         {
             bool found = false;
+            Content = Content.ToLower();
             switch (filter.Type)
             {
                 case BlockPhraseType.CONTAIN:
@@ -170,9 +171,41 @@ namespace HTTPProtocolFilter
 
         #endregion 
 
+        public static bool checkEPRule(AllowEP ep, string epPath )
+        {
+            bool allowed = false;
+            epPath = epPath.ToLower();
+
+            switch(ep.Type)
+            {
+                case AllowEPType.CONTAIN:
+                    allowed = epPath.IndexOf(ep.EpFormat) > -1; // not using contain cause HTTP is ASCII only
+                    break;
+
+                case AllowEPType.REGEX:
+                    allowed = Regex.IsMatch(epPath, ep.EpFormat);
+                    break;
+
+                case AllowEPType.STARTWITH:
+                    allowed = epPath.StartsWith(ep.EpFormat);
+                    break;
+            }
+
+            return allowed;
+        }
+
         public bool isWhitelistedEP(AllowDomain domainObj, string ep)
         {
-            throw new NotImplementedException();
+            if (domainObj == null)
+                return false;
+
+            bool allowed = false;
+
+            // check if ep in domain
+
+            // check if ep doesnot contain bad word
+
+            return allowed;
         }
 
         public bool isWhitelistedHost(string host)
