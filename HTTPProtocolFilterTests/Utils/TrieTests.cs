@@ -37,29 +37,31 @@ namespace HTTPProtocolFilter.Utils.Tests
                  }
             };
             t.InsertDomain(ad);
-            
+
 
             Found(t.PostfixDomain("go.red.com"));
             Found(t.PostfixDomain("a.b.c.go.red.com"));
             Found(t.SearchDomain("reddit.com"));
 
-            Found( t.CheckDomain("reddit.com"));
-            NotFound( t.CheckDomain("go.reddit.com"));
-            NotFound( t.CheckDomain("a.b.c.go.reddit.com"));
-            NotFound( t.CheckDomain("hack-reddit.com"));
+            Found(t.CheckDomain("reddit.com"));
+            NotFound(t.CheckDomain("go.reddit.com"));
+            NotFound(t.CheckDomain("a.b.c.go.reddit.com"));
+            NotFound(t.CheckDomain("hack-reddit.com"));
 
-            Found( t.CheckDomain("red.com"));
-            Found( t.CheckDomain("go.red.com"));
-            Found( t.CheckDomain("a.b.c.d.go.red.com"));
-            NotFound( t.CheckDomain("hack-red.com"));
+            Found(t.CheckDomain("red.com"));
+            Found(t.CheckDomain("go.red.com"));
+            Found(t.CheckDomain("a.b.c.d.go.red.com"));
+            NotFound(t.CheckDomain("hack-red.com"));
 
-            NotFound( t.CheckDomain("rrrred.com"));
-            NotFound( t.CheckDomain("rrrreddit.com"));
+            NotFound(t.CheckDomain("rrrred.com"));
+            NotFound(t.CheckDomain("rrrreddit.com"));
+
+            NotFound(t.CheckDomain(""));
 
             // Check tag contain the info.
             Assert.AreEqual(AllowEPType.CONTAIN, t.CheckDomain("go.gogo.com").Tag.WhiteListEP[0].Type);
         }
 
-       
+
     }
 }

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Common;
 using HTTPProtocolFilter.Utils;
+using static Common.ConnectionHelpers;
 
 namespace HTTPProtocolFilter
 {
@@ -21,6 +22,8 @@ namespace HTTPProtocolFilter
         #region DomainsFilter
 
         private Utils.Trie<AllowDomain> allowedDomainsTrie;
+        private List<AllowDomain> _allDomains = new List<AllowDomain>();
+
         private void initDomains(List<AllowDomain> newDomains)
         {
             // Fast search
@@ -28,12 +31,13 @@ namespace HTTPProtocolFilter
             allowedDomainsTrie = new Utils.Trie<AllowDomain>();
             foreach (AllowDomain domain in newDomains)
             {
-                allowedDomainsTrie.Insert(domain.DomainFormat, domain);
+                allowedDomainsTrie.InsertDomain( domain);
             }
+
+            _allDomains = newDomains;
         }
 
-        private List<AllowDomain> _allDomains = new List<AllowDomain>();
-        List<AllowDomain> AllowedDomains
+        public List<AllowDomain> AllowedDomains
         {
             get
             {
@@ -82,7 +86,8 @@ namespace HTTPProtocolFilter
                     if (insideWord)
                     {
                         insideWord = false;
-                        words.Add(currentWord.ToString());
+                        if (currentWord.Length > 0)
+                            words.Add(currentWord.ToString());
                         currentWord.Clear();
                     }
                     else
@@ -94,7 +99,8 @@ namespace HTTPProtocolFilter
 
             if (insideWord) // Word at the end of text
             {
-                words.Add(currentWord.ToString());
+                if (currentWord.Length > 0)
+                    words.Add(currentWord.ToString());
             }
 
             return words;
@@ -102,6 +108,9 @@ namespace HTTPProtocolFilter
 
         public static bool checkPhraseFoundSimple(string Content, PhraseFilter filter)
         {
+            if ((filter.Phrase ?? "") == "")
+                return false;
+
             bool found = false;
             Content = Content.ToLower();
             switch (filter.Type)
@@ -118,6 +127,9 @@ namespace HTTPProtocolFilter
 
         public static bool checkPhraseFoundWord(List<string> words, PhraseFilter filter)
         {
+            if ((filter.Phrase ?? "") == "")
+                return false;
+
             bool found = false;
             switch (filter.Type)
             {
@@ -136,7 +148,7 @@ namespace HTTPProtocolFilter
             bool allowed = true;
             List<string> Words = getWords(Content);
 
-            for (int i = 0; i < BlockedPhrases.Count; i++)
+            for (int i = 0; i < BlockedPhrases.Count && allowed; i++)
             {
                 switch (BlockedPhrases[i].Type)
                 {
@@ -158,6 +170,7 @@ namespace HTTPProtocolFilter
 
 
                     default:
+                        allowed = false;
                         break;
                 }
             }
@@ -229,17 +242,36 @@ namespace HTTPProtocolFilter
 
         public bool isWhitelistedURL(Uri uri)
         {
-            throw new NotImplementedException();
+            return isWhitelistedURL(uri.Host, uri.PathAndQuery);
+        }
+
+        public bool isWhitelistedURL(string host, string pathAndQuery)
+        {
+            bool allowed = false;
+            AllowDomain domainRule = findAllowedDomain(host ?? "");
+            if (domainRule != null)
+            {
+                allowed = isWhitelistedEP(domainRule, pathAndQuery ?? "");
+            }
+
+            return allowed;
         }
 
         public void reloadPolicy(string filename)
         {
-            throw new NotImplementedException();
+            TaskInfo newPolicyLoad = FilterPolicy.FromFile<FilterPolicy>(filename);
+            if (newPolicyLoad)
+            {
+                FilterPolicy newPolicy = ((TaskInfoResult<FilterPolicy>)newPolicyLoad).result;
+                proxyMode = newPolicy.proxyMode;
+                BlockedPhrases = newPolicy.BlockedPhrases;
+                AllowedDomains = newPolicy.AllowedDomains;
+            }
         }
 
         public void savePolicy(string filename)
         {
-            throw new NotImplementedException();
+            ToFile(filename);
         }
     }
 }

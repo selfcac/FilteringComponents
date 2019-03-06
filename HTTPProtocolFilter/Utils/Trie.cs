@@ -17,6 +17,8 @@ namespace HTTPProtocolFilter.Utils
 
         public static void InsertDomain(this Trie<AllowDomain> t, AllowDomain d)
         {
+            if (d.Type == AllowDomainType.SUBDOMAINS && d.DomainFormat[0] != '.')
+                d.DomainFormat = '.' + d.DomainFormat;
             t.Insert(Reverse(d.DomainFormat.ToLower()), d);
         }
 

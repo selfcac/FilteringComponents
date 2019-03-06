@@ -58,8 +58,11 @@ namespace HTTPProtocolFilter
         WorkingMode getMode();
 
         bool isWhitelistedURL(Uri uri);
+        bool isWhitelistedURL(string host, string pathAndQuery);
+
         bool isWhitelistedHost(string host);
         AllowDomain findAllowedDomain(string host);
+
         bool isWhitelistedEP(AllowDomain domainObj, string ep);
 
         bool checkPhrase(string Content);

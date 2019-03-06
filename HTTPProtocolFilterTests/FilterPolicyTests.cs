@@ -42,6 +42,18 @@ namespace HTTPProtocolFilter.Tests
                 Type = BlockPhraseType.EXACTWORD // Not supported in checkPhraseFoundSimple
             }));
 
+            areFalse(FilterPolicy.checkPhraseFoundSimple("", new PhraseFilter()
+            {
+                Phrase = "notfound",
+                Type = BlockPhraseType.CONTAIN
+            }));
+
+            areFalse(FilterPolicy.checkPhraseFoundSimple("", new PhraseFilter()
+            {
+                Phrase = "notfound",
+                Type = BlockPhraseType.REGEX
+            }));
+
             areFalse(FilterPolicy.checkPhraseFoundSimple(BodyContent, new PhraseFilter()
             {
                 Phrase = "notfound",
@@ -84,6 +96,18 @@ namespace HTTPProtocolFilter.Tests
             {
                 Phrase = "text",
                 Type = BlockPhraseType.CONTAIN // Not supported in checkPhraseFoundWord
+            }));
+
+            areFalse(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
+            {
+                Phrase = "",
+                Type = BlockPhraseType.WORDCONTAINING
+            }));
+
+            areFalse(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
+            {
+                Phrase = "",
+                Type = BlockPhraseType.EXACTWORD
             }));
 
             areFalse(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
@@ -144,6 +168,14 @@ namespace HTTPProtocolFilter.Tests
                 Type = AllowEPType.REGEX,
                 EpFormat = "\\/search\\?q=.*&safe=1"
             }, "/search?q=anyword"));
+
+            areFalse(FilterPolicy.checkEPRule(new AllowEP()
+            {
+                Type = AllowEPType.REGEX,
+                EpFormat = "\\/search\\?q=.*&safe=1"
+            }, ""));
+
+
         }
 
         [TestMethod()]
@@ -157,6 +189,11 @@ namespace HTTPProtocolFilter.Tests
                     {
                         Type = BlockPhraseType.WORDCONTAINING ,
                         Phrase= "bad"
+                    },
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.REGEX,
+                        Phrase = "wor[dk]"
                     }
                 }
             };
@@ -188,12 +225,60 @@ namespace HTTPProtocolFilter.Tests
             };
 
             areTrue(filter.isWhitelistedEP(domain1, ep2));
+            areFalse(filter.isWhitelistedEP(domain1, ep2 + "/work"));
             areFalse(filter.isWhitelistedEP(domain1, ep3));
-
             areFalse(filter.isWhitelistedEP(domain1, "/not-whitelisted"));
 
             areFalse(filter.isWhitelistedEP(null, ""));
+        }
 
+        [TestMethod()]
+        public void URLTest()
+        {
+            FilterPolicy filter = new FilterPolicy()
+            {
+                BlockedPhrases = new List<PhraseFilter>()
+                {
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.WORDCONTAINING ,
+                        Phrase= "bad"
+                    },
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.REGEX,
+                        Phrase = "wor[dk]"
+                    }
+                }
+            };
+
+            filter.AllowedDomains = new List<AllowDomain>()
+            {
+                new AllowDomain()
+                {
+                    DomainFormat = "go.com",
+                    Type = AllowDomainType.SUBDOMAINS,
+                    WhiteListEP = new List<AllowEP>()
+                    {
+                       new AllowEP() {
+                            Type = AllowEPType.STARTWITH,
+                             EpFormat = "/i-am-whitelisted"
+                       }
+                    }
+                }
+            };
+
+            string ep1 = "/search?q=verybadword";
+            string ep2 = "/i-am-whitelisted";
+            string ep3 = "/i-am-whitelisted/badword";
+
+            areTrue(filter.isWhitelistedHost("g.go.com"));
+            areTrue(filter.isWhitelistedURL("go.com", ep2));
+            areFalse(filter.isWhitelistedURL("go.com", "/not-ok"));
+            areFalse(filter.isWhitelistedURL("go-go.com", ep2));
+
+            areTrue(filter.isWhitelistedHost("go.com"));
+            areFalse(filter.isWhitelistedURL("g.go.com", ep2 + "/work"));
 
         }
     }
