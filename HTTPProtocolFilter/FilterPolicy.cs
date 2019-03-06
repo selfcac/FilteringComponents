@@ -59,7 +59,7 @@ namespace HTTPProtocolFilter
 
         #region Phrases
 
-        List<PhraseFilter> BlockedPhrases = new List<PhraseFilter>();
+        public List<PhraseFilter> BlockedPhrases = new List<PhraseFilter>();
 
         public static List<string> getWords(string text)
         {
@@ -202,15 +202,34 @@ namespace HTTPProtocolFilter
             bool allowed = false;
 
             // check if ep in domain
+            if (domainObj.WhiteListEP.Count > 0 )
+            {
+                // Whitelist : All EP are blocked unless some rule allow.
+                for (int i=0;i<domainObj.WhiteListEP.Count;i++)
+                {
+                    if (checkEPRule(domainObj.WhiteListEP[i], ep))
+                    {
+                        allowed = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // All EP allowed if none specified
+                allowed = true;
+            }
 
-            // check if ep doesnot contain bad word
+            if (allowed) // Finally check for banned phrases.
+                allowed = checkPhrase(ep); 
 
             return allowed;
         }
 
         public bool isWhitelistedHost(string host)
         {
-            throw new NotImplementedException();
+            AllowDomain domain = allowedDomainsTrie.CheckDomain(host)?.Tag;
+
         }
 
         public bool isWhitelistedURL(Uri uri)

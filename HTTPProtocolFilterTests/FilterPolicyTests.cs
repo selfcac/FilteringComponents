@@ -121,9 +121,10 @@ namespace HTTPProtocolFilter.Tests
         [TestMethod()]
         public void checkEPRuleTest()
         {
-            areTrue(FilterPolicy.checkEPRule(new AllowEP() {
-                 Type= AllowEPType.STARTWITH,
-                  EpFormat = "/r/collect"
+            areTrue(FilterPolicy.checkEPRule(new AllowEP()
+            {
+                Type = AllowEPType.STARTWITH,
+                EpFormat = "/r/collect"
             }, "/r/coLleCt"));
 
             areTrue(FilterPolicy.checkEPRule(new AllowEP()
@@ -143,6 +144,57 @@ namespace HTTPProtocolFilter.Tests
                 Type = AllowEPType.REGEX,
                 EpFormat = "\\/search\\?q=.*&safe=1"
             }, "/search?q=anyword"));
+        }
+
+        [TestMethod()]
+        public void isWhitelistedEPTest()
+        {
+            IHTTPFilter filter = new FilterPolicy()
+            {
+                BlockedPhrases = new List<PhraseFilter>()
+                {
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.WORDCONTAINING ,
+                        Phrase= "bad"
+                    }
+                }
+            };
+
+            string ep1 = "/search?q=verybadword";
+            string ep2 = "/i-am-whitelisted";
+            string ep3 = "/i-am-whitelisted/badword";
+
+            // any ep except bad phrases:
+            areFalse(filter.isWhitelistedEP(new AllowDomain()
+            {
+                DomainFormat = "",
+                Type = AllowDomainType.EXACT,
+                WhiteListEP = new List<AllowEP>()
+            }, ep1));
+
+            // only ep that are whitelisted
+            var domain1 = new AllowDomain()
+            {
+                DomainFormat = "",
+                Type = AllowDomainType.EXACT,
+                WhiteListEP = new List<AllowEP>()
+                {
+                   new AllowEP() {
+                        Type = AllowEPType.STARTWITH,
+                         EpFormat = "/i-am-whitelisted"
+                   }
+                }
+            };
+
+            areTrue(filter.isWhitelistedEP(domain1, ep2));
+            areFalse(filter.isWhitelistedEP(domain1, ep3));
+
+            areFalse(filter.isWhitelistedEP(domain1, "/not-whitelisted"));
+
+            areFalse(filter.isWhitelistedEP(null, ""));
+
+
         }
     }
 }
