@@ -12,7 +12,7 @@ namespace HTTPProtocolFilter
 {
     public class FilterPolicy : JSONBaseClass, IHTTPFilter
     {
-        WorkingMode proxyMode = WorkingMode.ENFORCE;
+        public WorkingMode proxyMode = WorkingMode.ENFORCE;
 
         public WorkingMode getMode()
         {

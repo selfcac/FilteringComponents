@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPProtocolFilter", "HTTPP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPProtocolFilterTests", "HTTPProtocolFilterTests\HTTPProtocolFilterTests.csproj", "{8A5FEC01-1B70-4D63-B0B2-791C37B3B7B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPProtocolFilter_GuiHelper", "HTTPProtocolFilter_GuiHelper\HTTPProtocolFilter_GuiHelper.csproj", "{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{8A5FEC01-1B70-4D63-B0B2-791C37B3B7B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A5FEC01-1B70-4D63-B0B2-791C37B3B7B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A5FEC01-1B70-4D63-B0B2-791C37B3B7B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
