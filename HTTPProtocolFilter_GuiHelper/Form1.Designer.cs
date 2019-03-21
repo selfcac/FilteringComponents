@@ -58,6 +58,17 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tvwDomainEp = new System.Windows.Forms.TreeView();
             this.clearPolicyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -70,6 +81,9 @@
             this.menuStrip3.SuspendLayout();
             this.menuStrip4.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -82,7 +96,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(840, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(965, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -117,7 +131,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(840, 566);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(965, 709);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // groupBox1
@@ -125,11 +139,11 @@
             this.groupBox1.Controls.Add(this.lbxSimulated);
             this.groupBox1.Controls.Add(this.menuStrip2);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(424, 4);
+            this.groupBox1.Location = new System.Drawing.Point(486, 4);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Size = new System.Drawing.Size(412, 558);
+            this.groupBox1.Size = new System.Drawing.Size(475, 701);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "<< Simulator >>";
@@ -142,7 +156,7 @@
             this.menuStrip2.Location = new System.Drawing.Point(4, 21);
             this.menuStrip2.Name = "menuStrip2";
             this.menuStrip2.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip2.Size = new System.Drawing.Size(404, 25);
+            this.menuStrip2.Size = new System.Drawing.Size(467, 25);
             this.menuStrip2.TabIndex = 1;
             this.menuStrip2.Text = "menuStrip2";
             // 
@@ -166,7 +180,7 @@
             this.lbxSimulated.Location = new System.Drawing.Point(4, 46);
             this.lbxSimulated.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.lbxSimulated.Name = "lbxSimulated";
-            this.lbxSimulated.Size = new System.Drawing.Size(404, 508);
+            this.lbxSimulated.Size = new System.Drawing.Size(467, 651);
             this.lbxSimulated.TabIndex = 2;
             // 
             // tabControl1
@@ -178,7 +192,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(412, 558);
+            this.tabControl1.Size = new System.Drawing.Size(474, 701);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -189,7 +203,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.tabPage1.Size = new System.Drawing.Size(404, 527);
+            this.tabPage1.Size = new System.Drawing.Size(466, 670);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Domains\\Ep";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -312,8 +326,8 @@
             // deleteSelectedToolStripMenuItem
             // 
             this.deleteSelectedToolStripMenuItem.Name = "deleteSelectedToolStripMenuItem";
-            this.deleteSelectedToolStripMenuItem.Size = new System.Drawing.Size(98, 20);
-            this.deleteSelectedToolStripMenuItem.Text = "Delete selected";
+            this.deleteSelectedToolStripMenuItem.Size = new System.Drawing.Size(144, 20);
+            this.deleteSelectedToolStripMenuItem.Text = "Delete selected (Phrase)";
             // 
             // menuStrip4
             // 
@@ -323,7 +337,7 @@
             this.deleteSelectedToolStripMenuItem1});
             this.menuStrip4.Location = new System.Drawing.Point(4, 4);
             this.menuStrip4.Name = "menuStrip4";
-            this.menuStrip4.Size = new System.Drawing.Size(396, 24);
+            this.menuStrip4.Size = new System.Drawing.Size(458, 24);
             this.menuStrip4.TabIndex = 0;
             this.menuStrip4.Text = "menuStrip4";
             // 
@@ -342,21 +356,22 @@
             // deleteSelectedToolStripMenuItem1
             // 
             this.deleteSelectedToolStripMenuItem1.Name = "deleteSelectedToolStripMenuItem1";
-            this.deleteSelectedToolStripMenuItem1.Size = new System.Drawing.Size(98, 20);
-            this.deleteSelectedToolStripMenuItem1.Text = "Delete selected";
+            this.deleteSelectedToolStripMenuItem1.Size = new System.Drawing.Size(169, 20);
+            this.deleteSelectedToolStripMenuItem1.Text = "Delete selected (EP\\Domain)";
             // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.Controls.Add(this.tvwDomainEp, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.panel1, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 28);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(396, 495);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(458, 638);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
             // tvwDomainEp
@@ -364,7 +379,7 @@
             this.tvwDomainEp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tvwDomainEp.Location = new System.Drawing.Point(3, 3);
             this.tvwDomainEp.Name = "tvwDomainEp";
-            this.tvwDomainEp.Size = new System.Drawing.Size(390, 241);
+            this.tvwDomainEp.Size = new System.Drawing.Size(452, 313);
             this.tvwDomainEp.TabIndex = 0;
             // 
             // clearPolicyToolStripMenuItem
@@ -373,11 +388,128 @@
             this.clearPolicyToolStripMenuItem.Size = new System.Drawing.Size(81, 19);
             this.clearPolicyToolStripMenuItem.Text = "Clear Policy";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.groupBox4);
+            this.panel1.Controls.Add(this.groupBox3);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 322);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(452, 313);
+            this.panel1.TabIndex = 1;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.comboBox2);
+            this.groupBox3.Controls.Add(this.textBox2);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Location = new System.Drawing.Point(20, 3);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(273, 211);
+            this.groupBox3.TabIndex = 0;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Edit Domain";
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.Items.AddRange(new object[] {
+            "DOMAIN-ONLY",
+            "INCLUDE-SUBDOMAIN"});
+            this.comboBox2.Location = new System.Drawing.Point(7, 135);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.Size = new System.Drawing.Size(372, 26);
+            this.comboBox2.TabIndex = 7;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(7, 61);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(372, 24);
+            this.textBox2.TabIndex = 6;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 114);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(140, 18);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Domain match type:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(7, 39);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(109, 18);
+            this.label4.TabIndex = 4;
+            this.label4.Text = "Domain pattern";
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.comboBox3);
+            this.groupBox4.Controls.Add(this.textBox3);
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Location = new System.Drawing.Point(299, 64);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(243, 187);
+            this.groupBox4.TabIndex = 1;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Edit Ep";
+            // 
+            // comboBox3
+            // 
+            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Items.AddRange(new object[] {
+            "CONTAIN",
+            "START-WITH (remember \'/\')",
+            "REGEX"});
+            this.comboBox3.Location = new System.Drawing.Point(9, 153);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(372, 26);
+            this.comboBox3.TabIndex = 7;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(9, 86);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(4);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(372, 24);
+            this.textBox3.TabIndex = 6;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 132);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(95, 18);
+            this.label5.TabIndex = 5;
+            this.label5.Text = "Phrase Type:";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(9, 64);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(81, 18);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "Ep Pattern:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(840, 591);
+            this.ClientSize = new System.Drawing.Size(965, 734);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
@@ -405,6 +537,11 @@
             this.menuStrip4.ResumeLayout(false);
             this.menuStrip4.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -442,6 +579,17 @@
         private System.Windows.Forms.ToolStripMenuItem addDomainToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addEPToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteSelectedToolStripMenuItem1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
     }
 }
 
