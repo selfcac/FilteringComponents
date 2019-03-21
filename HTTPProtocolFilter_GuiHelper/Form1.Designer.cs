@@ -261,6 +261,7 @@
             this.gpEditEp.Controls.Add(this.txtEpPattern);
             this.gpEditEp.Controls.Add(this.label5);
             this.gpEditEp.Controls.Add(this.label6);
+            this.gpEditEp.Enabled = false;
             this.gpEditEp.Location = new System.Drawing.Point(299, 64);
             this.gpEditEp.Name = "gpEditEp";
             this.gpEditEp.Size = new System.Drawing.Size(243, 187);
@@ -316,6 +317,7 @@
             this.gpEditDomain.Controls.Add(this.txtDomainPattern);
             this.gpEditDomain.Controls.Add(this.label3);
             this.gpEditDomain.Controls.Add(this.label4);
+            this.gpEditDomain.Enabled = false;
             this.gpEditDomain.Location = new System.Drawing.Point(20, 3);
             this.gpEditDomain.Name = "gpEditDomain";
             this.gpEditDomain.Size = new System.Drawing.Size(273, 211);
@@ -433,6 +435,7 @@
             this.lbxPhrases.Name = "lbxPhrases";
             this.lbxPhrases.Size = new System.Drawing.Size(450, 311);
             this.lbxPhrases.TabIndex = 0;
+            this.lbxPhrases.SelectedIndexChanged += new System.EventHandler(this.lbxPhrases_SelectedIndexChanged);
             // 
             // gpEditPhrase
             // 
@@ -441,6 +444,7 @@
             this.gpEditPhrase.Controls.Add(this.label2);
             this.gpEditPhrase.Controls.Add(this.label1);
             this.gpEditPhrase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gpEditPhrase.Enabled = false;
             this.gpEditPhrase.Location = new System.Drawing.Point(4, 323);
             this.gpEditPhrase.Margin = new System.Windows.Forms.Padding(4);
             this.gpEditPhrase.Name = "gpEditPhrase";
@@ -463,6 +467,7 @@
             this.cbPhraseType.Name = "cbPhraseType";
             this.cbPhraseType.Size = new System.Drawing.Size(372, 26);
             this.cbPhraseType.TabIndex = 3;
+            this.cbPhraseType.SelectedIndexChanged += new System.EventHandler(this.cbPhraseType_SelectedIndexChanged);
             // 
             // txtPhrase
             // 
@@ -471,6 +476,7 @@
             this.txtPhrase.Name = "txtPhrase";
             this.txtPhrase.Size = new System.Drawing.Size(372, 24);
             this.txtPhrase.TabIndex = 2;
+            this.txtPhrase.TextChanged += new System.EventHandler(this.txtPhrase_TextChanged);
             // 
             // label2
             // 
@@ -508,12 +514,14 @@
             this.addPhraseToolStripMenuItem.Name = "addPhraseToolStripMenuItem";
             this.addPhraseToolStripMenuItem.Size = new System.Drawing.Size(79, 20);
             this.addPhraseToolStripMenuItem.Text = "Add phrase";
+            this.addPhraseToolStripMenuItem.Click += new System.EventHandler(this.addPhraseToolStripMenuItem_Click);
             // 
             // deleteSelectedToolStripMenuItem
             // 
             this.deleteSelectedToolStripMenuItem.Name = "deleteSelectedToolStripMenuItem";
             this.deleteSelectedToolStripMenuItem.Size = new System.Drawing.Size(144, 20);
             this.deleteSelectedToolStripMenuItem.Text = "Delete selected (Phrase)";
+            this.deleteSelectedToolStripMenuItem.Click += new System.EventHandler(this.deleteSelectedToolStripMenuItem_Click);
             // 
             // dlgOpen
             // 

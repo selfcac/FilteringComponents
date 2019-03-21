@@ -87,8 +87,8 @@ namespace HTTPProtocolFilter_GuiHelper
         private void getBlockedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            lbxPhrases.Items.Clear();
-            lbxPhrases.Items.AddRange(
+            lbxSimulated.Items.Clear();
+            lbxSimulated.Items.AddRange(
                 blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
             );
         }
@@ -96,14 +96,65 @@ namespace HTTPProtocolFilter_GuiHelper
         private void getAllowedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            lbxPhrases.Items.Clear();
-            lbxPhrases.Items.AddRange(
+            lbxSimulated.Items.Clear();
+            lbxSimulated.Items.AddRange(
                 blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
             );
         }
 
+
         #endregion
 
+        private void refreshPhrases()
+        {
+            lbxPhrases.Items.Clear();
+            lbxPhrases.Items.AddRange(mainPolicy.BlockedPhrases.ToArray());
+            gpEditPhrase.Enabled = false;
+        }
 
+        private void addPhraseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mainPolicy.BlockedPhrases.Add(new PhraseFilter()
+            {
+                 Phrase = "Enter phrase",
+                 Type = BlockPhraseType.CONTAIN
+            });
+
+            refreshPhrases();
+        }
+
+        private void deleteSelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lbxPhrases.SelectedItem != null)
+            {
+                mainPolicy.BlockedPhrases.Remove((PhraseFilter)lbxPhrases.SelectedItem);
+            }
+
+            refreshPhrases();
+        }
+
+        private void lbxPhrases_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lbxPhrases.SelectedItem != null)
+            {
+                PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
+
+                gpEditPhrase.Enabled = true;
+                txtPhrase.Text = p.Phrase;
+                cbPhraseType.SelectedIndex = (int)p.Type;
+            }
+        }
+
+        private void txtPhrase_TextChanged(object sender, EventArgs e)
+        {
+            PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
+            p.Phrase = txtPhrase.Text;
+        }
+
+        private void cbPhraseType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
+            p.Type = (BlockPhraseType)cbPhraseType.SelectedIndex;
+        }
     }
 }

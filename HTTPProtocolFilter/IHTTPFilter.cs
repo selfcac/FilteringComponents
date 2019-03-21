@@ -30,6 +30,8 @@ namespace HTTPProtocolFilter
     {
         public BlockPhraseType Type;
         public string Phrase;
+
+
     }
 
     public class AllowEP
