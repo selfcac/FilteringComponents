@@ -58,9 +58,6 @@
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.tvwDomainEp = new System.Windows.Forms.TreeView();
             this.clearPolicyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.tabPage4 = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -73,7 +70,6 @@
             this.menuStrip3.SuspendLayout();
             this.menuStrip4.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            this.tabControl2.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -354,7 +350,6 @@
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel3.Controls.Add(this.tvwDomainEp, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.tabControl2, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 28);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -377,39 +372,6 @@
             this.clearPolicyToolStripMenuItem.Name = "clearPolicyToolStripMenuItem";
             this.clearPolicyToolStripMenuItem.Size = new System.Drawing.Size(81, 19);
             this.clearPolicyToolStripMenuItem.Text = "Clear Policy";
-            // 
-            // tabControl2
-            // 
-            this.tabControl2.Alignment = System.Windows.Forms.TabAlignment.Left;
-            this.tabControl2.Controls.Add(this.tabPage3);
-            this.tabControl2.Controls.Add(this.tabPage4);
-            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl2.Location = new System.Drawing.Point(3, 250);
-            this.tabControl2.Multiline = true;
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(390, 242);
-            this.tabControl2.TabIndex = 1;
-            // 
-            // tabPage3
-            // 
-            this.tabPage3.Location = new System.Drawing.Point(28, 4);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(358, 234);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "tabPage3";
-            this.tabPage3.UseVisualStyleBackColor = true;
-            // 
-            // tabPage4
-            // 
-            this.tabPage4.Location = new System.Drawing.Point(28, 4);
-            this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(358, 234);
-            this.tabPage4.TabIndex = 1;
-            this.tabPage4.Text = "tabPage4";
-            this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -443,7 +405,6 @@
             this.menuStrip4.ResumeLayout(false);
             this.menuStrip4.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
-            this.tabControl2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -481,9 +442,6 @@
         private System.Windows.Forms.ToolStripMenuItem addDomainToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addEPToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteSelectedToolStripMenuItem1;
-        private System.Windows.Forms.TabControl tabControl2;
-        private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.TabPage tabPage4;
     }
 }
 
