@@ -79,5 +79,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{1ED24440-1C8E-4187-A7C7-E685F967FB14}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HTTPProtocolFilter\HTTPProtocolFilter.csproj">
+      <Project>{8bcac42c-ef4f-4510-a327-3ee7e7ae80ac}</Project>
+      <Name>HTTPProtocolFilter</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
