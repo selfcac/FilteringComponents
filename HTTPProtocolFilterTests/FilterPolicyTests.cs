@@ -281,5 +281,19 @@ namespace HTTPProtocolFilter.Tests
             areFalse(filter.isWhitelistedURL("g.go.com", ep2 + "/work"));
 
         }
+
+        [TestMethod()]
+        public void nullAtInit()
+        {
+            IHTTPFilter filter = new FilterPolicy();
+            try
+            {
+                filter.isWhitelistedHost("try.com");
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail(ex.ToString());
+            }
+        }
     }
 }

@@ -49,6 +49,11 @@ namespace HTTPProtocolFilter
             }
         }
 
+        public FilterPolicy()
+        {
+            AllowedDomains = new List<AllowDomain>();
+        }
+
         public AllowDomain findAllowedDomain(string host)
         {
             return allowedDomainsTrie.CheckDomain(host)?.Tag;
