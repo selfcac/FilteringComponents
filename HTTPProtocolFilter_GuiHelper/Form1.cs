@@ -45,6 +45,9 @@ namespace HTTPProtocolFilter_GuiHelper
             {
                 mainPolicy.reloadPolicy(dlgOpen.FileName);
             }
+
+            refreshDomains();
+            refreshPhrases();
         }
 
         private void savePolicyJsonToolStripMenuItem_Click(object sender, EventArgs e)
@@ -138,18 +141,15 @@ namespace HTTPProtocolFilter_GuiHelper
             }
         }
 
-        private void txtPhrase_TextChanged(object sender, EventArgs e)
+        private void btnPApply_Click(object sender, EventArgs e)
         {
-            PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
-            p.Phrase = txtPhrase.Text;
-            refreshPhrases();
-        }
-
-        private void cbPhraseType_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
-            p.Type = (BlockPhraseType)cbPhraseType.SelectedIndex;
-            refreshPhrases();
+            PhraseFilter p = lbxPhrases.SelectedItem as PhraseFilter;
+            if (p != null)
+            {
+                p.Type = (BlockPhraseType)cbPhraseType.SelectedIndex;
+                p.Phrase = txtPhrase.Text;
+                refreshPhrases();
+            }
         }
 
 
@@ -258,7 +258,7 @@ namespace HTTPProtocolFilter_GuiHelper
             }
         }
 
-        #endregion
+        
 
         private void btnDApply_Click(object sender, EventArgs e)
         {
@@ -284,5 +284,9 @@ namespace HTTPProtocolFilter_GuiHelper
                 refreshEPs();
             }
         }
+
+        #endregion
+
+       
     }
 }

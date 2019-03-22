@@ -75,6 +75,7 @@
             this.rtbSimulator = new System.Windows.Forms.RichTextBox();
             this.btnDApply = new System.Windows.Forms.Button();
             this.btnEPApply = new System.Windows.Forms.Button();
+            this.btnPApply = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -418,6 +419,7 @@
             // 
             // gpEditPhrase
             // 
+            this.gpEditPhrase.Controls.Add(this.btnPApply);
             this.gpEditPhrase.Controls.Add(this.cbPhraseType);
             this.gpEditPhrase.Controls.Add(this.txtPhrase);
             this.gpEditPhrase.Controls.Add(this.label2);
@@ -446,7 +448,6 @@
             this.cbPhraseType.Name = "cbPhraseType";
             this.cbPhraseType.Size = new System.Drawing.Size(372, 26);
             this.cbPhraseType.TabIndex = 3;
-            this.cbPhraseType.SelectedIndexChanged += new System.EventHandler(this.cbPhraseType_SelectedIndexChanged);
             // 
             // txtPhrase
             // 
@@ -455,7 +456,6 @@
             this.txtPhrase.Name = "txtPhrase";
             this.txtPhrase.Size = new System.Drawing.Size(372, 24);
             this.txtPhrase.TabIndex = 2;
-            this.txtPhrase.TextChanged += new System.EventHandler(this.txtPhrase_TextChanged);
             // 
             // label2
             // 
@@ -590,6 +590,16 @@
             this.btnEPApply.UseVisualStyleBackColor = true;
             this.btnEPApply.Click += new System.EventHandler(this.btnEPApply_Click);
             // 
+            // btnPApply
+            // 
+            this.btnPApply.Location = new System.Drawing.Point(7, 179);
+            this.btnPApply.Name = "btnPApply";
+            this.btnPApply.Size = new System.Drawing.Size(75, 40);
+            this.btnPApply.TabIndex = 10;
+            this.btnPApply.Text = "Apply";
+            this.btnPApply.UseVisualStyleBackColor = true;
+            this.btnPApply.Click += new System.EventHandler(this.btnPApply_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
@@ -683,6 +693,7 @@
         private System.Windows.Forms.RichTextBox rtbSimulator;
         private System.Windows.Forms.Button btnEPApply;
         private System.Windows.Forms.Button btnDApply;
+        private System.Windows.Forms.Button btnPApply;
     }
 }
 
