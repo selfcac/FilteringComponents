@@ -29,15 +29,6 @@ namespace HTTPProtocolFilter_GuiHelper
             gpEditEp.Dock = gpEditDomain.Dock = DockStyle.Fill;
         }
 
-        
-
-        private void changeEditPanel(bool toDomain)
-        {
-            // Was docked to fill in form.load()
-            gpEditDomain.Visible = toDomain;
-            gpEditEp.Visible = !toDomain;
-        }
-
         #endregion
 
         #region  Policy Menu
@@ -87,37 +78,34 @@ namespace HTTPProtocolFilter_GuiHelper
         private void getBlockedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            lbxSimulated.Items.Clear();
-            lbxSimulated.Items.AddRange(
-                blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
-            );
+            rtbSimulator.Text =
+                string.Join("\r\n", blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log))));
         }
 
         private void getAllowedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            lbxSimulated.Items.Clear();
-            lbxSimulated.Items.AddRange(
-                blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
-            );
+            rtbSimulator.Text =
+                string.Join("\r\n", blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log))));
         }
 
 
         #endregion
 
+        #region Blocked Phrases
+
         private void refreshPhrases()
         {
-            lbxPhrases.Items.Clear();
-            lbxPhrases.Items.AddRange(mainPolicy.BlockedPhrases.ToArray());
-            gpEditPhrase.Enabled = false;
+            lbxPhrases.DataSource = null;
+            lbxPhrases.DataSource = mainPolicy.BlockedPhrases;
         }
 
         private void addPhraseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mainPolicy.BlockedPhrases.Add(new PhraseFilter()
             {
-                 Phrase = "Enter phrase",
-                 Type = BlockPhraseType.CONTAIN
+                Phrase = "Enter phrase",
+                Type = BlockPhraseType.CONTAIN
             });
 
             refreshPhrases();
@@ -139,9 +127,14 @@ namespace HTTPProtocolFilter_GuiHelper
             {
                 PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
 
-                gpEditPhrase.Enabled = true;
                 txtPhrase.Text = p.Phrase;
                 cbPhraseType.SelectedIndex = (int)p.Type;
+
+                gpEditPhrase.Enabled = true;
+            }
+            else
+            {
+                gpEditPhrase.Enabled = false;
             }
         }
 
@@ -149,12 +142,147 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
             p.Phrase = txtPhrase.Text;
+            refreshPhrases();
         }
 
         private void cbPhraseType_SelectedIndexChanged(object sender, EventArgs e)
         {
             PhraseFilter p = (PhraseFilter)lbxPhrases.SelectedItem;
             p.Type = (BlockPhraseType)cbPhraseType.SelectedIndex;
+            refreshPhrases();
+        }
+
+
+        #endregion
+
+        #region Domains and EP
+        private void refreshDomains()
+        {
+            lbxDomains.DataSource = null;
+            lbxDomains.DataSource = mainPolicy.AllowedDomains;
+        }
+
+        private void refreshEPs()
+        {
+            if (lbxDomains.SelectedItem != null)
+            {
+                lbxEp.DataSource = null;
+                lbxEp.DataSource = ((AllowDomain)lbxDomains.SelectedItem).WhiteListEP;
+            }
+        }
+
+        private void addDomainToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mainPolicy.AllowedDomains.Add(new AllowDomain()
+            {
+                DomainFormat = "Enter.Domain",
+                Type = AllowDomainType.EXACT,
+                WhiteListEP = new List<AllowEP>()
+            });
+
+            mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
+
+            refreshDomains();
+        }
+
+        private void addEPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            if (d != null)
+            {
+                d.WhiteListEP.Add(new AllowEP()
+                {
+                    EpFormat = "/enter/ep",
+                    Type = AllowEPType.CONTAIN
+                });
+                refreshEPs();
+            }
+
+        }
+
+        private void deleteDomainToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            if (d != null)
+            {
+                mainPolicy.AllowedDomains.Remove(d);
+                refreshDomains();
+
+                mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
+            }
+        }
+
+        private void deleteEPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            AllowEP ep = lbxEp.SelectedItem as AllowEP;
+            if (d != null && ep != null)
+            {
+                d.WhiteListEP.Remove(ep);
+                refreshDomains();
+                refreshEPs();
+            }
+        }
+
+        private void lbxDomains_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            if (d != null)
+            {
+                txtDomainPattern.Text = d.DomainFormat;
+                cbDomainType.SelectedIndex = (int)d.Type;
+
+                refreshEPs();
+
+                gpEditDomain.Visible = gpEditDomain.Enabled = true;
+            }
+            else
+            {
+                gpEditDomain.Visible = gpEditDomain.Enabled = false;
+            }
+        }
+
+        private void lbxEp_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AllowEP ep = lbxEp.SelectedItem as AllowEP;
+            if (ep != null)
+            {
+                txtEpPattern.Text = ep.EpFormat;
+                cbEpType.SelectedIndex = (int)ep.Type;
+
+                gpEditEp.Visible = gpEditEp.Enabled = true;
+            }
+            else
+            {
+                gpEditEp.Visible = gpEditEp.Enabled = false;
+            }
+        }
+
+        #endregion
+
+        private void btnDApply_Click(object sender, EventArgs e)
+        {
+            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            if (d != null)
+            {
+                d.DomainFormat = txtDomainPattern.Text;
+                d.Type = (AllowDomainType)cbDomainType.SelectedIndex;
+
+                mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
+                refreshDomains();
+            }
+        }
+
+        private void btnEPApply_Click(object sender, EventArgs e)
+        {
+            AllowEP ep = lbxEp.SelectedItem as AllowEP;
+            if (ep != null)
+            {
+                ep.EpFormat = txtEpPattern.Text;
+                ep.Type = (AllowEPType)cbEpType.SelectedIndex;
+                refreshDomains();
+                refreshEPs();
+            }
         }
     }
 }
