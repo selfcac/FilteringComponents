@@ -31,13 +31,21 @@ namespace HTTPProtocolFilter
         public BlockPhraseType Type;
         public string Phrase;
 
-
+        public override string ToString()
+        {
+            return string.Format("\"{0}\", {1}", Phrase, Type);
+        }
     }
 
     public class AllowEP
     {
         public AllowEPType Type;
         public string EpFormat;
+
+        public override string ToString()
+        {
+            return string.Format("\"{0}\", {1}", EpFormat, Type);
+        }
     }
 
     public class AllowDomain
@@ -52,6 +60,11 @@ namespace HTTPProtocolFilter
                 DomainFormat = input,
                 Type = ((input[0] == '.') ? AllowDomainType.SUBDOMAINS : AllowDomainType.EXACT)
                 };
+        }
+
+        public override string ToString()
+        {
+            return string.Format("\"{0}\" EP: {1}, {2}", DomainFormat, WhiteListEP.Count , Type);
         }
     }
 
