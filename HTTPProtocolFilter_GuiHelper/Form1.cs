@@ -36,6 +36,8 @@ namespace HTTPProtocolFilter_GuiHelper
         private void clearPolicyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mainPolicy = new FilterPolicy();
+            refreshDomains();
+            refreshPhrases();
         }
 
         private void loadPolicyJsonToolStripMenuItem_Click(object sender, EventArgs e)
@@ -81,17 +83,118 @@ namespace HTTPProtocolFilter_GuiHelper
         private void getBlockedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            rtbSimulator.Text =
-                string.Join("\r\n", blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log))));
+            lbxSimulated.Items.Clear();
+            lbxSimulated.Items.AddRange(
+                blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
+            );
         }
 
         private void getAllowedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            rtbSimulator.Text =
-                string.Join("\r\n", blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log))));
+            lbxSimulated.Items.Clear();
+            lbxSimulated.Items.AddRange(
+                blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
+            );
         }
 
+        private void newDomainToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string url = lbxSimulated.SelectedItem as string;
+            if (url != null)
+            {
+                Uri u = new Uri(url);
+                mainPolicy.AllowedDomains.Add(new AllowDomain()
+                {
+                    DomainFormat = u.Host,
+                    Type = AllowDomainType.EXACT,
+                    WhiteListEP = new List<AllowEP>()
+                });
+
+                mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
+
+                refreshDomains();
+            }
+        }
+
+        private void domainEPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string url = lbxSimulated.SelectedItem as string;
+            if (url != null)
+            {
+                Uri u = new Uri(url);
+                mainPolicy.AllowedDomains.Add(new AllowDomain()
+                {
+                    DomainFormat = u.Host,
+                    Type = AllowDomainType.EXACT,
+                    WhiteListEP = new List<AllowEP>()
+                    {
+                        new AllowEP()
+                        {
+                            EpFormat = u.AbsolutePath,
+                            Type = AllowEPType.STARTWITH
+                        }
+                    }
+                });
+
+                mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
+
+                refreshDomains();
+            }
+        }
+
+        private void subdomainsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string url = lbxSimulated.SelectedItem as string;
+            if (url != null)
+            {
+                Uri u = new Uri(url);
+                string[] hostParts = u.Host.Split('.');
+                string newHost = "";
+
+                if (hostParts.Length <= 2)
+                {
+                    newHost = u.Host;
+                }
+                else 
+                {
+                    if (hostParts[hostParts.Length -2 ] == "co")
+                    {
+                        // chose last 3
+                        newHost = string.Join(".", new[] {
+                            hostParts[hostParts.Length -3 ],
+                            hostParts[hostParts.Length -2 ],
+                            hostParts[hostParts.Length -1 ]
+                        });
+                    }
+                    else
+                    {
+                        // chose last 2
+                        newHost = string.Join(".", new[] {
+                            hostParts[hostParts.Length -2 ],
+                            hostParts[hostParts.Length -1 ]
+                        });
+                    }
+                }
+
+                mainPolicy.AllowedDomains.Add(new AllowDomain()
+                {
+                    DomainFormat = newHost,
+                    Type = AllowDomainType.SUBDOMAINS,
+                    WhiteListEP = new List<AllowEP>()
+                });
+
+                mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
+
+                refreshDomains();
+            }
+        }
+
+        private void lbxSimulated_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lbxSimulated.SelectedIndex > -1)
+                txtSimulatedSelected.Text = (string)lbxSimulated.SelectedItem;
+        }
 
         #endregion
 
@@ -285,8 +388,9 @@ namespace HTTPProtocolFilter_GuiHelper
             }
         }
 
+
         #endregion
 
-       
+        
     }
 }

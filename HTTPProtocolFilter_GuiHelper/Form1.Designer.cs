@@ -72,10 +72,15 @@
             this.lbxEp = new System.Windows.Forms.ListBox();
             this.deleteDomainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteEPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rtbSimulator = new System.Windows.Forms.RichTextBox();
             this.btnDApply = new System.Windows.Forms.Button();
             this.btnEPApply = new System.Windows.Forms.Button();
             this.btnPApply = new System.Windows.Forms.Button();
+            this.txtSimulatedSelected = new System.Windows.Forms.TextBox();
+            this.menuStrip5 = new System.Windows.Forms.MenuStrip();
+            this.newDomainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.domainEPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.subdomainsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lbxSimulated = new System.Windows.Forms.ListBox();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -91,6 +96,7 @@
             this.gpEditPhrase.SuspendLayout();
             this.menuStrip3.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.menuStrip5.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -153,7 +159,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.rtbSimulator);
+            this.groupBox1.Controls.Add(this.lbxSimulated);
+            this.groupBox1.Controls.Add(this.menuStrip5);
+            this.groupBox1.Controls.Add(this.txtSimulatedSelected);
             this.groupBox1.Controls.Add(this.menuStrip2);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(486, 4);
@@ -560,16 +568,6 @@
             this.deleteEPToolStripMenuItem.Text = "Delete EP";
             this.deleteEPToolStripMenuItem.Click += new System.EventHandler(this.deleteEPToolStripMenuItem_Click);
             // 
-            // rtbSimulator
-            // 
-            this.rtbSimulator.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbSimulator.Location = new System.Drawing.Point(4, 46);
-            this.rtbSimulator.Name = "rtbSimulator";
-            this.rtbSimulator.ReadOnly = true;
-            this.rtbSimulator.Size = new System.Drawing.Size(467, 651);
-            this.rtbSimulator.TabIndex = 2;
-            this.rtbSimulator.Text = "";
-            // 
             // btnDApply
             // 
             this.btnDApply.Location = new System.Drawing.Point(6, 164);
@@ -600,6 +598,63 @@
             this.btnPApply.UseVisualStyleBackColor = true;
             this.btnPApply.Click += new System.EventHandler(this.btnPApply_Click);
             // 
+            // txtSimulatedSelected
+            // 
+            this.txtSimulatedSelected.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.txtSimulatedSelected.Location = new System.Drawing.Point(4, 673);
+            this.txtSimulatedSelected.Name = "txtSimulatedSelected";
+            this.txtSimulatedSelected.ReadOnly = true;
+            this.txtSimulatedSelected.Size = new System.Drawing.Size(467, 24);
+            this.txtSimulatedSelected.TabIndex = 5;
+            // 
+            // menuStrip5
+            // 
+            this.menuStrip5.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.menuStrip5.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newDomainToolStripMenuItem,
+            this.domainEPToolStripMenuItem,
+            this.subdomainsToolStripMenuItem});
+            this.menuStrip5.Location = new System.Drawing.Point(4, 649);
+            this.menuStrip5.Name = "menuStrip5";
+            this.menuStrip5.Size = new System.Drawing.Size(467, 24);
+            this.menuStrip5.TabIndex = 6;
+            this.menuStrip5.Text = "menuStrip5";
+            // 
+            // newDomainToolStripMenuItem
+            // 
+            this.newDomainToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.newDomainToolStripMenuItem.Name = "newDomainToolStripMenuItem";
+            this.newDomainToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
+            this.newDomainToolStripMenuItem.Text = "New Domain";
+            this.newDomainToolStripMenuItem.Click += new System.EventHandler(this.newDomainToolStripMenuItem_Click);
+            // 
+            // domainEPToolStripMenuItem
+            // 
+            this.domainEPToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.domainEPToolStripMenuItem.Name = "domainEPToolStripMenuItem";
+            this.domainEPToolStripMenuItem.Size = new System.Drawing.Size(90, 20);
+            this.domainEPToolStripMenuItem.Text = "Domain && EP";
+            this.domainEPToolStripMenuItem.Click += new System.EventHandler(this.domainEPToolStripMenuItem_Click);
+            // 
+            // subdomainsToolStripMenuItem
+            // 
+            this.subdomainsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.subdomainsToolStripMenuItem.Name = "subdomainsToolStripMenuItem";
+            this.subdomainsToolStripMenuItem.Size = new System.Drawing.Size(85, 20);
+            this.subdomainsToolStripMenuItem.Text = "Subdomains";
+            this.subdomainsToolStripMenuItem.Click += new System.EventHandler(this.subdomainsToolStripMenuItem_Click);
+            // 
+            // lbxSimulated
+            // 
+            this.lbxSimulated.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbxSimulated.FormattingEnabled = true;
+            this.lbxSimulated.ItemHeight = 18;
+            this.lbxSimulated.Location = new System.Drawing.Point(4, 46);
+            this.lbxSimulated.Name = "lbxSimulated";
+            this.lbxSimulated.Size = new System.Drawing.Size(467, 603);
+            this.lbxSimulated.TabIndex = 7;
+            this.lbxSimulated.SelectedIndexChanged += new System.EventHandler(this.lbxSimulated_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
@@ -612,7 +667,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Policy Editor";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -639,6 +694,8 @@
             this.menuStrip3.ResumeLayout(false);
             this.menuStrip3.PerformLayout();
             this.panel2.ResumeLayout(false);
+            this.menuStrip5.ResumeLayout(false);
+            this.menuStrip5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -690,10 +747,15 @@
         private System.Windows.Forms.ListBox lbxEp;
         private System.Windows.Forms.ToolStripMenuItem deleteDomainToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteEPToolStripMenuItem;
-        private System.Windows.Forms.RichTextBox rtbSimulator;
         private System.Windows.Forms.Button btnEPApply;
         private System.Windows.Forms.Button btnDApply;
         private System.Windows.Forms.Button btnPApply;
+        private System.Windows.Forms.ListBox lbxSimulated;
+        private System.Windows.Forms.MenuStrip menuStrip5;
+        private System.Windows.Forms.ToolStripMenuItem newDomainToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem domainEPToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem subdomainsToolStripMenuItem;
+        private System.Windows.Forms.TextBox txtSimulatedSelected;
     }
 }
 
