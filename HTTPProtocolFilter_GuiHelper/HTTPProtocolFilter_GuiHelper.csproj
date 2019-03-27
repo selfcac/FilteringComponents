@@ -84,6 +84,10 @@
       <Project>{1ED24440-1C8E-4187-A7C7-E685F967FB14}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HTTPProtocolFilterTests\HTTPProtocolFilterTests.csproj">
+      <Project>{8A5FEC01-1B70-4D63-B0B2-791C37B3B7B4}</Project>
+      <Name>HTTPProtocolFilterTests</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HTTPProtocolFilter\HTTPProtocolFilter.csproj">
       <Project>{8bcac42c-ef4f-4510-a327-3ee7e7ae80ac}</Project>
       <Name>HTTPProtocolFilter</Name>

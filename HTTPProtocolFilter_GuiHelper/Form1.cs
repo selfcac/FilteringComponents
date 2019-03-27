@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HTTPProtocolFilter;
+using HTTPProtocolFilterTests.Utils;
 
 namespace HTTPProtocolFilter_GuiHelper
 {
@@ -67,12 +68,16 @@ namespace HTTPProtocolFilter_GuiHelper
             }
         }
 
+      
+
         private void loadLogFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             dlgOpen.Title = "Open block log file:";
             if (dlgOpen.ShowDialog() == DialogResult.OK)
             {
                 blockLogs = File.ReadAllLines(dlgOpen.FileName);
+                for (int i = 0; i < blockLogs.Length; i++)
+                    blockLogs[i] = blockLogs[i].Substring(blockLogs[i].IndexOf("||") + 2);
             }
         }
 
@@ -84,8 +89,10 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             IHTTPFilter filter = mainPolicy;
             lbxSimulated.Items.Clear();
+            var linq = blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log)));
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
             lbxSimulated.Items.AddRange(
-                blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
+                linq.Take(1000).ToArray<object>()
             );
         }
 
@@ -93,8 +100,82 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             IHTTPFilter filter = mainPolicy;
             lbxSimulated.Items.Clear();
+            var linq = blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log)));
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
             lbxSimulated.Items.AddRange(
-                blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log))).ToArray<object>()
+                linq.Take(1000).ToArray<object>()
+            );
+        }
+
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            lbxSimulated.Items.Clear();
+            var linq = blockLogs.Where(
+                (log) =>
+                {
+                    Uri uri = new Uri(log);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                }
+                );
+
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lbxSimulated.Items.AddRange(
+                linq.Take(1000).ToArray<object>()
+            );
+        }
+
+        private void orderedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lbxSimulated.Items.Clear();
+            var linq = blockLogs.Where(
+                (log) => {
+                    Uri uri = new Uri(log);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                }
+                ).OrderBy(
+                (log) => new Uri(log).Host
+                );
+
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lbxSimulated.Items.AddRange(
+                linq.Take(1000).ToArray<object>()
+            );
+        }
+
+        private void orderedGroupedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lbxSimulated.Items.Clear();
+            var linq = blockLogs.Where(
+                (log) => {
+                    Uri uri = new Uri(log);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                }
+                ).GroupBy(
+                (log) => new Uri(log).Host,
+                (log) => log,
+                (key, hosts) => hosts.First()
+                );
+
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lbxSimulated.Items.AddRange(
+                linq.Take(1000).ToArray<object>()
+            );
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            lbxSimulated.Items.Clear();
+            var linq = blockLogs.Where(
+                (log) =>
+                {
+                    Uri uri = new Uri(log);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                }
+                );
+
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lbxSimulated.Items.AddRange(
+                linq.Take(2000).ToArray<object>()
             );
         }
 
@@ -337,11 +418,11 @@ namespace HTTPProtocolFilter_GuiHelper
 
                 refreshEPs();
 
-                gpEditDomain.Visible = gpEditDomain.Enabled = true;
+               gpEditDomain.Enabled = true;
             }
             else
             {
-                gpEditDomain.Visible = gpEditDomain.Enabled = false;
+               gpEditDomain.Enabled = false;
             }
         }
 
@@ -353,11 +434,11 @@ namespace HTTPProtocolFilter_GuiHelper
                 txtEpPattern.Text = ep.EpFormat;
                 cbEpType.SelectedIndex = (int)ep.Type;
 
-                gpEditEp.Visible = gpEditEp.Enabled = true;
+                gpEditEp.Enabled = true;
             }
             else
             {
-                gpEditEp.Visible = gpEditEp.Enabled = false;
+                gpEditEp.Enabled = false;
             }
         }
 
@@ -387,6 +468,8 @@ namespace HTTPProtocolFilter_GuiHelper
                 refreshEPs();
             }
         }
+
+
 
 
         #endregion
