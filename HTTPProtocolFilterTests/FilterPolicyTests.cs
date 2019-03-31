@@ -203,17 +203,18 @@ namespace HTTPProtocolFilter.Tests
             string ep3 = "/i-am-whitelisted/badword";
 
             // any ep except bad phrases:
-            areFalse(filter.isWhitelistedEP(new AllowDomain()
+            areTrue(filter.isWhitelistedEP(new AllowDomain()
             {
                 DomainFormat = "",
                 Type = AllowDomainType.EXACT,
                 WhiteListEP = new List<AllowEP>()
             }, ep1));
+            areFalse(filter.isContentAllowed(ep1));
 
             // only ep that are whitelisted
             var domain1 = new AllowDomain()
             {
-                DomainFormat = "",
+                DomainFormat = "e.com",
                 Type = AllowDomainType.EXACT,
                 WhiteListEP = new List<AllowEP>()
                 {
@@ -225,9 +226,14 @@ namespace HTTPProtocolFilter.Tests
             };
 
             areTrue(filter.isWhitelistedEP(domain1, ep2));
-            areFalse(filter.isWhitelistedEP(domain1, ep2 + "/work"));
-            areFalse(filter.isWhitelistedEP(domain1, ep3));
             areFalse(filter.isWhitelistedEP(domain1, "/not-whitelisted"));
+
+            areTrue(filter.isWhitelistedEP(domain1, ep2 + "/work"));
+            areFalse(filter.isContentAllowed(ep2 + "/work"));
+            areFalse(filter.isWhitelistedURL(new Uri("http://e.com" + ep2 + "/work"))); // does both checks
+
+            areFalse(filter.isContentAllowed( ep3));
+            areFalse(filter.isWhitelistedURL(new Uri("http://e.com" + ep3))); // does both checks
 
             areFalse(filter.isWhitelistedEP(null, ""));
         }

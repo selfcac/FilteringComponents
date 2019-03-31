@@ -114,7 +114,7 @@ namespace HTTPProtocolFilter_GuiHelper
                 (log) =>
                 {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
                 }
                 );
 
@@ -130,7 +130,7 @@ namespace HTTPProtocolFilter_GuiHelper
             var linq = blockLogs.Where(
                 (log) => {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
                 }
                 ).OrderBy(
                 (log) => new Uri(log).Host
@@ -148,7 +148,7 @@ namespace HTTPProtocolFilter_GuiHelper
             var linq = blockLogs.Where(
                 (log) => {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
                 }
                 ).GroupBy(
                 (log) => new Uri(log).Host,
@@ -169,7 +169,7 @@ namespace HTTPProtocolFilter_GuiHelper
                 (log) =>
                 {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.checkPhrase(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
                 }
                 );
 

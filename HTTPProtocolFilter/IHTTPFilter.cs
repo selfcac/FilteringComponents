@@ -80,7 +80,7 @@ namespace HTTPProtocolFilter
 
         bool isWhitelistedEP(AllowDomain domainObj, string ep);
 
-        bool checkPhrase(string Content);
+        bool isContentAllowed(string Content);
 
         void reloadPolicy(string filename);
         void savePolicy(string filename);

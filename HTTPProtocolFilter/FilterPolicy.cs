@@ -148,11 +148,21 @@ namespace HTTPProtocolFilter
             return found;
         }
 
-        public bool checkPhrase(string Content)
+        /// <summary>
+        /// Check if content clean of bad words
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns>True if content is allowed under policy</returns>
+        public bool isContentAllowed(string Content)
         {
             return (findBlockingPhrase(Content) == null);
         }
 
+        /// <summary>
+        /// Find the phrase that the content is blocked from using.
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <returns>Null if no phrase rule is applicabalbe (allowed)</returns>
         public PhraseFilter findBlockingPhrase(string Content)
         {
             PhraseFilter result = null;
@@ -185,6 +195,7 @@ namespace HTTPProtocolFilter
 
         #endregion 
 
+       
         public static bool checkEPRule(AllowEP ep, string epPath )
         {
             bool allowed = false;
@@ -208,6 +219,10 @@ namespace HTTPProtocolFilter
             return allowed;
         }
 
+        /// <summary>
+        /// Check if ep is in policy
+        /// </summary>
+        /// <returns>true if allowed</returns>
         public bool isWhitelistedEP(AllowDomain domainObj, string ep)
         {
             if (domainObj == null)
@@ -234,18 +249,24 @@ namespace HTTPProtocolFilter
                 allowed = true;
             }
 
-            if (allowed) // Finally check for banned phrases.
-                allowed = checkPhrase(ep); 
 
             return allowed;
         }
 
+        /// <summary>
+        /// Check if Host (domain) is in policy
+        /// </summary>
+        /// <returns>true if allowed</returns>
         public bool isWhitelistedHost(string host)
         {
             AllowDomain domain = allowedDomainsTrie.CheckDomain(host)?.Tag;
             return domain != null;
         }
 
+        /// <summary>
+        /// Check if complete URL is in policy (Host+EP+Phrase checks)
+        /// </summary>
+        /// <returns>true if allowed</returns>
         public bool isWhitelistedURL(Uri uri)
         {
             return isWhitelistedURL(uri.Host, uri.PathAndQuery);
@@ -258,10 +279,14 @@ namespace HTTPProtocolFilter
             if (domainRule != null)
             {
                 allowed = isWhitelistedEP(domainRule, pathAndQuery ?? "");
+
+                if (allowed) // Finally check for banned phrases.
+                    allowed = isContentAllowed(pathAndQuery);
             }
 
             return allowed;
         }
+
 
         public void reloadPolicy(string filename)
         {
