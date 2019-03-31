@@ -75,11 +75,12 @@ namespace HTTPProtocolFilter
         bool isWhitelistedURL(Uri uri);
         bool isWhitelistedURL(string host, string pathAndQuery);
 
-        bool isWhitelistedHost(string host);
         AllowDomain findAllowedDomain(string host);
+        bool isWhitelistedHost(string host);
 
         bool isWhitelistedEP(AllowDomain domainObj, string ep);
 
+        PhraseFilter findBlockingPhrase(string Content);
         bool isContentAllowed(string Content);
 
         void reloadPolicy(string filename);
