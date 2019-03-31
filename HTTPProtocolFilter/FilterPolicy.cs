@@ -150,10 +150,15 @@ namespace HTTPProtocolFilter
 
         public bool checkPhrase(string Content)
         {
-            bool allowed = true;
+            return (findBlockingPhrase(Content) == null);
+        }
+
+        public PhraseFilter findBlockingPhrase(string Content)
+        {
+            PhraseFilter result = null;
             List<string> Words = getWords(Content);
 
-            for (int i = 0; i < BlockedPhrases.Count && allowed; i++)
+            for (int i = 0; i < BlockedPhrases.Count && (result == null); i++)
             {
                 switch (BlockedPhrases[i].Type)
                 {
@@ -161,7 +166,7 @@ namespace HTTPProtocolFilter
                     case BlockPhraseType.REGEX:
                         if (checkPhraseFoundSimple(Content, BlockedPhrases[i]))
                         {
-                            allowed = false;
+                            result = BlockedPhrases[i];
                         }
                         break;
 
@@ -169,17 +174,13 @@ namespace HTTPProtocolFilter
                     case BlockPhraseType.WORDCONTAINING:
                         if (checkPhraseFoundWord(Words, BlockedPhrases[i]))
                         {
-                            allowed = false;
+                            result = BlockedPhrases[i];
                         }
-                        break;
-
-
-                    default:
-                        allowed = false;
                         break;
                 }
             }
-            return allowed;
+
+            return result;
         }
 
         #endregion 
