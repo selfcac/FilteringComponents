@@ -12,6 +12,28 @@ namespace Common
 {
     public class SystemUtils
     {
+        public static C.TaskInfo isServiceRunning(string name, out bool isRunning)
+        {
+            C.TaskInfo result = C.TaskInfo.Fail("Init");
+            isRunning = false;
+
+            try
+            {
+                ServiceController service = new ServiceController(name);
+                isRunning = 
+                    (service.Status == ServiceControllerStatus.Running) ||
+                    (service.Status == ServiceControllerStatus.StartPending) ||
+                    (service.Status == ServiceControllerStatus.ContinuePending) 
+                    ;
+            }
+            catch (Exception ex)
+            {
+                result = C.TaskInfo.Fail(ex.Message);
+            }
+
+            return result;
+        }
+
         public static C.TaskInfo StartService(string name)
         {
             C.TaskInfo result = C.TaskInfo.Fail("Init");

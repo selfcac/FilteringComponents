@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPProtocolFilterTests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HTTPProtocolFilter_GuiHelper", "HTTPProtocolFilter_GuiHelper\HTTPProtocolFilter_GuiHelper.csproj", "{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckBlacklistedWifi", "CheckBlacklistedWifi\CheckBlacklistedWifi.csproj", "{A90885FE-F4F7-467B-9A1F-01BF2EE4C11E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73F3BFE5-02B6-44D4-9CAF-F24F4A74AC6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A90885FE-F4F7-467B-9A1F-01BF2EE4C11E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A90885FE-F4F7-467B-9A1F-01BF2EE4C11E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A90885FE-F4F7-467B-9A1F-01BF2EE4C11E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A90885FE-F4F7-467B-9A1F-01BF2EE4C11E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
