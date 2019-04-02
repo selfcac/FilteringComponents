@@ -301,5 +301,29 @@ namespace HTTPProtocolFilter.Tests
                 Assert.Fail(ex.ToString());
             }
         }
+
+        [TestMethod()]
+        public void emptyContent()
+        {
+            FilterPolicy filter = new FilterPolicy()
+            {
+                BlockedPhrases = new List<PhraseFilter>()
+                {
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.WORDCONTAINING ,
+                        Phrase= "bad"
+                    },
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.REGEX,
+                        Phrase = "wor[dk]"
+                    }
+                }
+            };
+
+
+            Assert.AreEqual(null, filter.findBlockingPhrase(""));
+        }
     }
 }

@@ -67,6 +67,9 @@ namespace HTTPProtocolFilter
 
         public static List<string> getWords(string text)
         {
+            if (string.IsNullOrEmpty(text))
+                return new List<string>();
+
             text = text.ToLower(); // all compares are done in little case
 
             List<string> words = new List<string>();
