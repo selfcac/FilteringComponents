@@ -17,6 +17,12 @@ namespace TimeBlock_GuiHelper
             InitializeComponent();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+
+        }
+
         string[] Days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
         string[] Hours =
         {
@@ -56,13 +62,44 @@ namespace TimeBlock_GuiHelper
 
         }
 
-        private void label145_MouseEnter(object sender, EventArgs e)
+        void SwitchValue(Label ctrl)
         {
-            Label ctrl = (Label)sender;
             int day = ctrl.TabIndex / 24;
             int hour = ctrl.TabIndex % 24;
 
-            lblHover1.Text = Days[day] + " - " + Hours[hour];
+            lblHover1.Text = Days[day] + ", " + Hours[hour] + "-" + Hours[(hour+1) % 24] ;
+
+            if (MouseButtons == MouseButtons.Left)
+            {
+                if (ctrl.BackColor == lblAllowColor.BackColor)
+                {
+                    ctrl.BackColor = lblBlockColor.BackColor;
+                }
+                else
+                {
+                    ctrl.BackColor = lblAllowColor.BackColor;
+                }
+            }
+        }
+
+
+        private void label145_MouseEnter(object sender, EventArgs e)
+        {
+            Label ctrl = (Label)sender;
+            SwitchValue(ctrl);
+        }
+
+        private void label145_MouseDown(object sender, MouseEventArgs e)
+        {
+            Label ctrl = (Label)sender;
+            ctrl.Capture = e.Clicks > 1;
+            SwitchValue(ctrl);
+        }
+
+        private void label145_Click(object sender, EventArgs e)
+        {
+            ((Control)sender).Capture = true;
+            SwitchValue((Label)sender);
         }
     }
 }
