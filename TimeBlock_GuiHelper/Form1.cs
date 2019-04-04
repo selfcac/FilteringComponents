@@ -139,7 +139,7 @@ namespace TimeBlock_GuiHelper
 
         private void loadFromJsonToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            WindowState = FormWindowState.Minimized;
             if (dlgOpen.ShowDialog() == DialogResult.OK)
             {
                 ConnectionHelpers.TaskInfo result =
@@ -154,10 +154,12 @@ namespace TimeBlock_GuiHelper
                     MessageBox.Show("Can't open beacuse:\n" + result.eventReason);
                 }
             }
+            tmrRestoreMinimize.Enabled = true;
         }
 
         private void saveToJsonToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            WindowState = FormWindowState.Minimized;
             if (dlgSave.ShowDialog() == DialogResult.OK)
             {
                 ConnectionHelpers.TaskInfo result =
@@ -167,6 +169,13 @@ namespace TimeBlock_GuiHelper
                     MessageBox.Show("Can't save beacuse:\n" + result.eventReason);
                 }
             }
+            tmrRestoreMinimize.Enabled = true;
+        }
+
+        private void tmrRestoreMinimize_Tick(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Normal;
+            tmrRestoreMinimize.Enabled = false;
         }
     }
 }
