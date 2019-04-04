@@ -121,13 +121,7 @@ namespace TimeBlock_GuiHelper
 
         private void allowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            for (int day =0;day < 7; day++)
-            {
-                for (int hour=0;hour < 24; hour ++)
-                {
-                    timeFilter.AllowDayAndTimeMatrix[day, hour] = true;
-                }
-            }
+            timeFilter.clearAllTo(true);
             reColorMatrix();
         }
 
