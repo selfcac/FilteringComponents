@@ -25,6 +25,7 @@ namespace Common
                     (service.Status == ServiceControllerStatus.StartPending) ||
                     (service.Status == ServiceControllerStatus.ContinuePending) 
                     ;
+                result = C.TaskInfo.Success("got status");
             }
             catch (Exception ex)
             {
