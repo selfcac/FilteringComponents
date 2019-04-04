@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -19,8 +20,7 @@ namespace TimeBlock_GuiHelper
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-
+            reColorMatrix();
         }
 
         string[] Days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
@@ -57,31 +57,48 @@ namespace TimeBlock_GuiHelper
             "11PM",
         };
 
-        void setState(int day, int hour)
+        TimeFilterObject timeFilter = new TimeFilterObject();
+
+        void reColorMatrix()
         {
-
-        }
-
-        void SwitchValue(Label ctrl)
-        {
-            int day = ctrl.TabIndex / 24;
-            int hour = ctrl.TabIndex % 24;
-
-            lblHover1.Text = Days[day] + ", " + Hours[hour] + "-" + Hours[(hour+1) % 24] ;
-
-            if (MouseButtons == MouseButtons.Left)
+            foreach (Control ctrl in tabPage1.Controls)
             {
-                if (ctrl.BackColor == lblAllowColor.BackColor)
+                Label lbl = ctrl as Label;
+                if (lbl != null && lbl.TabIndex < 7 * 24) 
                 {
-                    ctrl.BackColor = lblBlockColor.BackColor;
-                }
-                else
-                {
-                    ctrl.BackColor = lblAllowColor.BackColor;
+                    int day = ctrl.TabIndex / 24;
+                    int hour = ctrl.TabIndex % 24;
+
+                    lbl.BackColor = (timeFilter.AllowDayAndTimeMatrix[day, hour] ?
+                        lblAllowColor.BackColor : lblBlockColor.BackColor);
                 }
             }
         }
 
+        void SwitchValue(Label ctrl)
+        {
+           lock (timeFilter)
+            {
+                int day = ctrl.TabIndex / 24;
+                int hour = ctrl.TabIndex % 24;
+
+                lblHover1.Text = Days[day] + ", " + Hours[hour] + "-" + Hours[(hour + 1) % 24];
+
+                if (MouseButtons == MouseButtons.Left)
+                {
+                    if (ctrl.BackColor == lblAllowColor.BackColor)
+                    {
+                        ctrl.BackColor = lblBlockColor.BackColor;
+                        timeFilter.AllowDayAndTimeMatrix[day, hour] = false;
+                    }
+                    else
+                    {
+                        ctrl.BackColor = lblAllowColor.BackColor;
+                        timeFilter.AllowDayAndTimeMatrix[day, hour] = true;
+                    }
+                }
+            }
+        }
 
         private void label145_MouseEnter(object sender, EventArgs e)
         {
@@ -96,10 +113,60 @@ namespace TimeBlock_GuiHelper
             SwitchValue(ctrl);
         }
 
-        private void label145_Click(object sender, EventArgs e)
+        private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ((Control)sender).Capture = true;
-            SwitchValue((Label)sender);
+            timeFilter = new TimeFilterObject();
+            reColorMatrix();
+        }
+
+        private void allowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int day =0;day < 7; day++)
+            {
+                for (int hour=0;hour < 24; hour ++)
+                {
+                    timeFilter.AllowDayAndTimeMatrix[day, hour] = true;
+                }
+            }
+            reColorMatrix();
+        }
+
+        private void blockToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            timeFilter = new TimeFilterObject();
+            reColorMatrix();
+        }
+
+        private void loadFromJsonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            if (dlgOpen.ShowDialog() == DialogResult.OK)
+            {
+                ConnectionHelpers.TaskInfo result =
+                    JSONBaseClass.FromFile<TimeFilterObject>(dlgOpen.FileName);
+                if (result)
+                {
+                    timeFilter = ((ConnectionHelpers.TaskInfoResult<TimeFilterObject>)result).result;
+                    reColorMatrix();
+                }
+                else
+                {
+                    MessageBox.Show("Can't open beacuse:\n" + result.eventReason);
+                }
+            }
+        }
+
+        private void saveToJsonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dlgSave.ShowDialog() == DialogResult.OK)
+            {
+                ConnectionHelpers.TaskInfo result =
+                    timeFilter.ToFile(dlgSave.FileName);
+                if (!result)
+                {
+                    MessageBox.Show("Can't save beacuse:\n" + result.eventReason);
+                }
+            }
         }
     }
 }
