@@ -122,8 +122,8 @@ namespace HTTPProtocolFilter
             int before = Math.Max(index - expand, 0);
             int after = Math.Min(index + tryLength + expand, content.Length);
 
-            return content.Substring(before, (index - before)) + "*" +
-                   content.Substring(index, tryLength) + "*" +
+            return content.Substring(before, (index - before)) + "__" +
+                   content.Substring(index, tryLength) + "__" +
                    content.Substring(index + tryLength, (after - (index + tryLength)) );
         }
 

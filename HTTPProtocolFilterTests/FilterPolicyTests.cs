@@ -485,19 +485,43 @@ namespace HTTPProtocolFilter.Tests
             testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
 
             word = "text";
-            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) ;
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length);
 
             Console.Write(testResult);
 
-            Assert.AreEqual(@"*this* are very 
-this *are* very tigh
-this are *ver*y tight te
-ery tight *text*
-long long *this* are very 
-long this *are* very tigh
- this are *ver*y tight te
-ery tight *text* long long", testResult);
+            Assert.AreEqual(@"__this__ are very 
+this __are__ very tigh
+this are __ver__y tight te
+ery tight __text__
+long long __this__ are very 
+long this __are__ very tigh
+ this are __ver__y tight te
+ery tight __text__ long long", testResult);
 
         }
+
+
+        [TestMethod()]
+        public void regexContext()
+        {
+            FilterPolicy filter = new FilterPolicy()
+            {
+                BlockedPhrases = new List<PhraseFilter>()
+                {
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.REGEX,
+                        Phrase = "la[tp]ex",
+                        Scope = BlockPhraseScope.ANY // just block it -  Very bad term!
+                    },
+                },
+            };
+
+            string reason = "";
+            areFalse(filter.isContentAllowed("translateX: -50%", BlockPhraseScope.BODY, out reason));
+
+            Console.Write(reason);
+        }
     }
+    
 }
