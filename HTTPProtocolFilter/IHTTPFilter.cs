@@ -11,11 +11,12 @@ namespace HTTPProtocolFilter
 
     public enum BlockPhraseScope
     {
-        URL= 0, BODY, ALL_SCOPES
+        URL= 0, BODY, ANY
     }
 
     public enum AllowEPType //  EP
     {
+        // NO EXACT because always can have params (?a=b&c=d)
         CONTAIN = 0, STARTWITH, REGEX
     }
 

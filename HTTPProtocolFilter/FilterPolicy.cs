@@ -166,7 +166,7 @@ namespace HTTPProtocolFilter
             }
             else
             {
-                reason = "blocked because phrase " + phrase.ToString();
+                reason = "blocked because scope " + scope + " equal phrase " + phrase.ToString();
                 return false;
             }
         }
@@ -185,8 +185,8 @@ namespace HTTPProtocolFilter
             {
                 if (
                     // Any of the scope is ALL
-                    scope == BlockPhraseScope.ALL_SCOPES
-                    || BlockedPhrases[i].Scope == BlockPhraseScope.ALL_SCOPES
+                    scope == BlockPhraseScope.ANY
+                    || BlockedPhrases[i].Scope == BlockPhraseScope.ANY
 
                     // Scopes are equal:
                     || BlockedPhrases[i].Scope == scope
@@ -261,7 +261,7 @@ namespace HTTPProtocolFilter
             }
 
             bool allowed = false;
-            reason = "Domain " + domainObj.DomainFormat + " is blocked at init (default)";
+            reason = "block " + ep + " because not in " + domainObj.DomainFormat + " (not whitelisted) ";
 
 
             // check if ep in domain
@@ -273,7 +273,7 @@ namespace HTTPProtocolFilter
                     if (checkEPRuleMatch(domainObj.AllowEP[i], ep))
                     {
                         allowed = true;
-                        reason = "Domain " + domainObj.DomainFormat + " is allowed by " + ep.ToString();
+                        reason = domainObj.DomainFormat + ep + " is allowed by " + domainObj.AllowEP[i].ToString();
                         break;
                     }
                 }
@@ -291,7 +291,7 @@ namespace HTTPProtocolFilter
                     if (checkEPRuleMatch(domainObj.BlockEP[i], ep))
                     {
                         allowed = false;
-                        reason = "Domain " + domainObj.DomainFormat + " is blocked by " + ep.ToString();
+                        reason = domainObj.DomainFormat + ep + " is blocked by " + domainObj.BlockEP[i].ToString();
                         break;
                     }
                 }
@@ -331,7 +331,7 @@ namespace HTTPProtocolFilter
                 if (allowed) // Finally check for banned phrases. 
                 {
                     string phrase_reason = "";
-                    allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL, out reason);
+                    allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL, out phrase_reason);
                     if (!allowed)
                     {
                         reason = phrase_reason;

@@ -191,13 +191,13 @@ namespace HTTPProtocolFilter.Tests
                     {
                         Type = BlockPhraseType.WORDCONTAINING ,
                         Phrase= "bad",
-                        Scope = BlockPhraseScope.ALL_SCOPES
+                        Scope = BlockPhraseScope.ANY
                     },
                     new PhraseFilter()
                     {
                         Type = BlockPhraseType.REGEX,
                         Phrase = "wor[dk]",
-                        Scope = BlockPhraseScope.ALL_SCOPES
+                        Scope = BlockPhraseScope.ANY
                     }
                 }
 
@@ -340,7 +340,136 @@ namespace HTTPProtocolFilter.Tests
             };
 
 
-            Assert.AreEqual(null, filter.findBlockingPhrase("", BlockPhraseScope.ALL_SCOPES));
+            Assert.AreEqual(null, filter.findBlockingPhrase("", BlockPhraseScope.ANY));
+        }
+
+        [TestMethod()]
+        public void newBlockFeatures()
+        {
+            var epAllowList = new List<EPPolicy>();
+
+            FilterPolicy filter = new FilterPolicy()
+            {
+                BlockedPhrases = new List<PhraseFilter>()
+                {
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.WORDCONTAINING ,
+                        Phrase= "ssearch",
+                        Scope = BlockPhraseScope.URL // only search url will blocked
+                    },
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.EXACTWORD,
+                        Phrase = "veryHTMLTerm",
+                        Scope = BlockPhraseScope.BODY // like html
+                    },
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.WORDCONTAINING,
+                        Phrase = "veryBadTerm",
+                        Scope = BlockPhraseScope.ANY // just block it -  Very bad term!
+                    },
+                },
+
+                AllowedDomains = new List<DomainPolicy>()
+                {
+                    new DomainPolicy()
+                    {
+                        DomainBlocked = true,
+                        DomainFormat = "777.com",
+                        Type = AllowDomainType.SUBDOMAINS
+                    },
+                    new DomainPolicy()
+                    {
+                        DomainBlocked = false,
+                        DomainFormat = "666.com",
+                        Type = AllowDomainType.SUBDOMAINS,
+
+                        AllowEP = epAllowList,
+                        BlockEP = new List<EPPolicy>()
+                        {
+                            new EPPolicy()
+                            {
+                                EpFormat = "\\/search(\\/{0,1})",
+                                Type = AllowEPType.REGEX
+                            }
+                        }
+                    }
+                }
+                
+            };
+            string totalReason = "";
+            string reason = "";
+
+            // blocked by url\any but not body scope
+            areFalse(filter.isWhitelistedURL("a.666.com", "/ssearch", out reason)); totalReason += reason + '\n';
+            areFalse(filter.isWhitelistedURL("a.666.com", "/ok?q=veryBadTerm", out reason)); totalReason += reason + '\n';
+            areTrue( filter.isWhitelistedURL("a.666.com", "/ok?q=veryHTMLTerm", out reason)); totalReason += "<Allowed>\n";
+
+            areFalse(filter.isContentAllowed("<veryHTMLTerm>", BlockPhraseScope.BODY, out reason)); totalReason += reason + '\n';
+            areTrue( filter.isContentAllowed("<ssearch>", BlockPhraseScope.BODY, out reason)); totalReason += "<Allowed>\n";
+            areFalse(filter.isContentAllowed("<veryBadTerm>", BlockPhraseScope.BODY, out reason)); totalReason += reason + '\n';
+
+            areTrue(filter.isContentAllowed("<veryHTMLTerm>", BlockPhraseScope.URL, out reason)); totalReason += "<Allowed>\n";
+            areFalse(filter.isContentAllowed("<ssearch>", BlockPhraseScope.URL, out reason)); totalReason += reason + '\n';
+            areFalse(filter.isContentAllowed("<veryBadTerm>", BlockPhraseScope.URL, out reason)); totalReason += reason + '\n';
+
+            areFalse(filter.isContentAllowed("<veryHTMLTerm>", BlockPhraseScope.ANY, out reason)); totalReason += reason + '\n';
+            areFalse(filter.isContentAllowed("<ssearch>", BlockPhraseScope.ANY, out reason)); totalReason += reason + '\n';
+            areFalse(filter.isContentAllowed("<veryBadTerm>", BlockPhraseScope.ANY, out reason)); totalReason += reason + '\n';
+
+
+            // Blocked 777 by "DomainBlocked"
+            areFalse(filter.isWhitelistedURL("a.777.com", "/some-ep", out reason)); totalReason += reason + '\n';
+
+            // Allowed EP in 666 by default
+            areTrue(filter.isWhitelistedURL("a.666.com", "/some-ep", out reason)); totalReason += "<Allowed>\n";
+
+            // Blocked EP in 666 by blocke EP
+            areFalse(filter.isWhitelistedURL("a.666.com", "/some-ep/search/", out reason)); totalReason += reason + '\n';
+            areFalse(filter.isWhitelistedURL("a.666.com", "/some-ep/search", out reason)); totalReason += reason + '\n';
+            areFalse(filter.isWhitelistedURL("a.666.com", "/search/gggg", out reason)); totalReason += reason + '\n';
+
+            epAllowList.Add(new EPPolicy()
+            {
+                EpFormat = "/img",
+                Type = AllowEPType.STARTWITH
+            });
+
+            // Blocked EP in 66 when not default - no t in whitelist
+            areFalse(filter.isWhitelistedURL("a.666.com", "/some-ep", out reason)); totalReason += reason + '\n';
+
+            // Allowed EP in 66 when w.l. and not blocked by ep
+            areTrue(filter.isWhitelistedURL("a.666.com", "/img?a=b&b=c", out reason)); totalReason += "<Allowed>\n";
+
+            // Blocked EP in 66 when w.l. and blocked by ep
+            areFalse(filter.isWhitelistedURL("a.666.com", "/img/search?a=b&b=c", out reason)); totalReason += reason ;
+
+            Console.Write(totalReason);
+
+            Assert.AreEqual(totalReason,
+                "blocked because scope URL equal phrase [PHRASE] \"ssearch\", WORDCONTAINING in URL\n" +
+                "blocked because scope URL equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
+                "<Allowed>\n" +
+                "blocked because scope BODY equal phrase [PHRASE] \"veryHTMLTerm\", EXACTWORD in BODY\n" +
+                "<Allowed>\n" +
+                "blocked because scope BODY equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
+                "<Allowed>\n" +
+                "blocked because scope URL equal phrase [PHRASE] \"ssearch\", WORDCONTAINING in URL\n" +
+                "blocked because scope URL equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
+                "blocked because scope ANY equal phrase [PHRASE] \"veryHTMLTerm\", EXACTWORD in BODY\n" +
+                "blocked because scope ANY equal phrase [PHRASE] \"ssearch\", WORDCONTAINING in URL\n" +
+                "blocked because scope ANY equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
+                "Domain .777.com in block mode\n" +
+                "<Allowed>\n" +
+                ".666.com/some-ep/search/ is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX\n" +
+                ".666.com/some-ep/search is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX\n" +
+                ".666.com/search/gggg is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX\n" +
+                "block /some-ep because not in .666.com (not whitelisted) \n" +
+                "<Allowed>\n" +
+                ".666.com/img/search?a=b&b=c is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX"
+                );
         }
     }
 }
