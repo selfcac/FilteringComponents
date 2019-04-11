@@ -90,7 +90,7 @@ namespace HTTPProtocolFilter
 
         bool isWhitelistedEP(DomainPolicy domainObj, string ep, out string reason);
 
-        PhraseFilter findBlockingPhrase(string Content, BlockPhraseScope scope);
+        PhraseFilter findBlockingPhrase(string Content, BlockPhraseScope scope, out string context);
         bool isContentAllowed(string Content, BlockPhraseScope scope, out string reason);
 
         void reloadPolicy(string filename);

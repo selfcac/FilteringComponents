@@ -35,60 +35,63 @@ namespace HTTPProtocolFilter.Tests
         public void checkPhraseFoundSimpleTest()
         {
             string BodyContent = "This text has baDword and \"2wronGword\" and nonOword3 wroNgworK";
+            string context = "", allContexts = "";
 
             areFalse(FilterPolicy.checkPhraseFoundSimple(BodyContent, new PhraseFilter()
             {
                 Phrase = "text",
                 Type = BlockPhraseType.EXACTWORD // Not supported in checkPhraseFoundSimple
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areFalse(FilterPolicy.checkPhraseFoundSimple("", new PhraseFilter()
             {
                 Phrase = "notfound",
                 Type = BlockPhraseType.CONTAIN
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areFalse(FilterPolicy.checkPhraseFoundSimple("", new PhraseFilter()
             {
                 Phrase = "notfound",
                 Type = BlockPhraseType.REGEX
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areFalse(FilterPolicy.checkPhraseFoundSimple(BodyContent, new PhraseFilter()
             {
                 Phrase = "notfound",
                 Type = BlockPhraseType.CONTAIN
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundSimple(BodyContent, new PhraseFilter()
             {
                 Phrase = "badword",
                 Type = BlockPhraseType.CONTAIN
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundSimple(BodyContent, new PhraseFilter()
             {
                 Phrase = "wrongword",
                 Type = BlockPhraseType.CONTAIN
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundSimple(BodyContent, new PhraseFilter()
             {
                 Phrase = "nonoword",
                 Type = BlockPhraseType.CONTAIN
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundSimple(BodyContent, new PhraseFilter()
             {
                 Phrase = "wrongwor[tk]",
                 Type = BlockPhraseType.REGEX
-            }));
+            }, out context)); allContexts += context + '\n';
+
+            Console.Write(allContexts);
         }
 
         [TestMethod()]
         public void checkPhraseFoundWordTest()
         {
-
+            string context = "", allContexts = "";
             string BodyContent = "This text has baDword and \"2wronGword\" and nonOword3 wroNgworK";
             List<string> words = FilterPolicy.getWords(BodyContent);
 
@@ -96,50 +99,51 @@ namespace HTTPProtocolFilter.Tests
             {
                 Phrase = "text",
                 Type = BlockPhraseType.CONTAIN // Not supported in checkPhraseFoundWord
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areFalse(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
             {
                 Phrase = "",
                 Type = BlockPhraseType.WORDCONTAINING
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areFalse(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
             {
                 Phrase = "",
                 Type = BlockPhraseType.EXACTWORD
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areFalse(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
             {
                 Phrase = "notfound",
                 Type = BlockPhraseType.WORDCONTAINING
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
             {
                 Phrase = "badword",
                 Type = BlockPhraseType.EXACTWORD
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
             {
                 Phrase = "wrongword",
                 Type = BlockPhraseType.EXACTWORD
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
             {
                 Phrase = "nonoword",
                 Type = BlockPhraseType.EXACTWORD
-            }));
+            }, out context)); allContexts += context + '\n';
 
             areTrue(FilterPolicy.checkPhraseFoundWord(words, new PhraseFilter()
             {
                 Phrase = "rongwor",
                 Type = BlockPhraseType.WORDCONTAINING
-            }));
+            }, out context)); allContexts += context + '\n';
 
+            Console.Write(allContexts);
         }
 
         [TestMethod()]
@@ -340,7 +344,7 @@ namespace HTTPProtocolFilter.Tests
             };
 
 
-            Assert.AreEqual(null, filter.findBlockingPhrase("", BlockPhraseScope.ANY));
+            Assert.AreEqual(null, filter.findBlockingPhrase("", BlockPhraseScope.ANY, out _));
         }
 
         [TestMethod()]
@@ -397,7 +401,7 @@ namespace HTTPProtocolFilter.Tests
                         }
                     }
                 }
-                
+
             };
             string totalReason = "";
             string reason = "";
@@ -405,10 +409,10 @@ namespace HTTPProtocolFilter.Tests
             // blocked by url\any but not body scope
             areFalse(filter.isWhitelistedURL("a.666.com", "/ssearch", out reason)); totalReason += reason + '\n';
             areFalse(filter.isWhitelistedURL("a.666.com", "/ok?q=veryBadTerm", out reason)); totalReason += reason + '\n';
-            areTrue( filter.isWhitelistedURL("a.666.com", "/ok?q=veryHTMLTerm", out reason)); totalReason += "<Allowed>\n";
+            areTrue(filter.isWhitelistedURL("a.666.com", "/ok?q=veryHTMLTerm", out reason)); totalReason += "<Allowed>\n";
 
             areFalse(filter.isContentAllowed("<veryHTMLTerm>", BlockPhraseScope.BODY, out reason)); totalReason += reason + '\n';
-            areTrue( filter.isContentAllowed("<ssearch>", BlockPhraseScope.BODY, out reason)); totalReason += "<Allowed>\n";
+            areTrue(filter.isContentAllowed("<ssearch>", BlockPhraseScope.BODY, out reason)); totalReason += "<Allowed>\n";
             areFalse(filter.isContentAllowed("<veryBadTerm>", BlockPhraseScope.BODY, out reason)); totalReason += reason + '\n';
 
             areTrue(filter.isContentAllowed("<veryHTMLTerm>", BlockPhraseScope.URL, out reason)); totalReason += "<Allowed>\n";
@@ -444,10 +448,56 @@ namespace HTTPProtocolFilter.Tests
             areTrue(filter.isWhitelistedURL("a.666.com", "/img?a=b&b=c", out reason)); totalReason += "<Allowed>\n";
 
             // Blocked EP in 66 when w.l. and blocked by ep
-            areFalse(filter.isWhitelistedURL("a.666.com", "/img/search?a=b&b=c", out reason)); totalReason += reason ;
+            areFalse(filter.isWhitelistedURL("a.666.com", "/img/search?a=b&b=c", out reason)); totalReason += reason;
 
             Console.Write(totalReason);
-            
+
+        }
+
+        [TestMethod()]
+        public void getWordSurroundingTest()
+        {
+            string testResult = "";
+            string Content = "this are very tight text";
+
+            string word = "this";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
+
+            word = "are";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
+
+            word = "ver";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
+
+            word = "text";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
+
+
+            Content = "long long long long long long this are very tight text long long long long long long";
+
+            word = "this";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
+
+            word = "are";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
+
+            word = "ver";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) + '\n';
+
+            word = "text";
+            testResult += FilterPolicy.getWordSurrounding(Content, Content.IndexOf(word), word.Length) ;
+
+            Console.Write(testResult);
+
+            Assert.AreEqual(@"*this* are very 
+this *are* very tigh
+this are *ver*y tight te
+ery tight *text*
+long long *this* are very 
+long this *are* very tigh
+ this are *ver*y tight te
+ery tight *text* long long", testResult);
+
         }
     }
 }

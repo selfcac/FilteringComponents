@@ -31,7 +31,7 @@ namespace HTTPProtocolFilter
             allowedDomainsTrie = new Utils.Trie<DomainPolicy>();
             foreach (DomainPolicy domain in newDomains)
             {
-                allowedDomainsTrie.InsertDomain( domain);
+                allowedDomainsTrie.InsertDomain(domain);
             }
 
             _allDomains = newDomains;
@@ -114,8 +114,23 @@ namespace HTTPProtocolFilter
             return words;
         }
 
-        public static bool checkPhraseFoundSimple(string Content, PhraseFilter filter)
+        public static string getWordSurrounding(string content, int index, int tryLength, int expand = 10)
         {
+            if (string.IsNullOrEmpty(content))
+                return "";
+
+            int before = Math.Max(index - expand, 0);
+            int after = Math.Min(index + tryLength + expand, content.Length);
+
+            return content.Substring(before, (index - before)) + "*" +
+                   content.Substring(index, tryLength) + "*" +
+                   content.Substring(index + tryLength, (after - (index + tryLength)) );
+        }
+
+        public static bool checkPhraseFoundSimple(string Content, PhraseFilter filter, out string context)
+        {
+            context = "";
+
             if ((filter.Phrase ?? "") == "")
                 return false;
 
@@ -124,28 +139,44 @@ namespace HTTPProtocolFilter
             switch (filter.Type)
             {
                 case BlockPhraseType.CONTAIN:
-                    found = Content.IndexOf(filter.Phrase) > -1;
+                    var index = Content.IndexOf(filter.Phrase);
+                    if (index > -1)
+                        context = getWordSurrounding(Content, index, filter.Phrase.Length);
+                    found = index > -1;
                     break;
                 case BlockPhraseType.REGEX:
-                    found = Regex.IsMatch(Content, filter.Phrase);
+                    var match = Regex.Match(Content, filter.Phrase);
+                    if (match.Groups[0].Length > 0)
+                        context = getWordSurrounding(Content, match.Groups[0].Index, match.Groups[0].Length);
+                    found = match.Groups[0].Length > 0 ;
                     break;
             }
+
             return found;
         }
 
-        public static bool checkPhraseFoundWord(List<string> words, PhraseFilter filter)
+        public static bool checkPhraseFoundWord(List<string> words, PhraseFilter filter, out string  context)
         {
+            context = "";
+
             if ((filter.Phrase ?? "") == "")
                 return false;
 
             bool found = false;
+            int index = 0;
             switch (filter.Type)
             {
                 case BlockPhraseType.EXACTWORD:
-                    found = words.Contains(filter.Phrase.ToLower());
+                    index = words.IndexOf(filter.Phrase.ToLower());
+                    if (index > -1)
+                        context = words[index];
+                    found = index > -1;
                     break;
                 case BlockPhraseType.WORDCONTAINING:
-                    found = words.FindIndex((word) => word.Contains(filter.Phrase.ToLower())) > -1;
+                    index = words.FindIndex((word) => word.Contains(filter.Phrase.ToLower())) ;
+                    if (index > -1)
+                        context = words[index];
+                    found = index > -1;
                     break;
             }
             return found;
@@ -158,7 +189,8 @@ namespace HTTPProtocolFilter
         /// <returns>True if content is allowed under policy</returns>
         public bool isContentAllowed(string Content, BlockPhraseScope scope, out string reason)
         {
-            var phrase = findBlockingPhrase(Content, scope);
+            string phraseContext = "";
+            var phrase = findBlockingPhrase(Content, scope, out phraseContext);
             if (phrase == null)
             {
                 reason = "content allowed, no phrase found in scope " + scope;
@@ -166,7 +198,9 @@ namespace HTTPProtocolFilter
             }
             else
             {
-                reason = "content blocked because scope " + scope + " equal phrase " + phrase.ToString();
+                reason = "content blocked because scope " + scope 
+                    + " equal phrase " + phrase.ToString()
+                    + ", context: " + phraseContext;
                 return false;
             }
         }
@@ -174,12 +208,13 @@ namespace HTTPProtocolFilter
         /// <summary>
         /// Find the phrase that the content is blocked from using.
         /// </summary>
-        /// <param name="Content"></param>
+        /// <param name="Content">string chunk</param>
         /// <returns>Null if no phrase rule is applicabalbe (allowed)</returns>
-        public PhraseFilter findBlockingPhrase(string Content, BlockPhraseScope scope)
+        public PhraseFilter findBlockingPhrase(string Content, BlockPhraseScope scope , out string context)
         {
             PhraseFilter result = null;
             List<string> Words = getWords(Content);
+            context = "";
 
             for (int i = 0; i < BlockedPhrases.Count && (result == null); i++)
             {
@@ -196,7 +231,7 @@ namespace HTTPProtocolFilter
                     {
                         case BlockPhraseType.CONTAIN:
                         case BlockPhraseType.REGEX:
-                            if (checkPhraseFoundSimple(Content, BlockedPhrases[i]))
+                            if (checkPhraseFoundSimple(Content, BlockedPhrases[i], out context))
                             {
                                 result = BlockedPhrases[i];
                             }
@@ -204,7 +239,7 @@ namespace HTTPProtocolFilter
 
                         case BlockPhraseType.EXACTWORD:
                         case BlockPhraseType.WORDCONTAINING:
-                            if (checkPhraseFoundWord(Words, BlockedPhrases[i]))
+                            if (checkPhraseFoundWord(Words, BlockedPhrases[i], out context))
                             {
                                 result = BlockedPhrases[i];
                             }
