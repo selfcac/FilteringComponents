@@ -161,12 +161,12 @@ namespace HTTPProtocolFilter
             var phrase = findBlockingPhrase(Content, scope);
             if (phrase == null)
             {
-                reason = "no phrase found in scope " + scope;
+                reason = "content allowed, no phrase found in scope " + scope;
                 return true;
             }
             else
             {
-                reason = "blocked because scope " + scope + " equal phrase " + phrase.ToString();
+                reason = "content blocked because scope " + scope + " equal phrase " + phrase.ToString();
                 return false;
             }
         }
@@ -334,7 +334,7 @@ namespace HTTPProtocolFilter
                     allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL, out phrase_reason);
                     if (!allowed)
                     {
-                        reason = phrase_reason;
+                        reason = host + pathAndQuery + ", "+   phrase_reason;
                     }
                 }
             }

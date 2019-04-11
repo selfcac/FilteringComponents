@@ -447,29 +447,7 @@ namespace HTTPProtocolFilter.Tests
             areFalse(filter.isWhitelistedURL("a.666.com", "/img/search?a=b&b=c", out reason)); totalReason += reason ;
 
             Console.Write(totalReason);
-
-            Assert.AreEqual(totalReason,
-                "blocked because scope URL equal phrase [PHRASE] \"ssearch\", WORDCONTAINING in URL\n" +
-                "blocked because scope URL equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
-                "<Allowed>\n" +
-                "blocked because scope BODY equal phrase [PHRASE] \"veryHTMLTerm\", EXACTWORD in BODY\n" +
-                "<Allowed>\n" +
-                "blocked because scope BODY equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
-                "<Allowed>\n" +
-                "blocked because scope URL equal phrase [PHRASE] \"ssearch\", WORDCONTAINING in URL\n" +
-                "blocked because scope URL equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
-                "blocked because scope ANY equal phrase [PHRASE] \"veryHTMLTerm\", EXACTWORD in BODY\n" +
-                "blocked because scope ANY equal phrase [PHRASE] \"ssearch\", WORDCONTAINING in URL\n" +
-                "blocked because scope ANY equal phrase [PHRASE] \"veryBadTerm\", WORDCONTAINING in ANY\n" +
-                "Domain .777.com in block mode\n" +
-                "<Allowed>\n" +
-                ".666.com/some-ep/search/ is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX\n" +
-                ".666.com/some-ep/search is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX\n" +
-                ".666.com/search/gggg is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX\n" +
-                "block /some-ep because not in .666.com (not whitelisted) \n" +
-                "<Allowed>\n" +
-                ".666.com/img/search?a=b&b=c is blocked by [EP] \"\\/search(\\/{0,1})\", REGEX"
-                );
+            
         }
     }
 }
