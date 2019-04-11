@@ -74,7 +74,8 @@ namespace HTTPProtocolFilter
 
         public override string ToString()
         {
-            return string.Format("[DOMAIN] \"{0}\", Allow:{1}/Block:{2}, {3}", DomainFormat, AllowEP.Count, BlockEP.Count , Type);
+            return string.Format("[D] \"{0}\", Allow:{1}/Block:{2}, {3}, Blocked? {4}"
+                , DomainFormat, AllowEP.Count, BlockEP.Count , Type, DomainBlocked);
         }
     }
 

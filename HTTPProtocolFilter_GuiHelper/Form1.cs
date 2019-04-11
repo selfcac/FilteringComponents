@@ -27,7 +27,7 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            gpEditEp.Dock = gpEditDomain.Dock = DockStyle.Fill;
+            gpEditAllowEp.Dock = gpEditDomain.Dock = DockStyle.Fill;
         }
 
         #endregion
@@ -89,7 +89,7 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             IHTTPFilter filter = mainPolicy;
             lbxSimulated.Items.Clear();
-            var linq = blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log)));
+            var linq = blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log), out _));
             lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
             lbxSimulated.Items.AddRange(
                 linq.Take(1000).ToArray<object>()
@@ -100,7 +100,7 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             IHTTPFilter filter = mainPolicy;
             lbxSimulated.Items.Clear();
-            var linq = blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log)));
+            var linq = blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log), out _));
             lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
             lbxSimulated.Items.AddRange(
                 linq.Take(1000).ToArray<object>()
@@ -114,7 +114,8 @@ namespace HTTPProtocolFilter_GuiHelper
                 (log) =>
                 {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) 
+                            && mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 );
 
@@ -130,7 +131,8 @@ namespace HTTPProtocolFilter_GuiHelper
             var linq = blockLogs.Where(
                 (log) => {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) &&
+                            mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 ).OrderBy(
                 (log) => new Uri(log).Host
@@ -148,7 +150,8 @@ namespace HTTPProtocolFilter_GuiHelper
             var linq = blockLogs.Where(
                 (log) => {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) &&
+                            mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 ).GroupBy(
                 (log) => new Uri(log).Host,
@@ -169,7 +172,8 @@ namespace HTTPProtocolFilter_GuiHelper
                 (log) =>
                 {
                     Uri uri = new Uri(log);
-                    return !mainPolicy.isWhitelistedHost(uri.Host) && mainPolicy.isContentAllowed(uri.PathAndQuery);
+                    return !mainPolicy.isWhitelistedHost(uri.Host) &&
+                            mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 );
 
@@ -189,7 +193,6 @@ namespace HTTPProtocolFilter_GuiHelper
                 {
                     DomainFormat = u.Host,
                     Type = AllowDomainType.EXACT,
-                    WhiteListEP = new List<EPPolicy>()
                 });
 
                 mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
@@ -208,7 +211,7 @@ namespace HTTPProtocolFilter_GuiHelper
                 {
                     DomainFormat = u.Host,
                     Type = AllowDomainType.EXACT,
-                    WhiteListEP = new List<EPPolicy>()
+                    AllowEP = new List<EPPolicy>()
                     {
                         new EPPolicy()
                         {
@@ -262,7 +265,8 @@ namespace HTTPProtocolFilter_GuiHelper
                 {
                     DomainFormat = newHost,
                     Type = AllowDomainType.SUBDOMAINS,
-                    WhiteListEP = new List<EPPolicy>()
+                    AllowEP = new List<EPPolicy>(),
+                    BlockEP = new List<EPPolicy>()
                 });
 
                 mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
@@ -316,12 +320,11 @@ namespace HTTPProtocolFilter_GuiHelper
 
                 txtPhrase.Text = p.Phrase;
                 cbPhraseType.SelectedIndex = (int)p.Type;
-
-                gpEditPhrase.Enabled = true;
+                cbPhraseScope.SelectedIndex = (int)p.Scope;
             }
             else
             {
-                gpEditPhrase.Enabled = false;
+
             }
         }
 
@@ -332,6 +335,8 @@ namespace HTTPProtocolFilter_GuiHelper
             {
                 p.Type = (BlockPhraseType)cbPhraseType.SelectedIndex;
                 p.Phrase = txtPhrase.Text;
+                p.Scope = (BlockPhraseScope)cbPhraseScope.SelectedIndex;
+
                 refreshPhrases();
             }
         }
@@ -350,8 +355,11 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             if (lbxDomains.SelectedItem != null)
             {
-                lbxEp.DataSource = null;
-                lbxEp.DataSource = ((DomainPolicy)lbxDomains.SelectedItem).WhiteListEP;
+                lbxAllowEp.DataSource = null;
+                lbxAllowEp.DataSource = ((DomainPolicy)lbxDomains.SelectedItem).AllowEP;
+
+                lbxBlockEp.DataSource = null;
+                lbxBlockEp.DataSource = ((DomainPolicy)lbxDomains.SelectedItem).BlockEP;
             }
         }
 
@@ -361,7 +369,8 @@ namespace HTTPProtocolFilter_GuiHelper
             {
                 DomainFormat = "Enter.Domain",
                 Type = AllowDomainType.EXACT,
-                WhiteListEP = new List<EPPolicy>()
+                AllowEP = new List<EPPolicy>(),
+                BlockEP = new List<EPPolicy>(),
             });
 
             mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
@@ -369,20 +378,7 @@ namespace HTTPProtocolFilter_GuiHelper
             refreshDomains();
         }
 
-        private void addEPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
-            if (d != null)
-            {
-                d.WhiteListEP.Add(new EPPolicy()
-                {
-                    EpFormat = "/enter/ep",
-                    Type = AllowEPType.CONTAIN
-                });
-                refreshEPs();
-            }
-
-        }
+        
 
         private void deleteDomainToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -396,18 +392,6 @@ namespace HTTPProtocolFilter_GuiHelper
             }
         }
 
-        private void deleteEPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
-            EPPolicy ep = lbxEp.SelectedItem as EPPolicy;
-            if (d != null && ep != null)
-            {
-                d.WhiteListEP.Remove(ep);
-                refreshDomains();
-                refreshEPs();
-            }
-        }
-
         private void lbxDomains_SelectedIndexChanged(object sender, EventArgs e)
         {
             DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
@@ -415,34 +399,38 @@ namespace HTTPProtocolFilter_GuiHelper
             {
                 txtDomainPattern.Text = d.DomainFormat;
                 cbDomainType.SelectedIndex = (int)d.Type;
+                cbBlockDomain.Checked = d.DomainBlocked;
 
                 refreshEPs();
-
-               gpEditDomain.Enabled = true;
-            }
-            else
-            {
-               gpEditDomain.Enabled = false;
             }
         }
+
+
 
         private void lbxEp_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EPPolicy ep = lbxEp.SelectedItem as EPPolicy;
+            EPPolicy ep = lbxAllowEp.SelectedItem as EPPolicy;
             if (ep != null)
             {
-                txtEpPattern.Text = ep.EpFormat;
-                cbEpType.SelectedIndex = (int)ep.Type;
+                txtEpAllowPattern.Text = ep.EpFormat;
+                cbEpAllowType.SelectedIndex = (int)ep.Type;
 
-                gpEditEp.Enabled = true;
-            }
-            else
-            {
-                gpEditEp.Enabled = false;
             }
         }
 
-        
+
+        private void lbxEpBlock_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            EPPolicy ep = lbxBlockEp.SelectedItem as EPPolicy;
+            if (ep != null)
+            {
+                txtEpBlockPattern.Text = ep.EpFormat;
+                cbEpBlockType.SelectedIndex = (int)ep.Type;
+
+            }
+        }
+
+
 
         private void btnDApply_Click(object sender, EventArgs e)
         {
@@ -451,6 +439,7 @@ namespace HTTPProtocolFilter_GuiHelper
             {
                 d.DomainFormat = txtDomainPattern.Text;
                 d.Type = (AllowDomainType)cbDomainType.SelectedIndex;
+                d.DomainBlocked = cbBlockDomain.Checked;
 
                 mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
                 refreshDomains();
@@ -459,21 +448,80 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void btnEPApply_Click(object sender, EventArgs e)
         {
-            EPPolicy ep = lbxEp.SelectedItem as EPPolicy;
+            EPPolicy ep = lbxAllowEp.SelectedItem as EPPolicy;
             if (ep != null)
             {
-                ep.EpFormat = txtEpPattern.Text;
-                ep.Type = (AllowEPType)cbEpType.SelectedIndex;
+                ep.EpFormat = txtEpAllowPattern.Text;
+                ep.Type = (AllowEPType)cbEpAllowType.SelectedIndex;
                 refreshDomains();
                 refreshEPs();
             }
         }
 
-
-
+        private void btnEPBlockApply_Click(object sender, EventArgs e)
+        {
+            EPPolicy ep = lbxBlockEp.SelectedItem as EPPolicy;
+            if (ep != null)
+            {
+                ep.EpFormat = txtEpBlockPattern.Text;
+                ep.Type = (AllowEPType)cbEpBlockType.SelectedIndex;
+                refreshDomains();
+                refreshEPs();
+            }
+        }
 
         #endregion
 
-        
+        private void btnAddAllowEP_Click(object sender, EventArgs e)
+        {
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
+            if (d != null)
+            {
+                d.AllowEP.Add(new EPPolicy()
+                {
+                    EpFormat = "/z/enter/ep",
+                    Type = AllowEPType.CONTAIN
+                });
+                refreshEPs();
+            }
+        }
+
+        private void btnDelAllowEP_Click(object sender, EventArgs e)
+        {
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
+            EPPolicy ep = lbxAllowEp.SelectedItem as EPPolicy;
+            if (d != null && ep != null)
+            {
+                d.AllowEP.Remove(ep);
+                refreshDomains();
+                refreshEPs();
+            }
+        }
+
+        private void btnAddBlockEP_Click(object sender, EventArgs e)
+        {
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
+            if (d != null)
+            {
+                d.BlockEP.Add(new EPPolicy()
+                {
+                    EpFormat = "/z/enter/ep",
+                    Type = AllowEPType.CONTAIN
+                });
+                refreshEPs();
+            }
+        }
+
+        private void btnDelBlockEp_Click(object sender, EventArgs e)
+        {
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
+            EPPolicy ep = lbxAllowEp.SelectedItem as EPPolicy;
+            if (d != null && ep != null)
+            {
+                d.BlockEP.Remove(ep);
+                refreshDomains();
+                refreshEPs();
+            }
+        }
     }
 }
