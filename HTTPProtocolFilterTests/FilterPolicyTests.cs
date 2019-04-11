@@ -145,31 +145,31 @@ namespace HTTPProtocolFilter.Tests
         [TestMethod()]
         public void checkEPRuleTest()
         {
-            areTrue(FilterPolicy.checkEPRule(new AllowEP()
+            areTrue(FilterPolicy.checkEPRuleMatch(new EPPolicy()
             {
                 Type = AllowEPType.STARTWITH,
                 EpFormat = "/r/collect"
             }, "/r/coLleCt"));
 
-            areTrue(FilterPolicy.checkEPRule(new AllowEP()
+            areTrue(FilterPolicy.checkEPRuleMatch(new EPPolicy()
             {
                 Type = AllowEPType.CONTAIN,
                 EpFormat = "&safe=1"
             }, "/searcH?q=anyword&safe=1"));
 
-            areTrue(FilterPolicy.checkEPRule(new AllowEP()
+            areTrue(FilterPolicy.checkEPRuleMatch(new EPPolicy()
             {
                 Type = AllowEPType.REGEX,
                 EpFormat = "\\/search\\?q=.*&safe=1"
             }, "/searCh?q=anyword&safe=1"));
 
-            areFalse(FilterPolicy.checkEPRule(new AllowEP()
+            areFalse(FilterPolicy.checkEPRuleMatch(new EPPolicy()
             {
                 Type = AllowEPType.REGEX,
                 EpFormat = "\\/search\\?q=.*&safe=1"
             }, "/search?q=anyword"));
 
-            areFalse(FilterPolicy.checkEPRule(new AllowEP()
+            areFalse(FilterPolicy.checkEPRuleMatch(new EPPolicy()
             {
                 Type = AllowEPType.REGEX,
                 EpFormat = "\\/search\\?q=.*&safe=1"
@@ -203,22 +203,22 @@ namespace HTTPProtocolFilter.Tests
             string ep3 = "/i-am-whitelisted/badword";
 
             // any ep except bad phrases:
-            areTrue(filter.isWhitelistedEP(new AllowDomain()
+            areTrue(filter.isWhitelistedEP(new DomainPolicy()
             {
                 DomainFormat = "",
                 Type = AllowDomainType.EXACT,
-                WhiteListEP = new List<AllowEP>()
+                WhiteListEP = new List<EPPolicy>()
             }, ep1));
             areFalse(filter.isContentAllowed(ep1));
 
             // only ep that are whitelisted
-            var domain1 = new AllowDomain()
+            var domain1 = new DomainPolicy()
             {
                 DomainFormat = "e.com",
                 Type = AllowDomainType.EXACT,
-                WhiteListEP = new List<AllowEP>()
+                WhiteListEP = new List<EPPolicy>()
                 {
-                   new AllowEP() {
+                   new EPPolicy() {
                         Type = AllowEPType.STARTWITH,
                          EpFormat = "/i-am-whitelisted"
                    }
@@ -258,15 +258,15 @@ namespace HTTPProtocolFilter.Tests
                 }
             };
 
-            filter.AllowedDomains = new List<AllowDomain>()
+            filter.AllowedDomains = new List<DomainPolicy>()
             {
-                new AllowDomain()
+                new DomainPolicy()
                 {
                     DomainFormat = "go.com",
                     Type = AllowDomainType.SUBDOMAINS,
-                    WhiteListEP = new List<AllowEP>()
+                    WhiteListEP = new List<EPPolicy>()
                     {
-                       new AllowEP() {
+                       new EPPolicy() {
                             Type = AllowEPType.STARTWITH,
                              EpFormat = "/i-am-whitelisted"
                        }

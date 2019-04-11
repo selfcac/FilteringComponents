@@ -15,25 +15,25 @@ namespace HTTPProtocolFilter.Utils
             return new string(charArray);
         }
 
-        public static void InsertDomain(this Trie<AllowDomain> t, AllowDomain d)
+        public static void InsertDomain(this Trie<DomainPolicy> t, DomainPolicy d)
         {
             if (d.Type == AllowDomainType.SUBDOMAINS && d.DomainFormat[0] != '.')
                 d.DomainFormat = '.' + d.DomainFormat;
             t.Insert(Reverse(d.DomainFormat.ToLower()), d);
         }
 
-        public static void InsertDomainRange(this Trie<AllowDomain> t, List<AllowDomain> items)
+        public static void InsertDomainRange(this Trie<DomainPolicy> t, List<DomainPolicy> items)
         {
             for (int i = 0; i < items.Count; i++)
                 t.InsertDomain(items[i]);
         }
 
-        public static TrieNode<AllowDomain> SearchDomain(this Trie<AllowDomain> t, string d)
+        public static TrieNode<DomainPolicy> SearchDomain(this Trie<DomainPolicy> t, string d)
         {
             return t.Search(Reverse(d.ToLower()));
         }
 
-        public static TrieNode<AllowDomain> PostfixDomain(this Trie<AllowDomain> t, string d)
+        public static TrieNode<DomainPolicy> PostfixDomain(this Trie<DomainPolicy> t, string d)
         {
             return t.Prefix(Reverse(d.ToLower()));
         }
@@ -44,14 +44,14 @@ namespace HTTPProtocolFilter.Utils
         /// <param name="t"></param>
         /// <param name="d">The hostname (no prefix '.')</param>
         /// <returns>Null if not found a match that is a result of a rule</returns>
-        public static TrieNode<AllowDomain> CheckDomain(this Trie<AllowDomain> t, string d)
+        public static TrieNode<DomainPolicy> CheckDomain(this Trie<DomainPolicy> t, string d)
         {
-            TrieNode<AllowDomain> resultNode = null;
+            TrieNode<DomainPolicy> resultNode = null;
             resultNode = t.SearchDomain(d) ?? t.SearchDomain("." + d);
 
             if (resultNode == null)
             {
-                TrieNode<AllowDomain> postfix = t.PostfixDomain(d);
+                TrieNode<DomainPolicy> postfix = t.PostfixDomain(d);
                 if (postfix != null 
                     && postfix.Tag != null // not leaf
                     && postfix.Tag.Type == AllowDomainType.SUBDOMAINS) // Check if found subdomain rule

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleHTTPSProxyFilter", "SimpleHTTPSProxyFilter\SimpleHTTPSProxyFilter.csproj", "{67C88B80-6B9F-43BC-A21A-0BAF80101365}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanelServer", "ControlPanelForSafeControl\ControlPanelServer.csproj", "{1C44D4D9-81E9-42CB-A66E-EC40071E328D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControlPanelClient", "ControlPanelClient\ControlPanelClient.csproj", "{3834E06C-3608-4B1B-9472-DA8991BF463B}"
@@ -29,10 +27,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{67C88B80-6B9F-43BC-A21A-0BAF80101365}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67C88B80-6B9F-43BC-A21A-0BAF80101365}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67C88B80-6B9F-43BC-A21A-0BAF80101365}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67C88B80-6B9F-43BC-A21A-0BAF80101365}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1C44D4D9-81E9-42CB-A66E-EC40071E328D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C44D4D9-81E9-42CB-A66E-EC40071E328D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C44D4D9-81E9-42CB-A66E-EC40071E328D}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -17,19 +17,19 @@ namespace HTTPProtocolFilter.Utils.Tests
         [TestMethod()]
         public void TrieTest()
         {
-            Trie<AllowDomain> t = new Trie<AllowDomain>();
-            t.InsertDomainRange(new List<AllowDomain>()
+            Trie<DomainPolicy> t = new Trie<DomainPolicy>();
+            t.InsertDomainRange(new List<DomainPolicy>()
             {
                 "reddit.com",  ".red.com"
             });
 
-            AllowDomain ad = new AllowDomain()
+            DomainPolicy ad = new DomainPolicy()
             {
                 Type = AllowDomainType.SUBDOMAINS,
                 DomainFormat = ".gogo.com",
-                WhiteListEP = new List<AllowEP>()
+                WhiteListEP = new List<EPPolicy>()
                  {
-                     new AllowEP()
+                     new EPPolicy()
                      {
                          Type = AllowEPType.CONTAIN,
                          EpFormat = "Contain"

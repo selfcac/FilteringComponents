@@ -185,11 +185,11 @@ namespace HTTPProtocolFilter_GuiHelper
             if (url != null)
             {
                 Uri u = new Uri(url);
-                mainPolicy.AllowedDomains.Add(new AllowDomain()
+                mainPolicy.AllowedDomains.Add(new DomainPolicy()
                 {
                     DomainFormat = u.Host,
                     Type = AllowDomainType.EXACT,
-                    WhiteListEP = new List<AllowEP>()
+                    WhiteListEP = new List<EPPolicy>()
                 });
 
                 mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
@@ -204,13 +204,13 @@ namespace HTTPProtocolFilter_GuiHelper
             if (url != null)
             {
                 Uri u = new Uri(url);
-                mainPolicy.AllowedDomains.Add(new AllowDomain()
+                mainPolicy.AllowedDomains.Add(new DomainPolicy()
                 {
                     DomainFormat = u.Host,
                     Type = AllowDomainType.EXACT,
-                    WhiteListEP = new List<AllowEP>()
+                    WhiteListEP = new List<EPPolicy>()
                     {
-                        new AllowEP()
+                        new EPPolicy()
                         {
                             EpFormat = u.AbsolutePath,
                             Type = AllowEPType.STARTWITH
@@ -258,11 +258,11 @@ namespace HTTPProtocolFilter_GuiHelper
                     }
                 }
 
-                mainPolicy.AllowedDomains.Add(new AllowDomain()
+                mainPolicy.AllowedDomains.Add(new DomainPolicy()
                 {
                     DomainFormat = newHost,
                     Type = AllowDomainType.SUBDOMAINS,
-                    WhiteListEP = new List<AllowEP>()
+                    WhiteListEP = new List<EPPolicy>()
                 });
 
                 mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
@@ -351,17 +351,17 @@ namespace HTTPProtocolFilter_GuiHelper
             if (lbxDomains.SelectedItem != null)
             {
                 lbxEp.DataSource = null;
-                lbxEp.DataSource = ((AllowDomain)lbxDomains.SelectedItem).WhiteListEP;
+                lbxEp.DataSource = ((DomainPolicy)lbxDomains.SelectedItem).WhiteListEP;
             }
         }
 
         private void addDomainToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mainPolicy.AllowedDomains.Add(new AllowDomain()
+            mainPolicy.AllowedDomains.Add(new DomainPolicy()
             {
                 DomainFormat = "Enter.Domain",
                 Type = AllowDomainType.EXACT,
-                WhiteListEP = new List<AllowEP>()
+                WhiteListEP = new List<EPPolicy>()
             });
 
             mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
@@ -371,10 +371,10 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void addEPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
             if (d != null)
             {
-                d.WhiteListEP.Add(new AllowEP()
+                d.WhiteListEP.Add(new EPPolicy()
                 {
                     EpFormat = "/enter/ep",
                     Type = AllowEPType.CONTAIN
@@ -386,7 +386,7 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void deleteDomainToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
             if (d != null)
             {
                 mainPolicy.AllowedDomains.Remove(d);
@@ -398,8 +398,8 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void deleteEPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
-            AllowEP ep = lbxEp.SelectedItem as AllowEP;
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
+            EPPolicy ep = lbxEp.SelectedItem as EPPolicy;
             if (d != null && ep != null)
             {
                 d.WhiteListEP.Remove(ep);
@@ -410,7 +410,7 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void lbxDomains_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
             if (d != null)
             {
                 txtDomainPattern.Text = d.DomainFormat;
@@ -428,7 +428,7 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void lbxEp_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AllowEP ep = lbxEp.SelectedItem as AllowEP;
+            EPPolicy ep = lbxEp.SelectedItem as EPPolicy;
             if (ep != null)
             {
                 txtEpPattern.Text = ep.EpFormat;
@@ -446,7 +446,7 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void btnDApply_Click(object sender, EventArgs e)
         {
-            AllowDomain d = lbxDomains.SelectedItem as AllowDomain;
+            DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
             if (d != null)
             {
                 d.DomainFormat = txtDomainPattern.Text;
@@ -459,7 +459,7 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void btnEPApply_Click(object sender, EventArgs e)
         {
-            AllowEP ep = lbxEp.SelectedItem as AllowEP;
+            EPPolicy ep = lbxEp.SelectedItem as EPPolicy;
             if (ep != null)
             {
                 ep.EpFormat = txtEpPattern.Text;

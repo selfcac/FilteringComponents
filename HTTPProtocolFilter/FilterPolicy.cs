@@ -21,15 +21,15 @@ namespace HTTPProtocolFilter
 
         #region DomainsFilter
 
-        private Utils.Trie<AllowDomain> allowedDomainsTrie;
-        private List<AllowDomain> _allDomains = new List<AllowDomain>();
+        private Utils.Trie<DomainPolicy> allowedDomainsTrie;
+        private List<DomainPolicy> _allDomains = new List<DomainPolicy>();
 
-        private void initDomains(List<AllowDomain> newDomains)
+        private void initDomains(List<DomainPolicy> newDomains)
         {
             // Fast search
 
-            allowedDomainsTrie = new Utils.Trie<AllowDomain>();
-            foreach (AllowDomain domain in newDomains)
+            allowedDomainsTrie = new Utils.Trie<DomainPolicy>();
+            foreach (DomainPolicy domain in newDomains)
             {
                 allowedDomainsTrie.InsertDomain( domain);
             }
@@ -37,7 +37,7 @@ namespace HTTPProtocolFilter
             _allDomains = newDomains;
         }
 
-        public List<AllowDomain> AllowedDomains
+        public List<DomainPolicy> AllowedDomains
         {
             get
             {
@@ -51,10 +51,10 @@ namespace HTTPProtocolFilter
 
         public FilterPolicy()
         {
-            AllowedDomains = new List<AllowDomain>();
+            AllowedDomains = new List<DomainPolicy>();
         }
 
-        public AllowDomain findAllowedDomain(string host)
+        public DomainPolicy findAllowedDomain(string host)
         {
             return allowedDomainsTrie.CheckDomain(host)?.Tag;
         }
@@ -156,9 +156,9 @@ namespace HTTPProtocolFilter
         /// </summary>
         /// <param name="Content"></param>
         /// <returns>True if content is allowed under policy</returns>
-        public bool isContentAllowed(string Content)
+        public bool isContentAllowed(string Content, BlockPhraseScope scope)
         {
-            return (findBlockingPhrase(Content) == null);
+            return (findBlockingPhrase(Content,scope) == null);
         }
 
         /// <summary>
@@ -166,30 +166,33 @@ namespace HTTPProtocolFilter
         /// </summary>
         /// <param name="Content"></param>
         /// <returns>Null if no phrase rule is applicabalbe (allowed)</returns>
-        public PhraseFilter findBlockingPhrase(string Content)
+        public PhraseFilter findBlockingPhrase(string Content, BlockPhraseScope scope)
         {
             PhraseFilter result = null;
             List<string> Words = getWords(Content);
 
             for (int i = 0; i < BlockedPhrases.Count && (result == null); i++)
             {
-                switch (BlockedPhrases[i].Type)
+                if (BlockedPhrases[i].Scope == scope)
                 {
-                    case BlockPhraseType.CONTAIN:
-                    case BlockPhraseType.REGEX:
-                        if (checkPhraseFoundSimple(Content, BlockedPhrases[i]))
-                        {
-                            result = BlockedPhrases[i];
-                        }
-                        break;
+                    switch (BlockedPhrases[i].Type)
+                    {
+                        case BlockPhraseType.CONTAIN:
+                        case BlockPhraseType.REGEX:
+                            if (checkPhraseFoundSimple(Content, BlockedPhrases[i]))
+                            {
+                                result = BlockedPhrases[i];
+                            }
+                            break;
 
-                    case BlockPhraseType.EXACTWORD:
-                    case BlockPhraseType.WORDCONTAINING:
-                        if (checkPhraseFoundWord(Words, BlockedPhrases[i]))
-                        {
-                            result = BlockedPhrases[i];
-                        }
-                        break;
+                        case BlockPhraseType.EXACTWORD:
+                        case BlockPhraseType.WORDCONTAINING:
+                            if (checkPhraseFoundWord(Words, BlockedPhrases[i]))
+                            {
+                                result = BlockedPhrases[i];
+                            }
+                            break;
+                    }
                 }
             }
 
@@ -199,47 +202,50 @@ namespace HTTPProtocolFilter
         #endregion 
 
        
-        public static bool checkEPRule(AllowEP ep, string epPath )
+        public static bool checkEPRuleMatch(EPPolicy ep, string epPath )
         {
-            bool allowed = false;
+            bool match = false;
             epPath = epPath.ToLower();
 
             switch(ep.Type)
             {
                 case AllowEPType.CONTAIN:
-                    allowed = epPath.IndexOf(ep.EpFormat) > -1; // not using contain cause HTTP is ASCII only
+                    match = epPath.IndexOf(ep.EpFormat) > -1; // not using contain cause HTTP is ASCII only
                     break;
 
                 case AllowEPType.REGEX:
-                    allowed = Regex.IsMatch(epPath, ep.EpFormat);
+                    match = Regex.IsMatch(epPath, ep.EpFormat);
                     break;
 
                 case AllowEPType.STARTWITH:
-                    allowed = epPath.StartsWith(ep.EpFormat);
+                    match = epPath.StartsWith(ep.EpFormat);
                     break;
             }
 
-            return allowed;
+            return match;
         }
 
         /// <summary>
         /// Check if ep is in policy
         /// </summary>
         /// <returns>true if allowed</returns>
-        public bool isWhitelistedEP(AllowDomain domainObj, string ep)
+        public bool isWhitelistedEP(DomainPolicy domainObj, string ep)
         {
             if (domainObj == null)
+                return false;
+
+            if (!domainObj.DomainBlocked)
                 return false;
 
             bool allowed = false;
 
             // check if ep in domain
-            if (domainObj.WhiteListEP.Count > 0 )
+            if (domainObj.AllowEP.Count > 0 )
             {
-                // Whitelist : All EP are blocked unless some rule allow.
-                for (int i=0;i<domainObj.WhiteListEP.Count;i++)
+                // Whitelist : All EP are blocked unless some ep allow (and no block ep later).
+                for (int i=0;i<domainObj.AllowEP.Count;i++)
                 {
-                    if (checkEPRule(domainObj.WhiteListEP[i], ep))
+                    if (checkEPRuleMatch(domainObj.AllowEP[i], ep))
                     {
                         allowed = true;
                         break;
@@ -248,8 +254,20 @@ namespace HTTPProtocolFilter
             }
             else
             {
-                // All EP allowed if none specified
+                // All EP allowed unless found by block ep
                 allowed = true;
+            }
+
+            if (allowed)
+            {
+                for (int i = 0; i < domainObj.BlockEP.Count; i++)
+                {
+                    if (checkEPRuleMatch(domainObj.BlockEP[i], ep))
+                    {
+                        allowed = false;
+                        break;
+                    }
+                }
             }
 
 
@@ -262,7 +280,7 @@ namespace HTTPProtocolFilter
         /// <returns>true if allowed</returns>
         public bool isWhitelistedHost(string host)
         {
-            AllowDomain domain = allowedDomainsTrie.CheckDomain(host)?.Tag;
+            DomainPolicy domain = allowedDomainsTrie.CheckDomain(host)?.Tag;
             return domain != null;
         }
 
@@ -278,13 +296,13 @@ namespace HTTPProtocolFilter
         public bool isWhitelistedURL(string host, string pathAndQuery)
         {
             bool allowed = false;
-            AllowDomain domainRule = findAllowedDomain(host ?? "");
+            DomainPolicy domainRule = findAllowedDomain(host ?? "");
             if (domainRule != null)
             {
                 allowed = isWhitelistedEP(domainRule, pathAndQuery ?? "");
 
                 if (allowed) // Finally check for banned phrases.
-                    allowed = isContentAllowed(pathAndQuery);
+                    allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL);
             }
 
             return allowed;

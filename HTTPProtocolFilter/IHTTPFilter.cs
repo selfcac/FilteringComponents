@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HTTPProtocolFilter
 {
     public enum BlockPhraseType // CONTENT \ EP
     {
         CONTAIN = 0, EXACTWORD, WORDCONTAINING, REGEX
+    }
+
+    public enum BlockPhraseScope
+    {
+        URL= 0, BODY, ALL_SCOPES
     }
 
     public enum AllowEPType //  EP
@@ -28,35 +31,41 @@ namespace HTTPProtocolFilter
 
     public class PhraseFilter
     {
+        public BlockPhraseScope Scope;
         public BlockPhraseType Type;
         public string Phrase;
 
         public override string ToString()
         {
-            return string.Format("\"{0}\", {1}", Phrase, Type);
+            return string.Format("[PHRASE] \"{0}\", {1} in {2}", Phrase, Type, Scope);
         }
     }
 
-    public class AllowEP
+    public class EPPolicy
     {
         public AllowEPType Type;
         public string EpFormat;
 
         public override string ToString()
         {
-            return string.Format("\"{0}\", {1}", EpFormat, Type);
+            return string.Format("[EP] \"{0}\", {1}", EpFormat, Type);
         }
     }
 
-    public class AllowDomain
+    public class DomainPolicy
     {
+        // only if true, checke if allowed ep, if 0 just check blocked, o.w check allow then block
+        public bool DomainBlocked; 
+
         public AllowDomainType Type;
         public string DomainFormat;
-        public List<AllowEP> WhiteListEP = new List<AllowEP>();
 
-        public static implicit operator AllowDomain (string input)
+        public List<EPPolicy> AllowEP = new List<EPPolicy>();
+        public List<EPPolicy> BlockEP = new List<EPPolicy>();
+
+        public static implicit operator DomainPolicy (string input)
         {
-            return new AllowDomain() {
+            return new DomainPolicy() {
                 DomainFormat = input,
                 Type = ((input[0] == '.') ? AllowDomainType.SUBDOMAINS : AllowDomainType.EXACT)
                 };
@@ -64,7 +73,7 @@ namespace HTTPProtocolFilter
 
         public override string ToString()
         {
-            return string.Format("\"{0}\" EP: {1}, {2}", DomainFormat, WhiteListEP.Count , Type);
+            return string.Format("[DOMAIN] \"{0}\", Allow:{1}/Block:{2}, {3}", DomainFormat, AllowEP.Count, BlockEP.Count , Type);
         }
     }
 
@@ -72,16 +81,16 @@ namespace HTTPProtocolFilter
     {
         WorkingMode getMode();
 
-        bool isWhitelistedURL(Uri uri);
-        bool isWhitelistedURL(string host, string pathAndQuery);
+        bool isWhitelistedURL(Uri uri, out object reason);
+        bool isWhitelistedURL(string host, string pathAndQuery, out object reason);
 
-        AllowDomain findAllowedDomain(string host);
+        DomainPolicy findAllowedDomain(string host);
         bool isWhitelistedHost(string host);
 
-        bool isWhitelistedEP(AllowDomain domainObj, string ep);
+        bool isWhitelistedEP(DomainPolicy domainObj, string ep, out object reason);
 
-        PhraseFilter findBlockingPhrase(string Content);
-        bool isContentAllowed(string Content);
+        PhraseFilter findBlockingPhrase(string Content, BlockPhraseScope scope);
+        bool isContentAllowed(string Content, BlockPhraseScope scope, out object reason);
 
         void reloadPolicy(string filename);
         void savePolicy(string filename);
