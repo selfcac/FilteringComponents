@@ -489,14 +489,14 @@ namespace HTTPProtocolFilter.Tests
 
             Console.Write(testResult);
 
-            Assert.AreEqual(@"__this__ are very 
-this __are__ very tigh
-this are __ver__y tight te
-ery tight __text__
-long long __this__ are very 
-long this __are__ very tigh
- this are __ver__y tight te
-ery tight __text__ long long", testResult);
+            Assert.AreEqual(@"_<this>_ are very 
+this _<are>_ very tigh
+this are _<ver>_y tight te
+ery tight _<text>_
+long long _<this>_ are very 
+long this _<are>_ very tigh
+ this are _<ver>_y tight te
+ery tight _<text>_ long long", testResult);
 
         }
 

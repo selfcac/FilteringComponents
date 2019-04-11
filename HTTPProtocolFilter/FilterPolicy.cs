@@ -122,8 +122,8 @@ namespace HTTPProtocolFilter
             int before = Math.Max(index - expand, 0);
             int after = Math.Min(index + tryLength + expand, content.Length);
 
-            return content.Substring(before, (index - before)) + "__" +
-                   content.Substring(index, tryLength) + "__" +
+            return content.Substring(before, (index - before)) + "_<" +
+                   content.Substring(index, tryLength) + ">_" +
                    content.Substring(index + tryLength, (after - (index + tryLength)) );
         }
 
@@ -179,6 +179,8 @@ namespace HTTPProtocolFilter
                     found = index > -1;
                     break;
             }
+
+            context = "_<" + context + ">_";
             return found;
         }
 
@@ -198,9 +200,9 @@ namespace HTTPProtocolFilter
             }
             else
             {
-                reason = "content blocked because scope " + scope 
-                    + " equal phrase " + phrase.ToString()
-                    + ", context: " + phraseContext;
+                reason = "content blocked because scope <*" + scope 
+                    + "*> equal phrase <*" + phrase.ToString()
+                    + "*>, context: " + phraseContext;
                 return false;
             }
         }
@@ -291,12 +293,12 @@ namespace HTTPProtocolFilter
 
             if (domainObj.DomainBlocked)
             {
-                reason = "Domain " + domainObj.DomainFormat + " in block mode";
+                reason = "Domain <*" + domainObj.DomainFormat + "*> in block mode";
                 return false;
             }
 
             bool allowed = false;
-            reason = "block " + ep + " because not in " + domainObj.DomainFormat + " (not whitelisted) ";
+            reason = "block <*" + ep + "*> because not in <*" + domainObj.DomainFormat + "*> (not whitelisted) ";
 
 
             // check if ep in domain
@@ -326,7 +328,7 @@ namespace HTTPProtocolFilter
                     if (checkEPRuleMatch(domainObj.BlockEP[i], ep))
                     {
                         allowed = false;
-                        reason = domainObj.DomainFormat + ep + " is blocked by " + domainObj.BlockEP[i].ToString();
+                        reason = "<*" + domainObj.DomainFormat + ep + "*> is blocked by <*" + domainObj.BlockEP[i].ToString() + "*>";
                         break;
                     }
                 }
@@ -369,13 +371,13 @@ namespace HTTPProtocolFilter
                     allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL, out phrase_reason);
                     if (!allowed)
                     {
-                        reason = host + pathAndQuery + ", "+   phrase_reason;
+                        reason = host + pathAndQuery + ", "+   phrase_reason ;
                     }
                 }
             }
             else
             {
-                reason = "Doamin " + host + " is not whitelisted";
+                reason = "Doamin <*" + host + "*> is not whitelisted";
             }
 
             return allowed;
