@@ -512,14 +512,23 @@ namespace HTTPProtocolFilter.Tests
                         Scope = BlockPhraseScope.URL,
                     }
                 },
+                AllowedDomains = new List<DomainPolicy>()
+                {
+                    new DomainPolicy()
+                    {
+                         DomainBlocked = false,
+                         DomainFormat = ".google.com",
+                         Type = AllowDomainType.SUBDOMAINS
+                    }
+                }
             };
 
             string reason = "";
             areFalse(filter.isContentAllowed("translateX: -50%", BlockPhraseScope.BODY, out reason));
 
-            areTrue(filter.isContentAllowed(
-                "www.google.com/search?q=normal%20search&oq=normal%20search&aqs=chrome..69i57.2865j0j1&sourceid=chrome&ie=UTF-8&safe=active"
-                , BlockPhraseScope.URL, out reason));
+            areTrue(filter.isWhitelistedURL(new Uri(
+                "https://www.google.com/search?q=normal%20search&oq=normal%20search&aqs=chrome..69i57.2865j0j1&sourceid=chrome&ie=UTF-8&safe=active")
+                , out reason));
 
 
             Console.Write(reason);

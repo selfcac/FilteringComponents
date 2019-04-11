@@ -368,7 +368,7 @@ namespace HTTPProtocolFilter
                 if (allowed) // Finally check for banned phrases. 
                 {
                     string phrase_reason = "";
-                    allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL, out phrase_reason);
+                    allowed = isContentAllowed(host + pathAndQuery, BlockPhraseScope.URL, out phrase_reason);
                     if (!allowed)
                     {
                         reason = host + pathAndQuery + ", "+   phrase_reason ;
