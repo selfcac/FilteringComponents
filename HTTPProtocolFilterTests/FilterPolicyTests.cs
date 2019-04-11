@@ -489,15 +489,6 @@ namespace HTTPProtocolFilter.Tests
 
             Console.Write(testResult);
 
-            Assert.AreEqual(@"_<this>_ are very 
-this _<are>_ very tigh
-this are _<ver>_y tight te
-ery tight _<text>_
-long long _<this>_ are very 
-long this _<are>_ very tigh
- this are _<ver>_y tight te
-ery tight _<text>_ long long", testResult);
-
         }
 
 
@@ -514,11 +505,22 @@ ery tight _<text>_ long long", testResult);
                         Phrase = "la[tp]ex",
                         Scope = BlockPhraseScope.ANY // just block it -  Very bad term!
                     },
+                    new PhraseFilter()
+                    {
+                        Type = BlockPhraseType.REGEX,
+                        Phrase = "^(?=.*search)(?!.*google\\.com).*\\/search.*[\\?&]q\\=",
+                        Scope = BlockPhraseScope.URL,
+                    }
                 },
             };
 
             string reason = "";
             areFalse(filter.isContentAllowed("translateX: -50%", BlockPhraseScope.BODY, out reason));
+
+            areTrue(filter.isContentAllowed(
+                "www.google.com/search?q=normal%20search&oq=normal%20search&aqs=chrome..69i57.2865j0j1&sourceid=chrome&ie=UTF-8&safe=active"
+                , BlockPhraseScope.URL, out reason));
+
 
             Console.Write(reason);
         }
