@@ -181,6 +181,8 @@ namespace HTTPProtocolFilter.Tests
         [TestMethod()]
         public void isWhitelistedEPTest()
         {
+            string reason_throwaway = "";
+
             IHTTPFilter filter = new FilterPolicy()
             {
                 BlockedPhrases = new List<PhraseFilter>()
@@ -188,12 +190,32 @@ namespace HTTPProtocolFilter.Tests
                     new PhraseFilter()
                     {
                         Type = BlockPhraseType.WORDCONTAINING ,
-                        Phrase= "bad"
+                        Phrase= "bad",
+                        Scope = BlockPhraseScope.ALL_SCOPES
                     },
                     new PhraseFilter()
                     {
                         Type = BlockPhraseType.REGEX,
-                        Phrase = "wor[dk]"
+                        Phrase = "wor[dk]",
+                        Scope = BlockPhraseScope.ALL_SCOPES
+                    }
+                }
+
+                ,
+                AllowedDomains = new List<DomainPolicy>()
+                {
+                    new DomainPolicy()
+                    {
+                        DomainBlocked = false,
+                        DomainFormat = "e.com",
+                        Type = AllowDomainType.EXACT,
+                        AllowEP = new List<EPPolicy>()
+                        {
+                           new EPPolicy() {
+                                Type = AllowEPType.STARTWITH,
+                                 EpFormat = "/i-am-whitelisted"
+                           }
+                        }
                     }
                 }
             };
@@ -205,42 +227,34 @@ namespace HTTPProtocolFilter.Tests
             // any ep except bad phrases:
             areTrue(filter.isWhitelistedEP(new DomainPolicy()
             {
+                DomainBlocked = false,
                 DomainFormat = "",
                 Type = AllowDomainType.EXACT,
-                WhiteListEP = new List<EPPolicy>()
-            }, ep1));
-            areFalse(filter.isContentAllowed(ep1));
+                AllowEP = new List<EPPolicy>()
+            }, ep1, out reason_throwaway));
+            areFalse(filter.isContentAllowed(ep1, BlockPhraseScope.URL, out reason_throwaway));
 
             // only ep that are whitelisted
-            var domain1 = new DomainPolicy()
-            {
-                DomainFormat = "e.com",
-                Type = AllowDomainType.EXACT,
-                WhiteListEP = new List<EPPolicy>()
-                {
-                   new EPPolicy() {
-                        Type = AllowEPType.STARTWITH,
-                         EpFormat = "/i-am-whitelisted"
-                   }
-                }
-            };
+            var domain1 = ((FilterPolicy)filter).AllowedDomains[0];
 
-            areTrue(filter.isWhitelistedEP(domain1, ep2));
-            areFalse(filter.isWhitelistedEP(domain1, "/not-whitelisted"));
+            areTrue(filter.isWhitelistedEP(domain1, ep2, out reason_throwaway));
+            areFalse(filter.isWhitelistedEP(domain1, "/not-whitelisted", out reason_throwaway));
 
-            areTrue(filter.isWhitelistedEP(domain1, ep2 + "/work"));
-            areFalse(filter.isContentAllowed(ep2 + "/work"));
-            areFalse(filter.isWhitelistedURL(new Uri("http://e.com" + ep2 + "/work"))); // does both checks
+            areTrue(filter.isWhitelistedEP(domain1, ep2 + "/work", out reason_throwaway));
+            areFalse(filter.isContentAllowed(ep2 + "/work", BlockPhraseScope.URL, out reason_throwaway));
+            areFalse(filter.isWhitelistedURL(new Uri("http://e.com" + ep2 + "/work"), out reason_throwaway)); // does both checks
 
-            areFalse(filter.isContentAllowed( ep3));
-            areFalse(filter.isWhitelistedURL(new Uri("http://e.com" + ep3))); // does both checks
+            areFalse(filter.isContentAllowed(ep3, BlockPhraseScope.URL, out reason_throwaway));
+            areFalse(filter.isWhitelistedURL(new Uri("http://e.com" + ep3), out reason_throwaway)); // does both checks
 
-            areFalse(filter.isWhitelistedEP(null, ""));
+            areFalse(filter.isWhitelistedEP(null, "", out reason_throwaway));
         }
 
         [TestMethod()]
         public void URLTest()
         {
+            string reason_throwaway = "";
+
             FilterPolicy filter = new FilterPolicy()
             {
                 BlockedPhrases = new List<PhraseFilter>()
@@ -248,12 +262,14 @@ namespace HTTPProtocolFilter.Tests
                     new PhraseFilter()
                     {
                         Type = BlockPhraseType.WORDCONTAINING ,
-                        Phrase= "bad"
+                        Phrase= "bad",
+                        Scope = BlockPhraseScope.URL
                     },
                     new PhraseFilter()
                     {
                         Type = BlockPhraseType.REGEX,
-                        Phrase = "wor[dk]"
+                        Phrase = "wor[dk]",
+                        Scope = BlockPhraseScope.URL
                     }
                 }
             };
@@ -262,9 +278,10 @@ namespace HTTPProtocolFilter.Tests
             {
                 new DomainPolicy()
                 {
+                    DomainBlocked = false,
                     DomainFormat = "go.com",
                     Type = AllowDomainType.SUBDOMAINS,
-                    WhiteListEP = new List<EPPolicy>()
+                    AllowEP = new List<EPPolicy>()
                     {
                        new EPPolicy() {
                             Type = AllowEPType.STARTWITH,
@@ -279,12 +296,12 @@ namespace HTTPProtocolFilter.Tests
             string ep3 = "/i-am-whitelisted/badword";
 
             areTrue(filter.isWhitelistedHost("g.go.com"));
-            areTrue(filter.isWhitelistedURL("go.com", ep2));
-            areFalse(filter.isWhitelistedURL("go.com", "/not-ok"));
-            areFalse(filter.isWhitelistedURL("go-go.com", ep2));
+            areTrue(filter.isWhitelistedURL("go.com", ep2, out reason_throwaway));
+            areFalse(filter.isWhitelistedURL("go.com", "/not-ok", out reason_throwaway));
+            areFalse(filter.isWhitelistedURL("go-go.com", ep2, out reason_throwaway));
 
             areTrue(filter.isWhitelistedHost("go.com"));
-            areFalse(filter.isWhitelistedURL("g.go.com", ep2 + "/work"));
+            areFalse(filter.isWhitelistedURL("g.go.com", ep2 + "/work", out reason_throwaway));
 
         }
 
@@ -323,7 +340,7 @@ namespace HTTPProtocolFilter.Tests
             };
 
 
-            Assert.AreEqual(null, filter.findBlockingPhrase(""));
+            Assert.AreEqual(null, filter.findBlockingPhrase("", BlockPhraseScope.ALL_SCOPES));
         }
     }
 }

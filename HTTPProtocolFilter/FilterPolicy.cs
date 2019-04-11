@@ -183,7 +183,14 @@ namespace HTTPProtocolFilter
 
             for (int i = 0; i < BlockedPhrases.Count && (result == null); i++)
             {
-                if (BlockedPhrases[i].Scope == scope)
+                if (
+                    // Any of the scope is ALL
+                    scope == BlockPhraseScope.ALL_SCOPES
+                    || BlockedPhrases[i].Scope == BlockPhraseScope.ALL_SCOPES
+
+                    // Scopes are equal:
+                    || BlockedPhrases[i].Scope == scope
+                    )
                 {
                     switch (BlockedPhrases[i].Type)
                     {
@@ -247,7 +254,7 @@ namespace HTTPProtocolFilter
                 return false;
             }
 
-            if (!domainObj.DomainBlocked)
+            if (domainObj.DomainBlocked)
             {
                 reason = "Domain " + domainObj.DomainFormat + " in block mode";
                 return false;
@@ -333,7 +340,7 @@ namespace HTTPProtocolFilter
             }
             else
             {
-                reason = "Doamin " + domainRule.DomainFormat + " is not whitelisted";
+                reason = "Doamin " + host + " is not whitelisted";
             }
 
             return allowed;

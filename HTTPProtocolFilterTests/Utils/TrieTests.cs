@@ -27,7 +27,7 @@ namespace HTTPProtocolFilter.Utils.Tests
             {
                 Type = AllowDomainType.SUBDOMAINS,
                 DomainFormat = ".gogo.com",
-                WhiteListEP = new List<EPPolicy>()
+                AllowEP = new List<EPPolicy>()
                  {
                      new EPPolicy()
                      {
@@ -59,7 +59,7 @@ namespace HTTPProtocolFilter.Utils.Tests
             NotFound(t.CheckDomain(""));
 
             // Check tag contain the info.
-            Assert.AreEqual(AllowEPType.CONTAIN, t.CheckDomain("go.gogo.com").Tag.WhiteListEP[0].Type);
+            Assert.AreEqual(AllowEPType.CONTAIN, t.CheckDomain("go.gogo.com").Tag.AllowEP[0].Type);
         }
 
 
