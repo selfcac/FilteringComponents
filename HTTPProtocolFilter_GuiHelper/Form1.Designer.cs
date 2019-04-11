@@ -678,11 +678,12 @@
             // 
             // lbxAllowEp
             // 
+            this.lbxAllowEp.Dock = System.Windows.Forms.DockStyle.Top;
             this.lbxAllowEp.FormattingEnabled = true;
             this.lbxAllowEp.ItemHeight = 22;
-            this.lbxAllowEp.Location = new System.Drawing.Point(6, 32);
+            this.lbxAllowEp.Location = new System.Drawing.Point(3, 24);
             this.lbxAllowEp.Name = "lbxAllowEp";
-            this.lbxAllowEp.Size = new System.Drawing.Size(398, 136);
+            this.lbxAllowEp.Size = new System.Drawing.Size(405, 136);
             this.lbxAllowEp.TabIndex = 10;
             this.lbxAllowEp.SelectedIndexChanged += new System.EventHandler(this.lbxEp_SelectedIndexChanged);
             // 
@@ -830,11 +831,12 @@
             // 
             // lbxBlockEp
             // 
+            this.lbxBlockEp.Dock = System.Windows.Forms.DockStyle.Top;
             this.lbxBlockEp.FormattingEnabled = true;
             this.lbxBlockEp.ItemHeight = 22;
-            this.lbxBlockEp.Location = new System.Drawing.Point(6, 32);
+            this.lbxBlockEp.Location = new System.Drawing.Point(3, 24);
             this.lbxBlockEp.Name = "lbxBlockEp";
-            this.lbxBlockEp.Size = new System.Drawing.Size(398, 136);
+            this.lbxBlockEp.Size = new System.Drawing.Size(405, 136);
             this.lbxBlockEp.TabIndex = 10;
             this.lbxBlockEp.SelectedIndexChanged += new System.EventHandler(this.lbxEpBlock_SelectedIndexChanged);
             // 
@@ -891,7 +893,7 @@
             // 
             // btnAddAllowEP
             // 
-            this.btnAddAllowEP.Location = new System.Drawing.Point(328, 3);
+            this.btnAddAllowEP.Location = new System.Drawing.Point(93, 0);
             this.btnAddAllowEP.Name = "btnAddAllowEP";
             this.btnAddAllowEP.Size = new System.Drawing.Size(31, 34);
             this.btnAddAllowEP.TabIndex = 11;
@@ -901,7 +903,7 @@
             // 
             // btnDelAllowEP
             // 
-            this.btnDelAllowEP.Location = new System.Drawing.Point(365, 3);
+            this.btnDelAllowEP.Location = new System.Drawing.Point(130, 0);
             this.btnDelAllowEP.Name = "btnDelAllowEP";
             this.btnDelAllowEP.Size = new System.Drawing.Size(31, 34);
             this.btnDelAllowEP.TabIndex = 12;
@@ -911,7 +913,7 @@
             // 
             // btnDelBlockEp
             // 
-            this.btnDelBlockEp.Location = new System.Drawing.Point(365, 3);
+            this.btnDelBlockEp.Location = new System.Drawing.Point(129, 0);
             this.btnDelBlockEp.Name = "btnDelBlockEp";
             this.btnDelBlockEp.Size = new System.Drawing.Size(31, 34);
             this.btnDelBlockEp.TabIndex = 14;
@@ -921,7 +923,7 @@
             // 
             // btnAddBlockEP
             // 
-            this.btnAddBlockEP.Location = new System.Drawing.Point(328, 3);
+            this.btnAddBlockEP.Location = new System.Drawing.Point(92, 0);
             this.btnAddBlockEP.Name = "btnAddBlockEP";
             this.btnAddBlockEP.Size = new System.Drawing.Size(31, 34);
             this.btnAddBlockEP.TabIndex = 13;
