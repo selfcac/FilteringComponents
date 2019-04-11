@@ -156,9 +156,19 @@ namespace HTTPProtocolFilter
         /// </summary>
         /// <param name="Content"></param>
         /// <returns>True if content is allowed under policy</returns>
-        public bool isContentAllowed(string Content, BlockPhraseScope scope)
+        public bool isContentAllowed(string Content, BlockPhraseScope scope, out string reason)
         {
-            return (findBlockingPhrase(Content,scope) == null);
+            var phrase = findBlockingPhrase(Content, scope);
+            if (phrase == null)
+            {
+                reason = "no phrase found in scope " + scope;
+                return true;
+            }
+            else
+            {
+                reason = "blocked because phrase " + phrase.ToString();
+                return false;
+            }
         }
 
         /// <summary>
@@ -229,15 +239,23 @@ namespace HTTPProtocolFilter
         /// Check if ep is in policy
         /// </summary>
         /// <returns>true if allowed</returns>
-        public bool isWhitelistedEP(DomainPolicy domainObj, string ep)
+        public bool isWhitelistedEP(DomainPolicy domainObj, string ep, out string reason)
         {
             if (domainObj == null)
+            {
+                reason = "domain object is null";
                 return false;
+            }
 
             if (!domainObj.DomainBlocked)
+            {
+                reason = "Domain " + domainObj.DomainFormat + " in block mode";
                 return false;
+            }
 
             bool allowed = false;
+            reason = "Domain " + domainObj.DomainFormat + " is blocked at init (default)";
+
 
             // check if ep in domain
             if (domainObj.AllowEP.Count > 0 )
@@ -248,6 +266,7 @@ namespace HTTPProtocolFilter
                     if (checkEPRuleMatch(domainObj.AllowEP[i], ep))
                     {
                         allowed = true;
+                        reason = "Domain " + domainObj.DomainFormat + " is allowed by " + ep.ToString();
                         break;
                     }
                 }
@@ -265,6 +284,7 @@ namespace HTTPProtocolFilter
                     if (checkEPRuleMatch(domainObj.BlockEP[i], ep))
                     {
                         allowed = false;
+                        reason = "Domain " + domainObj.DomainFormat + " is blocked by " + ep.ToString();
                         break;
                     }
                 }
@@ -288,21 +308,32 @@ namespace HTTPProtocolFilter
         /// Check if complete URL is in policy (Host+EP+Phrase checks)
         /// </summary>
         /// <returns>true if allowed</returns>
-        public bool isWhitelistedURL(Uri uri)
+        public bool isWhitelistedURL(Uri uri, out string reason)
         {
-            return isWhitelistedURL(uri.Host, uri.PathAndQuery);
+            return isWhitelistedURL(uri.Host, uri.PathAndQuery, out reason);
         }
 
-        public bool isWhitelistedURL(string host, string pathAndQuery)
+        public bool isWhitelistedURL(string host, string pathAndQuery, out string reason)
         {
             bool allowed = false;
             DomainPolicy domainRule = findAllowedDomain(host ?? "");
             if (domainRule != null)
             {
-                allowed = isWhitelistedEP(domainRule, pathAndQuery ?? "");
+                allowed = isWhitelistedEP(domainRule, pathAndQuery ?? "", out reason);
 
-                if (allowed) // Finally check for banned phrases.
-                    allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL);
+                if (allowed) // Finally check for banned phrases. 
+                {
+                    string phrase_reason = "";
+                    allowed = isContentAllowed(pathAndQuery, BlockPhraseScope.URL, out reason);
+                    if (!allowed)
+                    {
+                        reason = phrase_reason;
+                    }
+                }
+            }
+            else
+            {
+                reason = "Doamin " + domainRule.DomainFormat + " is not whitelisted";
             }
 
             return allowed;

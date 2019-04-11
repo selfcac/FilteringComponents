@@ -81,16 +81,16 @@ namespace HTTPProtocolFilter
     {
         WorkingMode getMode();
 
-        bool isWhitelistedURL(Uri uri, out object reason);
-        bool isWhitelistedURL(string host, string pathAndQuery, out object reason);
+        bool isWhitelistedURL(Uri uri, out string reason);
+        bool isWhitelistedURL(string host, string pathAndQuery, out string reason);
 
         DomainPolicy findAllowedDomain(string host);
         bool isWhitelistedHost(string host);
 
-        bool isWhitelistedEP(DomainPolicy domainObj, string ep, out object reason);
+        bool isWhitelistedEP(DomainPolicy domainObj, string ep, out string reason);
 
         PhraseFilter findBlockingPhrase(string Content, BlockPhraseScope scope);
-        bool isContentAllowed(string Content, BlockPhraseScope scope, out object reason);
+        bool isContentAllowed(string Content, BlockPhraseScope scope, out string reason);
 
         void reloadPolicy(string filename);
         void savePolicy(string filename);
