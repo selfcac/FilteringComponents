@@ -533,6 +533,65 @@ namespace HTTPProtocolFilter.Tests
 
             Console.Write(reason);
         }
+
+
+
+        [TestMethod()]
+        public void blockSubdomainAfterDomain()
+        {
+            FilterPolicy filter = new FilterPolicy()
+            {
+                BlockedPhrases = new List<PhraseFilter>() {},
+                AllowedDomains = new List<DomainPolicy>()
+                {
+                    new DomainPolicy()
+                    {
+                         DomainBlocked = true,
+                         DomainFormat = "aaa.maariv.co.il",
+                         Type = AllowDomainType.EXACT
+                    },
+                    new DomainPolicy()
+                    {
+                         DomainBlocked = false,
+                         DomainFormat = ".maariv.co.il",
+                         Type = AllowDomainType.SUBDOMAINS
+                    },
+                    new DomainPolicy()
+                    {
+                         DomainBlocked = true,
+                         DomainFormat = "tmi.maariv.co.il",
+                         Type = AllowDomainType.EXACT
+                    },
+                }
+            };
+
+
+            string reason = "";
+
+            areFalse(filter.isWhitelistedURL(new Uri(
+                "https://aaa.maariv.co.il/sss?a=b&c=d")
+                , out reason));
+
+            areTrue(filter.isWhitelistedURL(new Uri(
+                "https://www.maariv.co.il/sss?a=b&c=d")
+                , out reason));
+
+            areTrue(filter.isWhitelistedURL(new Uri(
+                "https://maariv.co.il/sss?a=b&c=d")
+                , out reason));
+
+            areTrue(filter.isWhitelistedURL(new Uri(
+                "https://abc.maariv.co.il/sss?a=b&c=d")
+                , out reason));
+
+            areFalse(filter.isWhitelistedURL(new Uri(
+                "https://tmi.maariv.co.il/sss?a=b&c=d")
+                , out reason));
+
+            Console.WriteLine(reason);
+        }
+
+
     }
     
 }
