@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeBlock_GuiHelper", "Time
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeBlock_GuiHelperTests", "TimeBlock_GuiHelperTests\TimeBlock_GuiHelperTests.csproj", "{9F4B8103-8A13-4074-B082-4E1616F9B2D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckBlacklistedWifiTests", "CheckBlacklistedWifiTests\CheckBlacklistedWifiTests.csproj", "{22940B16-E5F7-46BF-B6C9-851FCA26F85D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{9F4B8103-8A13-4074-B082-4E1616F9B2D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F4B8103-8A13-4074-B082-4E1616F9B2D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F4B8103-8A13-4074-B082-4E1616F9B2D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22940B16-E5F7-46BF-B6C9-851FCA26F85D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22940B16-E5F7-46BF-B6C9-851FCA26F85D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22940B16-E5F7-46BF-B6C9-851FCA26F85D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22940B16-E5F7-46BF-B6C9-851FCA26F85D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

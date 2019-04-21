@@ -118,24 +118,27 @@ namespace CheckBlacklistedWifi
 
             IEnumerable<string> trusted = BSSIDsRules
                 .Where((s) => s[0] == '+')
-                .Select((s) => s.Substring(1));
+                .Select((s) => s.Split('#')[0].Substring(1));
 
             IEnumerable<string> ignored = BSSIDsRules
                 .Where((s) => s[0] == '?')
-                .Select((s) => s.Substring(1));
+                .Select((s) => s.Split('#')[0].Substring(1));
 
             IEnumerable<string> blocked = BSSIDsRules
                 .Where((s) => s[0] == '-')
-                .Select((s) => s.Substring(1));
+                .Select((s) => s.Split('#')[0].Substring(1));
 
             List<string> newBSSIDs = new List<string>();
 
-            inBlockZone = WifiHelper.inBlockZone(currentIDs, blocked, ignored, trusted, out newBSSIDs, log);
+            inBlockZone = WifiHelper.inBlockZone(
+                currentIDs.Select((id) => id.Split('#')[0]),
+                blocked, ignored, trusted, out newBSSIDs, log);
 
             if (inBlockZone)
             {
                 foreach(string newbad in newBSSIDs)
                 {
+                    // TODO : restore name from currentIDs
                     BSSIDsRules.Add("-" + newbad);
                 }
             }

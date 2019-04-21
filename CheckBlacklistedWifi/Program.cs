@@ -81,6 +81,25 @@ namespace CheckBlacklistedWifi
                     .Where((line) => line.StartsWith("    BSSID"))
                     .ToArray();
 
+                /* TODO: Add names (In some comment mode so renaming wont affect... only bssid)
+SSID <N> : Moshe
+    Network type            : Infrastructure
+    Authentication          : WPA2-Personal
+    Encryption              : CCMP
+    BSSID <i>               : 8c:59:c3:aa:1d:dc
+         Signal             : 92%
+         Radio type         : 802.11n
+         Channel            : 11
+         Basic rates (Mbps) : 1 2 5.5 11
+         Other rates (Mbps) : 6 9 12 18 24 36 48 54
+    BSSID <i+1>             : 8c:59:c3:aa:1d:e0
+         Signal             : 34%
+         Radio type         : 802.11ac
+         Channel            : 36
+         Basic rates (Mbps) : 6 12 24
+         Other rates (Mbps) : 9 18 36 48 54
+                */
+
                 for (int i = 0; i < currentBSSID.Length; i++)
                 {
                     currentBSSID[i] = currentBSSID[i].Substring(currentBSSID[i].IndexOf(": ") + 2);
