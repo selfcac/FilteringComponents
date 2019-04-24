@@ -23,21 +23,22 @@ namespace CheckBlacklistedWifi.Tests
         {
             List<string> current = new List<string>()
             {
-                "hash1#Name of wifi",
-                "hash2#Name1 of wifi",
-                "hash3#Name of2 wifi",
-                "hash4#Name of wifi3",
+                "hash1;Name of wifi",
+                "hash2;Name1 of wifi",
+                "hash3;Name of2 wifi",
+                "hash4    ;          Name of wifi3       ",
             };
 
             var rules = new List<string>()
             {
-                "-hash1#Name ignored"
+                "-    ;    hash1    ;                Name ignored"
             };
 
             TestWifiBlocked(true, current, rules);
 
             // Check new hashes added:
-            Assert.IsTrue(rules.Count == 4 && rules[3].StartsWith("-hash4")) ;
+            Assert.AreEqual(4, rules.Count);
+            Assert.AreEqual("-;hash4;Name of wifi3",rules[3]);
         }
 
         [TestMethod()]
@@ -45,16 +46,16 @@ namespace CheckBlacklistedWifi.Tests
         {
             List<string> current = new List<string>()
             {
-                "hash1#Name of wifi",
-                "hash2#Name1 of wifi",
-                "hash3#Name of2 wifi",
-                "hash4#Name of wifi3",
+                "hash1;Name of wifi",
+                "hash2;Name1 of wifi",
+                "hash3;Name of2 wifi",
+                "hash4;Name of wifi3",
             };
 
             var rules = new List<string>()
             {
-                "+hash1#Name ignored",
-                "-hash2#Name ignored"
+                "+;hash1;Name ignored",
+                "-;hash2;Name ignored"
             };
 
             TestWifiBlocked(false, current, rules);
@@ -68,20 +69,20 @@ namespace CheckBlacklistedWifi.Tests
         {
             List<string> current = new List<string>()
             {
-                "hash1#Name of wifi",
-                "hash5#Name of wifi3",
+                "hash1;Name of wifi",
+                "hash5;Name of wifi3",
             };
 
             var rules = new List<string>()
             {
-                "?hash1#Name ignored",
-                "-hash2#Name ignored"
+                "?;hash1;Name ignored",
+                "-;hash2;Name ignored"
             };
 
             var rules2 = new List<string>()
             {
-                "-hash1#Name ignored",
-                "-hash2#Name ignored"
+                "-;hash1;Name ignored",
+                "-;hash2;Name ignored"
             };
 
             TestWifiBlocked(false, current, rules);
@@ -98,21 +99,22 @@ namespace CheckBlacklistedWifi.Tests
         {
             List<string> current = new List<string>()
             {
-                "hash1#Name of wifi",
-                "hash2#Name1 of wifi",
-                "hash3#Name of2 wifi",
-                "hash4#Name of wifi3",
+                "hash1;Name of wifi",
+                "hash2;Name1 of wifi",
+                "hash3;Name of2 wifi",
+                "hash4;Name of wifi3",
             };
 
             var rules = new List<string>()
             {
-                "-hash55#Name ignored"
+                "-;hash55;Name ignored"
             };
 
             TestWifiBlocked(false, current, rules);
 
             // Check new hashes added:
-            Assert.IsTrue(rules.Count == 1);
+            Assert.AreEqual(1,rules.Count);
+            Assert.AreEqual("-;hash55;Name ignored", rules[0]);
         }
     }
 }

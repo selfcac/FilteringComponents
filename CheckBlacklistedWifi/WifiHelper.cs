@@ -8,6 +8,84 @@ namespace CheckBlacklistedWifi
 {
     public class WifiHelper
     {
+        public class WifiNetwork
+        {
+            public enum TrustMode
+            {
+                TRUSTED, IGNORED, BLOCKED, UNKOWN
+            }
+
+            public static char seperator = ';';
+
+            public static Dictionary<string, TrustMode> TrustMap = new Dictionary<string, TrustMode>()
+            {
+                { "+", TrustMode.TRUSTED },
+                { "?", TrustMode.IGNORED},
+                { "-", TrustMode.BLOCKED },
+                { "*", TrustMode.UNKOWN },
+            };
+
+            public static Dictionary<TrustMode, string> ReverseTrustMap = new Dictionary<TrustMode, string>()
+            {
+                {TrustMode.TRUSTED, "+" },
+                {TrustMode.IGNORED, "?" },
+                {TrustMode.BLOCKED, "-" },
+                {TrustMode.UNKOWN,  "*" },
+            };
+
+            public string BSSID;
+            public string DisplaName;
+            public TrustMode TrustLevel;
+
+            public static WifiNetwork fromString(string wifidata, Action<string> logger, out bool error)
+            {
+                error = true;
+                WifiNetwork result = new WifiNetwork();
+                try
+                {
+                    List<string> data =
+                        wifidata.Split(seperator).Select((a) => a.Trim()).ToList();
+                    if (data.Count == 3)
+                    {
+                        result.TrustLevel = TrustMap[data[0]];
+                        result.BSSID = data[1];
+                        result.DisplaName = data[2];
+                        error = false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger(ex.ToString());
+                }
+                return result;
+            }
+
+            public static WifiNetwork newNetwork(string bssid, string name)
+            {
+                return new WifiNetwork() { TrustLevel = TrustMode.UNKOWN, BSSID = bssid, DisplaName = name };
+            }
+
+
+            public override int GetHashCode() 
+            {
+                // Only for bucket search ==> after that must use Equls.
+                return BSSID.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                return GetHashCode() == obj.GetHashCode();
+            }
+
+            public override string ToString()
+            {
+                return string.Join(
+                    seperator + "",
+                    new[] { ReverseTrustMap[TrustLevel], BSSID, DisplaName }
+                    );
+            }
+        }
+
         /// <summary>
         /// Main decision tree to see if we are in block zone.
         /// </summary>
@@ -19,31 +97,31 @@ namespace CheckBlacklistedWifi
         /// <param name="log">A logging function</param>
         /// <returns></returns>
         public static bool inBlockZone(
-            IEnumerable<string> currentIDs,
-            IEnumerable<string> badIDs, IEnumerable<string> ignoreIDs, IEnumerable<string> trustedIDs,
-            out List<string> newBadIDs, Action<string> log)
+            IEnumerable<WifiNetwork> currentIDs,
+            IEnumerable<WifiNetwork> badIDs, IEnumerable<WifiNetwork> ignoreIDs, IEnumerable<WifiNetwork> trustedIDs,
+            out List<WifiNetwork> newBadIDs, Action<string> log)
         {
             bool inblockzone = true; // until proven innocent
 
             // Make hashset for faster searching:
-            HashSet<string> currentHashes = new HashSet<string>(currentIDs),
-                badsHashes = new HashSet<string>(badIDs),
-                ignoredHashes = new HashSet<string>(ignoreIDs),
-                trustedHashes = new HashSet<string>(trustedIDs);
+            HashSet<WifiNetwork> currentHashes = new HashSet<WifiNetwork>(currentIDs),
+                badsHashes = new HashSet<WifiNetwork>(badIDs),
+                ignoredHashes = new HashSet<WifiNetwork>(ignoreIDs),
+                trustedHashes = new HashSet<WifiNetwork>(trustedIDs);
 
-            newBadIDs = new List<string>();
+            newBadIDs = new List<WifiNetwork>();
 
-            HashSet<string> relevantHashes = new HashSet<string>();
+            HashSet<WifiNetwork> relevantHashes = new HashSet<WifiNetwork>();
 
             bool foundTrusted = false;
             int ignoredCount = 0;
 
             // Find relevant ids. If you find trusted, just stop.
-            foreach(string id in currentHashes)
+            foreach (WifiNetwork id in currentHashes)
             {
                 if (trustedHashes.Contains(id))
                 {
-                    log("Found trusted ('" + id +"'). So not in blockzone.");
+                    log("Found trusted ('" + id + "'). So not in blockzone.");
                     foundTrusted = true;
                     break;
                 }
@@ -52,7 +130,7 @@ namespace CheckBlacklistedWifi
                     // Dont add it to next step
                     ignoredCount++;
                 }
-                else 
+                else
                 {
                     // not trusted and not ignored --> so need to be checked
                     relevantHashes.Add(id);
@@ -68,7 +146,7 @@ namespace CheckBlacklistedWifi
                 bool foundBlocked = false;
 
                 // Now check all relevant:
-                foreach (string id in relevantHashes)
+                foreach (WifiNetwork id in relevantHashes)
                 {
                     if (badsHashes.Contains(id))
                     {
@@ -104,43 +182,67 @@ namespace CheckBlacklistedWifi
         /// <summary>
         /// Quick call of the inBlockZone functions
         /// </summary>
-        /// <param name="currentIDs">List of current Wifi BSSID</param>
-        /// <param name="BSSIDsRules">prefix: '-' block, '+' trusted, '?' ignore</param>
+        /// <param name="textcurrent">List of current Wifi BSSID</param>
+        /// <param name="textrules">prefix: '-' block, '+' trusted, '?' ignore</param>
         /// <param name="newBSSIDsRules">the entire new rule set (not only the added blocked)</param>
         /// <param name="log">A logging function</param>
         /// <returns></returns>
         public static bool fastBlockZoneCheck(
-            IEnumerable<string> currentIDs,
-            List<string> BSSIDsRules,
+            IEnumerable<string> textcurrent,
+            List<string> textrules,
             Action<string> log)
         {
             bool inBlockZone = true;
 
-            IEnumerable<string> trusted = BSSIDsRules
-                .Where((s) => s[0] == '+')
-                .Select((s) => s.Split('#')[0].Substring(1));
-
-            IEnumerable<string> ignored = BSSIDsRules
-                .Where((s) => s[0] == '?')
-                .Select((s) => s.Split('#')[0].Substring(1));
-
-            IEnumerable<string> blocked = BSSIDsRules
-                .Where((s) => s[0] == '-')
-                .Select((s) => s.Split('#')[0].Substring(1));
-
-            List<string> newBSSIDs = new List<string>();
-
-            inBlockZone = WifiHelper.inBlockZone(
-                currentIDs.Select((id) => id.Split('#')[0]),
-                blocked, ignored, trusted, out newBSSIDs, log);
-
-            if (inBlockZone)
+            try
             {
-                foreach(string newbad in newBSSIDs)
+                List<WifiNetwork> networkRules = new List<WifiNetwork>();
+                foreach (string rule in textrules)
                 {
-                    // TODO : restore name from currentIDs
-                    BSSIDsRules.Add("-" + newbad);
+                    bool error = false;
+                    WifiNetwork wifi = WifiNetwork.fromString(rule, log, out error);
+                    if (!error)
+                        networkRules.Add(wifi);
                 }
+
+                List<WifiNetwork> currentWifis = textcurrent
+                    .Select((t) =>
+                    {
+                        var data = t
+                            .Split(WifiNetwork.seperator)
+                            .Select((a) => a.Trim())
+                            .ToList();
+                        return WifiNetwork.newNetwork(data[0], data[1]);
+                    })
+                    .ToList();
+
+                List<WifiNetwork> trusted = networkRules
+                    .Where((s) => s.TrustLevel == WifiNetwork.TrustMode.TRUSTED).ToList();
+
+                List<WifiNetwork> ignored = networkRules
+                    .Where((s) => s.TrustLevel == WifiNetwork.TrustMode.IGNORED).ToList();
+
+                List<WifiNetwork> blocked = networkRules
+                    .Where((s) => s.TrustLevel == WifiNetwork.TrustMode.BLOCKED).ToList();
+
+                List<WifiNetwork> newBadWifis = new List<WifiNetwork>();
+
+                inBlockZone = WifiHelper.inBlockZone(
+                    currentWifis,
+                    blocked, ignored, trusted, out newBadWifis, log);
+
+                if (inBlockZone)
+                {
+                    foreach (var newbad in newBadWifis)
+                    {
+                        newbad.TrustLevel = WifiNetwork.TrustMode.BLOCKED; // From unkown to bad.
+                        textrules.Add(newbad.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log(ex.ToString());
             }
 
             return inBlockZone;
