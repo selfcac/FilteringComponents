@@ -73,23 +73,9 @@ namespace CheckBlacklistedWifi
                     ((args != null && args.Length > 0) ? args : new[] { "no-service" })
                     .Last();
 
-                string nearByWifis = getCMDOutput("netsh", "wlan show networks mode=bssid");
+                string nearByWifisCMDResult = getCMDOutput("netsh", "wlan show networks mode=bssid");
 
-
-
-                /* TODO: Add names (In some comment mode so renaming wont affect... only bssid)
-
-                */
-                string[] currentBSSID =
-                    nearByWifis
-                    .Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
-                    .Where((line) => line.StartsWith("    BSSID"))
-                    .ToArray();
-
-                for (int i = 0; i < currentBSSID.Length; i++)
-                {
-                    currentBSSID[i] = currentBSSID[i].Substring(currentBSSID[i].IndexOf(": ") + 2);
-                }
+                List<string> wifi_data = Utils.getWifiParsed(nearByWifisCMDResult);
 
                 // Logic:
                 //      if in block zone (by finding 1 result of blocked bssid) save all new bssid.
@@ -97,35 +83,20 @@ namespace CheckBlacklistedWifi
 
                 if (blockFile.Exists)
                 {
-                    bool foundBlockedBSSID = false;
 
-                    if (currentBSSID.Length > 0)
+                    if (wifi_data.Count > 0)
                     {
-                        HashSet<string> blockHashes = new HashSet<string>(File.ReadAllLines(blockFile.FullName));
-                        List<string> newBSSID = new List<string>();
+                        List<string> ruleset = File.ReadAllLines(blockFile.FullName).ToList();
 
-                        for (int i = 0; i < currentBSSID.Length; i++)
+                        if (WifiHelper.fastBlockZoneCheck(wifi_data, ruleset, (text) => log(text))) 
                         {
-                            if (blockHashes.Contains(currentBSSID[i]))
-                            {
-                                foundBlockedBSSID = true;
-                            }
-                            else
-                            {
-                                newBSSID.Add(currentBSSID[i]);
-                            }
-                        }
+                            // Update all rules with bad ones:
+                            File.WriteAllLines(blockFile.FullName, ruleset);
 
-                        if (foundBlockedBSSID)
-                        {
-                            File.AppendAllLines(blockFile.FullName, newBSSID);
-                            log("In block zone, found " + newBSSID.Count + " new bssid");
                             setService(true, servicename);
                         }
                         else
                         {
-                            // found wifis + didnt find block, so we not in blocked zone!
-                            log("Found " + currentBSSID.Length + " wifis but none blocked, ok zone!");
                             setService(false, servicename);
                         }
                     }
