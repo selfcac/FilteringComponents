@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿//using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +17,10 @@ namespace Common
             ConnectionHelpers.TaskInfo result = ConnectionHelpers.TaskInfo.Fail("init");
             try
             {
-                string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                string json =
+                    new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(this);
+
                 if (File.Exists(filename))
                     File.Delete(filename); // O.W might write only in the beginning of the file.
                 File.WriteAllText(filename, json);
@@ -39,7 +42,9 @@ namespace Common
                 if (File.Exists(filename))
                 {
                     string json = File.ReadAllText(filename);
-                    T obj = JsonConvert.DeserializeObject<T>(json);
+                    //T obj = JsonConvert.DeserializeObject<T>(json);
+                    T obj =
+                        new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<T>(json);
                     result = ConnectionHelpers.TaskInfoResult<T>.Result(obj);
                 }
                 else
