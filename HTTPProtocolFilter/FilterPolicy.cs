@@ -66,7 +66,6 @@ namespace HTTPProtocolFilter
 
         public List<PhraseFilter> BlockedPhrases = new List<PhraseFilter>();
 
-        [DllExport]
         public static List<string> getWords(string text)
         {
             if (string.IsNullOrEmpty(text))
