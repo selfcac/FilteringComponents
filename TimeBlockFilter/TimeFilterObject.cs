@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Common.ConnectionHelpers;
 
-
-namespace TimeBlock_GuiHelper
+namespace TimeBlockFilter
 {
     public class TimeFilterObject : Common.JSONBaseClass
     {
@@ -47,5 +47,19 @@ namespace TimeBlock_GuiHelper
             return isBlocked(DateTime.Now);
         }
 
+        public void reloadPolicy(string filename)
+        {
+            TaskInfo newPolicyLoad = TimeFilterObject.FromFile<TimeFilterObject>(filename);
+            if (newPolicyLoad)
+            {
+                TimeFilterObject newPolicy = ((TaskInfoResult<TimeFilterObject>)newPolicyLoad).result;
+                AllowDayAndTimeMatrix = newPolicy.AllowDayAndTimeMatrix;
+            }
+        }
+
+        public void savePolicy(string filename)
+        {
+            ToFile(filename);
+        }
     }
 }

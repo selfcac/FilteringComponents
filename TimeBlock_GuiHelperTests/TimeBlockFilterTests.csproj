@@ -84,9 +84,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TimeBlock_GuiHelper\TimeBlock_GuiHelper.csproj">
-      <Project>{39A420E6-2C0C-4F57-9FDF-52755E6C0D8F}</Project>
-      <Name>TimeBlock_GuiHelper</Name>
+    <ProjectReference Include="..\TimeBlockFilter\TimeBlockFilter.csproj">
+      <Project>{4d07cb79-6e55-48d9-80e3-36effa4813ea}</Project>
+      <Name>TimeBlockFilter</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
