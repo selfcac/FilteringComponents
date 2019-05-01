@@ -26,7 +26,6 @@ namespace TimeBlockFilter.Tests
         {
             TimeFilterObject filter = new TimeFilterObject();
             filter.clearAllTo(true);
-
             filter.setPolicy(DayOfWeek.Monday, 6, false);
 
             // 1 April 2019 = Monday
@@ -46,10 +45,53 @@ namespace TimeBlockFilter.Tests
         }
 
         [TestMethod()]
+        public void SingleArray()
+        {
+            TimeFilterObject filter = new TimeFilterObject();
+            filter.clearAllTo(true);
+
+            // Test for one array (error used '*')
+            filter.setPolicy((DayOfWeek)0, 1, false);
+            filter.setPolicy((DayOfWeek)0, 0, true);
+            Assert.IsTrue(filter.isBlocked(new DateTime(2019, 4, 28, 1, 00, 00)));
+        }
+
+        public DateTime CreateDayOfWeek(int DayOfWeek, int hour, int min)
+        {
+            DateTime dt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, hour, min, 0);
+            // The (... + 7) % 7 ensures we end up with a value in the range [0, 6]
+            int daysUntilTuesday = (DayOfWeek - (int)dt.DayOfWeek + 7) % 7;
+            //  DateTime nextTuesday = today.AddDays(daysUntilTuesday);
+            dt = dt.AddDays(daysUntilTuesday);
+            return dt;
+        }
+
+        [TestMethod()]
+        public void SingleArrayExtender()
+        {
+            TimeFilterObject filter = new TimeFilterObject();
+           
+            for (int day=0;day<7;day++)
+            {
+                for (int hour = 0; hour<24;hour++)
+                {
+                    filter.clearAllTo(true);
+
+                    // Test for one array (error used '*')
+                    filter.setPolicy((DayOfWeek)day, hour, false);
+                    Assert.IsTrue(
+                        filter.isBlocked(CreateDayOfWeek(day,hour,0)), 
+                        string.Format("day {0} hour {1}", day,hour)
+                        );
+                }
+            }
+        }
+
+        [TestMethod()]
         public void reloadPolicyTest()
         {
             TimeFilterObject filter = new TimeFilterObject();
-            filter.reloadPolicy(@"C:\Users\Yoni\Desktop\selfcac\CitadelCore.Windows.Divert.Proxy\CitadelCore.Windows.Example\bin\Debug\timeblock.json");
+            filter.reloadPolicy(@"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json");
 
             Assert.AreEqual(false, filter.isBlockedNow());
         }

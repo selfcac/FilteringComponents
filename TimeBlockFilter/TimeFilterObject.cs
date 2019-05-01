@@ -9,14 +9,19 @@ namespace TimeBlockFilter
 {
     public class TimeFilterObject : Common.JSONBaseClass
     {
-        public bool[,] AllowDayAndTimeMatrix = new bool[7, 24];
+        public bool[] AllowDayAndTimeMatrix = new bool[7 * 24];
+
+        public int getIndex(int days, int hours)
+        {
+            return (days * 7 + hours) % (7*24);
+        }
 
         public bool isBlocked(DateTime dt)
         {
             int day = (int)dt.DayOfWeek;
             int hour = dt.Hour;
 
-            return !AllowDayAndTimeMatrix[day, hour];
+            return !AllowDayAndTimeMatrix[getIndex(day, hour)];
         }
 
         /// <summary>
@@ -27,7 +32,7 @@ namespace TimeBlockFilter
         /// <param name="allow">allow or block?</param>
         public void setPolicy(DayOfWeek day, int hour, bool allow)
         {
-            AllowDayAndTimeMatrix[(int)day, hour % 24] = allow;
+            AllowDayAndTimeMatrix[getIndex((int)day , hour % 24)] = allow;
         }
 
         public void clearAllTo(bool allow)
@@ -36,7 +41,7 @@ namespace TimeBlockFilter
             {
                 for (int hour = 0; hour < 24; hour++)
                 {
-                    AllowDayAndTimeMatrix[day, hour] = allow;
+                    AllowDayAndTimeMatrix[getIndex(day, hour)] = allow;
                 }
             }
         }
@@ -49,7 +54,7 @@ namespace TimeBlockFilter
 
         public void reloadPolicy(string filename)
         {
-            TaskInfo newPolicyLoad = TimeFilterObject.FromFile<TimeFilterObject>(filename);
+            TaskInfo newPolicyLoad = FromFile<TimeFilterObject>(filename);
             if (newPolicyLoad)
             {
                 TimeFilterObject newPolicy = ((TaskInfoResult<TimeFilterObject>)newPolicyLoad).result;

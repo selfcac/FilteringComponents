@@ -70,7 +70,7 @@ namespace TimeBlock_GuiHelper
                     int day = ctrl.TabIndex / 24;
                     int hour = ctrl.TabIndex % 24;
 
-                    lbl.BackColor = (timeFilter.AllowDayAndTimeMatrix[day, hour] ?
+                    lbl.BackColor = (timeFilter.AllowDayAndTimeMatrix[timeFilter.getIndex(day , hour)] ?
                         lblAllowColor.BackColor : lblBlockColor.BackColor);
                 }
             }
@@ -90,12 +90,12 @@ namespace TimeBlock_GuiHelper
                     if (ctrl.BackColor == lblAllowColor.BackColor)
                     {
                         ctrl.BackColor = lblBlockColor.BackColor;
-                        timeFilter.AllowDayAndTimeMatrix[day, hour] = false;
+                        timeFilter.AllowDayAndTimeMatrix[timeFilter.getIndex(day , hour)] = false;
                     }
                     else
                     {
                         ctrl.BackColor = lblAllowColor.BackColor;
-                        timeFilter.AllowDayAndTimeMatrix[day, hour] = true;
+                        timeFilter.AllowDayAndTimeMatrix[timeFilter.getIndex(day , hour)] = true;
                     }
                 }
             }
