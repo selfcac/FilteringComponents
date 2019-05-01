@@ -4,3 +4,5 @@
 /packages/
 /.axoCover
 /HTTPProtocolFilter/packages/
+__pycache__/
+.vscode/
