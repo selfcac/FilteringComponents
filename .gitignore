@@ -6,3 +6,4 @@
 /HTTPProtocolFilter/packages/
 __pycache__/
 .vscode/
+/MitmprxyPlugin/block_log.json

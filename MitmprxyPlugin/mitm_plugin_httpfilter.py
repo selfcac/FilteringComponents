@@ -36,9 +36,10 @@ class PluginConfig:
 
 def writeBlockLog(tag, url, referer, mimetype, reason):
     jsonObj = { "time":str(datetime.datetime.now()), "tag":tag, "url":url, "referer":referer, "mimetype":mimetype, "reason":reason};
-    _log("Blocks {tag} {mimetype} {url}")
-    with open(BlockLogPath, "a") as f:
-        json.dump(f)
+    _log(f"Blocks {tag} {mimetype} {url}")
+    with open(PluginConfig.BlockLogPath, "a") as f:
+        json.dump(jsonObj,f)
+        f.write('\n')
 
 def _log(text):
     print("[PLUGIN] " + str(text));
@@ -116,7 +117,7 @@ def shouldFilterResponse(flow): # return (Filter? , nosniff?, content-type)
     if contenttype == "":
         return (False,False,None);
 
-    ignoredTypes = ["text/css","text/javascript"]
+    ignoredTypes = ["image/","text/css","text/javascript"]
     filteredTypes = ["text/","json","x-javascript"]
     if len([x for x in ignoredTypes if  contenttype.find(x) > -1]) == 0:
         if len([x for x in filteredTypes if  contenttype.find(x) > -1]) > 0:
@@ -138,6 +139,8 @@ def blockWithReason(flow, reason):
 
 def processRequest(flow, mimetype):
     url = flow.request.pretty_url
+    host = flow.request.pretty_host
+    path = flow.request.path
     _filter = PluginConfig.FilterObj;
     _timeblock = PluginConfig.TimeBlockObj;
 
@@ -153,13 +156,15 @@ def processRequest(flow, mimetype):
             # No time block reason!
             _log(f"Request time block url: {url}")
         else:
-            (whitelisted, reason) = _filter.isWhitelistedURL(url, None);
+            (whitelisted, reason) = _filter.isWhitelistedURL(host,path, None);
             if not whitelisted:
                 writeBlockLog("block-req-url",url, referer, mimetype, reason);
                 blockWithReason(flow,reason);
 
 def processResponse(flow, mimetype):
     url = flow.request.pretty_url
+    host = flow.request.pretty_host
+    path = flow.request.path
     _filter = PluginConfig.FilterObj;
     _timeblock = PluginConfig.TimeBlockObj;
 
@@ -175,7 +180,7 @@ def processResponse(flow, mimetype):
             # No time block reason!
             _log(f"Response time block url: {url}")
         else:
-            (whitelisted, reason) = _filter.isWhitelistedURL(url, None);
+            (whitelisted, reason) = _filter.isWhitelistedURL(host,path, None);
             if not whitelisted:
                 writeBlockLog("block-resp-url",url, referer, mimetype, reason);
                 blockWithReason(flow,reason);
@@ -241,7 +246,7 @@ class MitmFilterPlugin():
 
         acceptvalue = findInHeaders(flow.request.headers, "accept").lower();
         contenttype = findInHeaders(flow.response.headers, "content-type").lower();
-        processResponse(flow, "accept '{acceptvalue}' -> content-type '{contenttype}'")
+        processResponse(flow, f"accept '{acceptvalue}' -> content-type '{contenttype}'")
         
 if __name__ == "__main__":
     print ("Init ok? " + str(init()))
