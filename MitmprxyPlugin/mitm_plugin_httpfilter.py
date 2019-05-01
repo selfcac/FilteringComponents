@@ -36,6 +36,7 @@ class PluginConfig:
 
 def writeBlockLog(tag, url, referer, mimetype, reason):
     jsonObj = { "time":str(datetime.datetime.now()), "tag":tag, "url":url, "referer":referer, "mimetype":mimetype, "reason":reason};
+    _log("Blocks {tag} {mimetype} {url}")
     with open(BlockLogPath, "a") as f:
         json.dump(f)
 
@@ -83,7 +84,8 @@ def findInHeaders(headers, headername):
     return result;
 
 def make_google_safe(flow):
-    #host = flow.request.pretty_host.lower()
+    host = flow.request.pretty_host.lower()
+
     #if host.find("google") > -1:
     #    path = flow.request.path;
     #    _log("Adding safe=active to : " + path)
@@ -95,7 +97,8 @@ def make_google_safe(flow):
 
     # Native way:
     # https://github.com/mitmproxy/mitmproxy/blob/master/examples/simple/modify_querystring.py
-    flow.request.query["safe"] = "active"
+    if host.find("google") > -1:
+        flow.request.query["safe"] = "active"
 
 def shouldFilterRequest(flow): # return (Filter? , accept-type)
     acceptvalue = findInHeaders(flow.request.headers, "accept").lower();
@@ -148,6 +151,7 @@ def processRequest(flow, mimetype):
         if _timeblock.isBlockedNow():
             blockWithReason(flow, PluginConfig.TimeBlockReasonText);
             # No time block reason!
+            _log(f"Request time block url: {url}")
         else:
             (whitelisted, reason) = _filter.isWhitelistedURL(url, None);
             if not whitelisted:
@@ -169,6 +173,7 @@ def processResponse(flow, mimetype):
         if _timeblock.isBlockedNow():
             blockWithReason(flow, PluginConfig.TimeBlockReasonText);
             # No time block reason!
+            _log(f"Response time block url: {url}")
         else:
             (whitelisted, reason) = _filter.isWhitelistedURL(url, None);
             if not whitelisted:
@@ -227,7 +232,13 @@ class MitmFilterPlugin():
                 _log(f"Not filtering content-type {resp_type} for {url}");
 
     def response(self, flow):
-        # If we are here - block!
+        # If we are here - block! (also we get here from custom response)
+        
+        status_code = flow.response.status_code;
+        if status_code == 202:
+            # Already blocked by request!
+            return;
+
         acceptvalue = findInHeaders(flow.request.headers, "accept").lower();
         contenttype = findInHeaders(flow.response.headers, "content-type").lower();
         processResponse(flow, "accept '{acceptvalue}' -> content-type '{contenttype}'")

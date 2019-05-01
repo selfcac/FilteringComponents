@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using TimeBlockFilter;
 
-namespace TimeBlock_GuiHelper.Tests
+namespace TimeBlockFilter.Tests
 {
     [TestClass()]
     public class TimeFilterObjectTests
     {
+        
+ 
         static DateTime dateString(string date)
         {
             return DateTime.ParseExact(
@@ -41,6 +43,15 @@ namespace TimeBlock_GuiHelper.Tests
             Assert.IsFalse(filter.isBlocked(dateString("2/4/2019 1:00:00 AM")));
             Assert.IsFalse(filter.isBlocked(dateString("2/4/2019 12:20:00 PM")));
             Assert.IsFalse(filter.isBlocked(dateString("1/4/2019 11:59:59 PM")));
+        }
+
+        [TestMethod()]
+        public void reloadPolicyTest()
+        {
+            TimeFilterObject filter = new TimeFilterObject();
+            filter.reloadPolicy(@"C:\Users\Yoni\Desktop\selfcac\CitadelCore.Windows.Divert.Proxy\CitadelCore.Windows.Example\bin\Debug\timeblock.json");
+
+            Assert.AreEqual(false, filter.isBlockedNow());
         }
     }
 }
