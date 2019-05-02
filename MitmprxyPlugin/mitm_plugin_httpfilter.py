@@ -17,6 +17,7 @@ class PluginConfig:
     CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\x86\Debug\Common.dll"
     CSFilterPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\x86\Debug\HTTPProtocolFilter.dll"
     CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
+    CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\ProcessTerminationProtection\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
 
     #Policies:
     PoilcyPath = r"C:\Users\Yoni\Desktop\selfcac\CitadelCore.Windows.Divert.Proxy\CitadelCore.Windows.Example\bin\Debug\policy.json"
@@ -58,6 +59,9 @@ def init():
         filterDLL = LoadLibrary(PluginConfig.CSFilterPath,'net')
         timeblockDLL = LoadLibrary(PluginConfig.CSTimeblockPath,'net')
 
+        pprotectDLL = LoadLibrary(PluginConfig.CSProtectProcessPath,'net')
+        pprotectDLL._lib.ProcessTerminationProtection.ProcessProtect.ProtectCurrentFromUsers();
+
         PluginConfig.FilterObj = filterDLL._lib.HTTPProtocolFilter.FilterPolicy();
         PluginConfig.FilterObj.reloadPolicy(PluginConfig.PoilcyPath);
 
@@ -66,7 +70,7 @@ def init():
 
         with open(PluginConfig.BlockHtmlPath,'r',encoding="utf-8") as file:
             PluginConfig.BlockHTMLTemplate = file.read()
-
+            
         return True;
     except Exception as ex:
         _err("Problem loading plugin. stopping. Error: " + str(ex))
