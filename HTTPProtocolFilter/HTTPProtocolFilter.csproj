@@ -80,7 +80,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExportedPolicyFilter.cs" />
     <Compile Include="FilterPolicy.cs" />
     <Compile Include="IHTTPFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
