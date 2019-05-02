@@ -1,3 +1,8 @@
+# Python x86
+#pip install msl-loadlib
+#pip install git+https://github.com/pythonnet/pythonnet
+#pip(3) install mitmproxy
+
 # System
 import os, sys
 import argparse
