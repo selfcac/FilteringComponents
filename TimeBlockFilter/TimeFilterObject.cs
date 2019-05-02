@@ -13,7 +13,7 @@ namespace TimeBlockFilter
 
         public int getIndex(int days, int hours)
         {
-            return (days * 7 + hours) % (7*24);
+            return (days * 24 + hours) % (7*24);
         }
 
         public bool isBlocked(DateTime dt)

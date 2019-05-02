@@ -11,8 +11,8 @@ namespace TimeBlockFilter.Tests
     [TestClass()]
     public class TimeFilterObjectTests
     {
-        
- 
+
+
         static DateTime dateString(string date)
         {
             return DateTime.ParseExact(
@@ -70,30 +70,48 @@ namespace TimeBlockFilter.Tests
         public void SingleArrayExtender()
         {
             TimeFilterObject filter = new TimeFilterObject();
-           
-            for (int day=0;day<7;day++)
+
+            for (int day = 0; day < 7; day++)
             {
-                for (int hour = 0; hour<24;hour++)
+                for (int hour = 0; hour < 24; hour++)
                 {
                     filter.clearAllTo(true);
 
                     // Test for one array (error used '*')
                     filter.setPolicy((DayOfWeek)day, hour, false);
                     Assert.IsTrue(
-                        filter.isBlocked(CreateDayOfWeek(day,hour,0)), 
-                        string.Format("day {0} hour {1}", day,hour)
+                        filter.isBlocked(CreateDayOfWeek(day, hour, 0)),
+                        string.Format("day {0} hour {1}", day, hour)
                         );
                 }
             }
         }
 
         [TestMethod()]
-        public void reloadPolicyTest()
+        public void SingleArrayOrder()
         {
-            TimeFilterObject filter = new TimeFilterObject();
-            filter.reloadPolicy(@"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json");
+            // Make sure the structure is [..24h of day 1 .. 24h of day 2...] = [24hours per day  * 7 ]
+            // and not [ 0-1AM across days , 1-2AM across days ...] = [ hour per week * 24  ]
 
-            Assert.AreEqual(false, filter.isBlockedNow());
+            TimeFilterObject filter = new TimeFilterObject();
+
+            filter.clearAllTo(false);
+
+            filter.setPolicy(0, 0, true);
+            filter.setPolicy((DayOfWeek)1, 5, true);
+            filter.setPolicy((DayOfWeek)2, 0, true);
+            filter.setPolicy((DayOfWeek)4, 1, true);
+
+            // Correct should be : 24*day + hour
+            Assert.AreEqual(true, filter.AllowDayAndTimeMatrix[24 * 0 + 0]);
+            Assert.AreEqual(true, filter.AllowDayAndTimeMatrix[24 * 1 + 5]);
+            Assert.AreEqual(true, filter.AllowDayAndTimeMatrix[24 * 2 + 0]);
+            Assert.AreEqual(true, filter.AllowDayAndTimeMatrix[24 * 4 + 1]);
+
+            //Wrong chek that it is not : 24*hour + day
+            Assert.AreEqual(false, filter.AllowDayAndTimeMatrix[24 * 0 + 1]);
+
         }
+
     }
 }
