@@ -21,7 +21,7 @@ namespace HTTPProtocolFilter_GuiHelper
         }
 
         FilterPolicy mainPolicy = new FilterPolicy();
-        string[] blockLogs =  { };
+        List<LogClass> blockLogs =  new List<LogClass>();
 
         #region Tools
 
@@ -75,9 +75,10 @@ namespace HTTPProtocolFilter_GuiHelper
             dlgOpen.Title = "Open block log file:";
             if (dlgOpen.ShowDialog() == DialogResult.OK)
             {
-                blockLogs = File.ReadAllLines(dlgOpen.FileName);
-                for (int i = 0; i < blockLogs.Length; i++)
-                    blockLogs[i] = blockLogs[i].Substring(blockLogs[i].IndexOf("||") + 2);
+                File.ReadAllLines(dlgOpen.FileName).ForEachDo((line) =>
+                {
+                    blockLogs.Add(LogClass.FromString(line));
+                });
             }
         }
 
@@ -89,8 +90,8 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             IHTTPFilter filter = mainPolicy;
             lbxSimulated.Items.Clear();
-            var linq = blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log), out _));
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            var linq = blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log.url), out _));
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
             lbxSimulated.Items.AddRange(
                 linq.Take(1000).ToArray<object>()
             );
@@ -100,8 +101,8 @@ namespace HTTPProtocolFilter_GuiHelper
         {
             IHTTPFilter filter = mainPolicy;
             lbxSimulated.Items.Clear();
-            var linq = blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log), out _));
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            var linq = blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log.url), out _));
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
             lbxSimulated.Items.AddRange(
                 linq.Take(1000).ToArray<object>()
             );
@@ -113,13 +114,13 @@ namespace HTTPProtocolFilter_GuiHelper
             var linq = blockLogs.Where(
                 (log) =>
                 {
-                    Uri uri = new Uri(log);
+                    Uri uri = new Uri(log.url);
                     return !mainPolicy.isWhitelistedHost(uri.Host) 
                             && mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
             lbxSimulated.Items.AddRange(
                 linq.Take(1000).ToArray<object>()
             );
@@ -130,15 +131,15 @@ namespace HTTPProtocolFilter_GuiHelper
             lbxSimulated.Items.Clear();
             var linq = blockLogs.Where(
                 (log) => {
-                    Uri uri = new Uri(log);
+                    Uri uri = new Uri(log.url);
                     return !mainPolicy.isWhitelistedHost(uri.Host) &&
                             mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 ).OrderBy(
-                (log) => new Uri(log).Host
+                (log) => new Uri(log.url).Host
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
             lbxSimulated.Items.AddRange(
                 linq.Take(1000).ToArray<object>()
             );
@@ -149,17 +150,17 @@ namespace HTTPProtocolFilter_GuiHelper
             lbxSimulated.Items.Clear();
             var linq = blockLogs.Where(
                 (log) => {
-                    Uri uri = new Uri(log);
+                    Uri uri = new Uri(log.url);
                     return !mainPolicy.isWhitelistedHost(uri.Host) &&
                             mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 ).GroupBy(
-                (log) => new Uri(log).Host,
+                (log) => new Uri(log.url).Host,
                 (log) => log,
                 (key, hosts) => hosts.First()
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
             lbxSimulated.Items.AddRange(
                 linq.Take(1000).ToArray<object>()
             );
@@ -171,13 +172,13 @@ namespace HTTPProtocolFilter_GuiHelper
             var linq = blockLogs.Where(
                 (log) =>
                 {
-                    Uri uri = new Uri(log);
+                    Uri uri = new Uri(log.url);
                     return !mainPolicy.isWhitelistedHost(uri.Host) &&
                             mainPolicy.isContentAllowed(uri.PathAndQuery, BlockPhraseScope.URL, out _);
                 }
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Length);
+            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
             lbxSimulated.Items.AddRange(
                 linq.Take(2000).ToArray<object>()
             );
@@ -185,10 +186,10 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void newDomainToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string url = lbxSimulated.SelectedItem as string;
-            if (url != null)
+            LogClass log = lbxSimulated.SelectedItem as LogClass;
+            if (log != null)
             {
-                Uri u = new Uri(url);
+                Uri u = new Uri(log.url);
                 mainPolicy.AllowedDomains.Add(new DomainPolicy()
                 {
                     DomainFormat = u.Host,
@@ -203,10 +204,10 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void domainEPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string url = lbxSimulated.SelectedItem as string;
-            if (url != null)
+            LogClass log = lbxSimulated.SelectedItem as LogClass;
+            if (log != null)
             {
-                Uri u = new Uri(url);
+                Uri u = new Uri(log.url);
                 mainPolicy.AllowedDomains.Add(new DomainPolicy()
                 {
                     DomainFormat = u.Host,
@@ -229,10 +230,10 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void subdomainsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string url = lbxSimulated.SelectedItem as string;
-            if (url != null)
+            LogClass log = lbxSimulated.SelectedItem as LogClass;
+            if (log != null)
             {
-                Uri u = new Uri(url);
+                Uri u = new Uri(log.url);
                 string[] hostParts = u.Host.Split('.');
                 string newHost = "";
 
@@ -278,7 +279,7 @@ namespace HTTPProtocolFilter_GuiHelper
         private void lbxSimulated_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (lbxSimulated.SelectedIndex > -1)
-                txtSimulatedSelected.Text = (string)lbxSimulated.SelectedItem;
+                rtbItemInfo.Text = ((LogClass)lbxSimulated.SelectedItem).getInfo();
         }
 
         #endregion
