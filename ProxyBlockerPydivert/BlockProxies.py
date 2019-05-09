@@ -4,7 +4,7 @@
 
 # 2) drop UDP 80,443 (Tor)
 
-# 3) divert outbound tcp & port != http(S) & payload > 10
+# 3) divert outbound tcp & port != http(S)\socks & payload > 7
 
 #   if conn is user:
 #       if has proxy http\s and not going to localhost (such has fiddler)
