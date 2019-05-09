@@ -142,10 +142,10 @@ try:
     udpThread = threading.Thread(target=dropHTTPUdp, args=(0,), daemon=True);
     udpThread.start();
 
-    # Processing all other outbound ports
-    maindivert = pydivert.WinDivert("outbound and tcp and tcp.PayloadLength > 0")
+    # Processing all other outbound ports (both SOCKS and HTTPs can be identified in the first 8 bytes)
+    maindivert = pydivert.WinDivert("outbound and tcp and tcp.DstPort != 80 and tcp.DstPort != 443 and tcp.PayloadLength > 7")
     try:
-        log("Statring main divert");
+        log("Starting main divert");
         maindivert.open();
         safeDivert = SafeAccessDivert(maindivert);
 
