@@ -22,7 +22,7 @@ class PluginConfig:
     CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\x86\Debug\Common.dll"
     CSFilterPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\x86\Debug\HTTPProtocolFilter.dll"
     CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
-    CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\ProcessTerminationProtection\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
+    CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
 
     #Policies:
     PoilcyPath = r"C:\Users\Yoni\Desktop\selfcac\CitadelCore.Windows.Divert.Proxy\CitadelCore.Windows.Example\bin\Debug\policy.json"

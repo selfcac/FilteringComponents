@@ -7,3 +7,4 @@
 __pycache__/
 .vscode/
 /MitmprxyPlugin/block_log.json
+/MitmprxyPlugin/block_log.v2.json
