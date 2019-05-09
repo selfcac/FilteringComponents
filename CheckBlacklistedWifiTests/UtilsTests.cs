@@ -193,7 +193,7 @@ ac:3b:77:58:fa:25;asaf5
 40:9b:cd:d0:40:1d;Kamal.S_5
 10:be:f5:38:76:3a;itai
 a0:ab:1b:5b:12:7c;Asaf
-c8:d3:ff:89:2a:25;DIRECT-22-HP OfficeJet Pro 8710";
+c8:d3:ff:89:2a:25;DIRECT-22-HP OfficeJet Pro 8710".Replace("\r","");
 
             List<string> currentWifis = Utils.getWifiParsed(Input);
             Assert.AreEqual(13, currentWifis.Count);
