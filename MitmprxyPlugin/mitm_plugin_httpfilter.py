@@ -1,7 +1,10 @@
-# Python x86
+# Python x86 - pip 3
+#python -m pip install --upgrade pip
 #pip install msl-loadlib
+#pip install wheel
 #pip install git+https://github.com/pythonnet/pythonnet
-#pip(3) install mitmproxy
+#pip install mitmproxy
+#pip install pydivert
 
 # System
 import os, sys
