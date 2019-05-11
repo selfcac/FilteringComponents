@@ -1,6 +1,8 @@
 # FilteringComponents
 
-Many small utilities that will help make a parental filtering in windows
+Many small utilities that will help make a parental filtering in windows along with more tools from selfcac repos. Architecture:
+
+![architecture](architecture.png)
 
 ### CheckBlacklistedWifi + Tests
 **[C#]**
