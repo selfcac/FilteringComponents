@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProcessTerminationProtectio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTPConsole", "PTPConsole\PTPConsole.csproj", "{21E8D7AE-E96B-4CD9-8D2D-D70351851ED4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestartWhenPortUsed", "RestartWhenPortUsed\RestartWhenPortUsed.csproj", "{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +143,14 @@ Global
 		{21E8D7AE-E96B-4CD9-8D2D-D70351851ED4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{21E8D7AE-E96B-4CD9-8D2D-D70351851ED4}.Release|x86.ActiveCfg = Release|Any CPU
 		{21E8D7AE-E96B-4CD9-8D2D-D70351851ED4}.Release|x86.Build.0 = Release|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8C8F820-EA1C-4F4C-BE62-C805DCB2CC6E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
