@@ -19,11 +19,12 @@ import clr
 # Mitmproxy
 from mitmproxy import ctx
 from mitmproxy import http
+from mitmproxy.proxy import config
 
 class PluginConfig:
     #DLLs:
-    CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\x86\Debug\Common.dll"
-    CSFilterPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\x86\Debug\HTTPProtocolFilter.dll"
+    CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\Common.dll"
+    CSFilterPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\HTTPProtocolFilter.dll"
     CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
     CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
 
@@ -32,7 +33,7 @@ class PluginConfig:
     TimePolicyPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json"
 
     # Templates:
-    BlockHtmlPath = r"C:\Users\Yoni\Desktop\selfcac\CitadelCore.Windows.Divert.Proxy\CitadelCore.Windows.Example\bin\Debug\BlockedPage.html"
+    BlockHtmlPath = r"C:\Users\Yoni\Desktop\selfcac\BlockedPage.html"
     TimeBlockReasonText = "Current Time is blocked"
 
     # Logs:
@@ -79,6 +80,7 @@ def init():
         with open(PluginConfig.BlockHtmlPath,'r',encoding="utf-8") as file:
             PluginConfig.BlockHTMLTemplate = file.read()
             
+        _log("All C# DLLs Loaded")
         return True;
     except Exception as ex:
         _err("Problem loading plugin. stopping. Error: " + str(ex))
