@@ -65,13 +65,20 @@ namespace CheckBlacklistedWifi
             }
         }
 
+        static void startProcess(string path)
+        {
+
+        }
+
         static void Main(string[] args)
         {
             try
             {
-                string servicename = 
+                string lastArgument = 
                     ((args != null && args.Length > 0) ? args : new[] { "no-service" })
                     .Last();
+
+                bool isExe = lastArgument.Contains(".exe"); // not endsWith because might contain \" after exe
 
                 string nearByWifisCMDResult = getCMDOutput("netsh", "wlan show networks mode=bssid");
 
@@ -93,17 +100,24 @@ namespace CheckBlacklistedWifi
                             // Update all rules with bad ones:
                             File.WriteAllLines(blockFile.FullName, ruleset);
 
-                            setService(true, servicename);
+                            if (isExe)
+                                startProcess(lastArgument);
+                            else
+                                setService(true, lastArgument);
                         }
                         else
                         {
-                            setService(false, servicename);
+                            if (!isExe) setService(false, lastArgument);
                         }
                     }
                     else
                     {
                         log("Found 0 wifis, assume blockzone");
-                        setService(true, servicename);
+
+                        if (isExe)
+                            startProcess(lastArgument);
+                        else
+                            setService(true, lastArgument);
                     }
 
                 }
