@@ -63,7 +63,7 @@ printLock = threading.Lock();
 
 def log( text):
     global __print__, printLock;
-    llog = "[" + str(datetime.datetime.now()) +"] "  + text;
+    llog = "[" + str(datetime.datetime.now()) +"] "  + text ;
     with printLock:
         __print__(llog)
 
@@ -184,6 +184,8 @@ try:
             #    my_threads[i].join();
             while True:
                 time.sleep(1);
+                with printLock:
+                    sys.stdout.flush()
         except KeyboardInterrupt:
             print("Ctrl-C");
         
