@@ -31,8 +31,13 @@ class ScriptConfig:
     #DLLs:
     CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
     CSNetworkHelper = r"C:\Users\Yoni\Desktop\selfcac\PortsOwners\PortOwnersDLL\bin\x86\Debug\PortOwnersDLL.dll"
+    CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
+
+    #Policies:
+    TimePolicyPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json"
 
     # Global objects:
+    TimeBlockObj = None;
     netHelper = None
     proxyDetectHelper = None
 
@@ -53,8 +58,8 @@ class SafeAccessDivert(object):
         self.value.send(packet);
 
 def log( text):
-    log = "[" + str(datetime.datetime.now()) +"] "  + text;
-    print(log)
+    llog = "[" + str(datetime.datetime.now()) +"] "  + text;
+    print(llog)
 
 def protectProcess():
     pprotectDLL = LoadLibrary(ScriptConfig.CSProtectProcessPath,'net')
@@ -66,16 +71,16 @@ def getAddressString(packet):
     else:
         return "[UDP] "+ packet.src_addr + ":" + str(packet.src_port) + "->" + packet.dst_addr + ":" + str(packet.dst_port);
 
-def logDrop(packet):
+def logDrop(packet, tag):
     global log, getAddressString
-    text = "Dropping " + getAddressString(packet);    
+    text = "[" + str(tag) + "] Dropping " + getAddressString(packet);    
     log(text);
 
 def dropHTTPUdp(state):
     global logDrop;
     with pydivert.WinDivert("outbound and udp and (udp.DstPort == 80 || udp.DstPort == 443)") as w:
         for packet in w:
-            logDrop(packet);
+            logDrop(packet, "UDP-QUICk");
             # Drop so no w.send(packet)
 
 def windivertWorker(safeDivert):
@@ -95,6 +100,7 @@ def handlePacket(packet, safeDivert):
     isAdmin = ScriptConfig.netHelper.isLocalAddressAdmin(conn_addr, False); # False- new connection need to be checked
     isSocks = isPacketSOCKS(packet);
     isHTTPS = isPacketHTTP(packet);
+    isTimeBlocked = ScriptConfig.TimeBlockObj.isBlockedNow();
 
     isBlocked = False;
 
@@ -108,13 +114,16 @@ def handlePacket(packet, safeDivert):
             if not packet.dst_addr == "127.0.0.1": 
                 isBlocked =True;
     
-    if not isBlocked:
+    if not isBlocked and not isTimeBlocked:
         #debug data:
         #if packet.dst_addr == "127.0.0.1": 
         #    print("Admin? " + str(isAdmin) + " HTTPS? " + str(isHTTPS) + " " + getAddressString(packet) )
         safeDivert.reinjectPacket(packet);
     else:
-        logDrop(packet);
+        if isTimeBlocked:
+            logDrop(packet, "TIME");
+        else:
+            logDrop(packet, "PROXY");
 
 
 log("Python version: " + sys.version)
@@ -132,6 +141,9 @@ try:
 
     log("Starting proxy helper")
     ScriptConfig.proxyDetectHelper = netHelperDLL._lib.PortsOwners.ProxyDetection();
+
+    ScriptConfig.TimeBlockObj = timeblockDLL._lib.TimeBlockFilter.TimeFilterObject();
+    ScriptConfig.TimeBlockObj.reloadPolicy(ScriptConfig.TimePolicyPath);
 
     log("Starting network watcher")
     ScriptConfig.netHelper = netHelperDLL._lib.PortsOwners.NetworkWatcher();
