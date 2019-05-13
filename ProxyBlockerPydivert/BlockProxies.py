@@ -18,7 +18,7 @@
 import os, sys
 import argparse
 import typing
-import json , datetime
+import json , datetime, time
 
 # C# Load
 from msl.loadlib import LoadLibrary
@@ -31,6 +31,7 @@ class ScriptConfig:
     #DLLs:
     CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
     CSNetworkHelper = r"C:\Users\Yoni\Desktop\selfcac\PortsOwners\PortOwnersDLL\bin\x86\Debug\PortOwnersDLL.dll"
+    CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\Common.dll"
     CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
 
     #Policies:
@@ -125,10 +126,10 @@ def handlePacket(packet, safeDivert):
         else:
             logDrop(packet, "PROXY");
 
-
 log("Python version: " + sys.version)
 log("Exe path: " + sys.executable)
 log("Command: " + " ".join(sys.argv))
+
 
 try:
     log("Block proxy Started!");
@@ -137,7 +138,10 @@ try:
     log("Removing kill permission...");
     protectProcess();
 
+
     netHelperDLL = LoadLibrary(ScriptConfig.CSNetworkHelper,'net')
+    commonDLL = LoadLibrary(ScriptConfig.CSCommonPath,'net')
+    timeblockDLL = LoadLibrary(ScriptConfig.CSTimeblockPath,'net')
 
     log("Starting proxy helper")
     ScriptConfig.proxyDetectHelper = netHelperDLL._lib.PortsOwners.ProxyDetection();
@@ -166,12 +170,18 @@ try:
         # Give the thread-safe object to 3 threads to handle it:
         log("Starting 3 handler for tcp packets")
         for i in range(0,3):
-            t = threading.Thread(target=windivertWorker, args=(safeDivert,), daemon=False);
+            t = threading.Thread(target=windivertWorker, args=(safeDivert,), daemon=True);
             my_threads.append(t);
             t.start();
 
-        for i in range(0, len(my_threads)):
-            my_threads[i].join();
+        try:
+            #for i in range(0, len(my_threads)):
+            #    my_threads[i].join();
+            while True:
+                time.sleep(1);
+        except KeyboardInterrupt:
+            print("Ctrl-C");
+        
         
         log("Existing....")
     except Exception as ex:
