@@ -58,9 +58,14 @@ class SafeAccessDivert(object):
     def reinjectPacket(self, packet):
         self.value.send(packet);
 
+__print__ = print;
+printLock = threading.Lock();
+
 def log( text):
+    global __print__, printLock;
     llog = "[" + str(datetime.datetime.now()) +"] "  + text;
-    print(llog)
+    with printLock:
+        __print__(llog)
 
 def protectProcess():
     pprotectDLL = LoadLibrary(ScriptConfig.CSProtectProcessPath,'net')
