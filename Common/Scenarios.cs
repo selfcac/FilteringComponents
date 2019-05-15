@@ -149,21 +149,7 @@ namespace Common
             return cmdInfo.data + " " + DateTime.Now;
         }
 
-        // === === === === === PROXY === === === === === === 
-
-        public async static Task<string> Proxy_Client(bool start)
-        {
-            return await runCommand(CommandType.PROXY, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
-        }
-
-        public static string Proxy_Server(CommandInfo cmdInfo)
-        {
-            TaskInfo result = (cmdInfo.data == CommandActions.START.ToString()) ?
-                SystemUtils.StartService(Config.Instance.PROXY_SERVICE_NAME) :
-                SystemUtils.StopService(Config.Instance.PROXY_SERVICE_NAME);
-
-            return chopString("OP:" + cmdInfo.data + "->" + result.success.ToString() + ", " + result.eventReason);
-        }
+       
 
 
         // === === === === === FIREWALL === === === === === === 

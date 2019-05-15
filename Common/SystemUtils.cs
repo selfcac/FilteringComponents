@@ -144,11 +144,20 @@ namespace Common
 
         public static C.TaskInfo StartFirewall()
         {
+            string process = "netsh.exe";
+            string args = "advfirewall set allprofiles state on";
+            string name = "Firewall";
+            return  RunProcessInfo(process, name ,args);
+
+        }
+
+        private static C.TaskInfo RunProcessInfo(string name, string process, string args)
+        {
             C.TaskInfo result = C.TaskInfo.Fail("Init");
             try
             {
-                runCmdProcess("netsh.exe", "advfirewall set allprofiles state on");
-                result = C.TaskInfo.Success("Firewall started...");
+                runCmdProcess(process, args );
+                result = C.TaskInfo.Success("Completed '" + name + "' without errors");
             }
             catch (Exception ex)
             {
@@ -160,18 +169,10 @@ namespace Common
 
         public static C.TaskInfo StopFirewall()
         {
-            C.TaskInfo result = C.TaskInfo.Fail("Init");
-            try
-            {
-                runCmdProcess("netsh.exe", "advfirewall set allprofiles state off");
-                result = C.TaskInfo.Success("Firewall started...");
-            }
-            catch (Exception ex)
-            {
-                result = C.TaskInfo.Fail(ex.Message);
-            }
-
-            return result;
+            string process = "netsh.exe";
+            string args = "advfirewall set allprofiles state off";
+            string name = "Firewall";
+            return RunProcessInfo(process, name, args);
         }
 
     }

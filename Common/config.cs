@@ -17,9 +17,6 @@ namespace Common
         public FileInfo unlockFile = new FileInfo("lock.txt");
         public FileInfo auditFile = new FileInfo("log_audit.txt");
 
-        public FileInfo whitelistFile = new FileInfo("whitelist.txt");
-        public FileInfo blocklogFile = new FileInfo("log_block.txt");
-
         public static Config Instance {
             get
             {
@@ -50,55 +47,23 @@ namespace Common
             }
         }
 
-        public string PROXY_SERVICE_NAME = "w3logsvc";
-        public string ADMIN_USERNAME = "YoniH";
+        public ConfigCOmmand[] ALLOWED_COMMANDS = new ConfigCOmmand[] {
+            new ConfigCOmmand() {name = "Start firewall" , path = "", arg ="" }
+        };
+        public string[] ADMIN_COMMANDS = new[] { "disable all.bat" };
 
-               
-        public int ProxyPort = 9011;
+        public string ADMIN_USB_USERNAME = "YoniH";
+        public string ADMIN_PASS_RESET_FILE = "userkey.psw";
+
         public int ControlPanelPort = 9012;
-
         public bool proxyMappingMode = false;
-
-        public TimeBlock[] blockedTimes = new TimeBlock[] { new TimeBlock( 23, 00,8 * 60) };
-       
     }
 
-    public class TimeBlock
+    public class ConfigCOmmand
     {
-        public int HourStart;
-        public int MinuteStart;
-        public int LengthMinutes;
-
-        public TimeBlock(int hStart, int mStart, int length)
-        {
-            HourStart = hStart;
-            MinuteStart = mStart;
-            LengthMinutes = length;
-        }
-
-        public bool ContainTime(int hour, int minute)
-        {
-            int startTotalMinutes = ((HourStart % 24) * 60 + (MinuteStart % 60));
-            int endTotalMinutes = (startTotalMinutes + LengthMinutes) % (24 * 60);
-
-            int time = ((hour % 24) * 60 + minute);
-            
-            if ( endTotalMinutes < startTotalMinutes ) // from one day to other
-            {
-                if (time  <= endTotalMinutes  ^ time >= startTotalMinutes)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if (time >= startTotalMinutes && time <= endTotalMinutes)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
+        public string name;
+        public string path;
+        public string arg;
     }
+
 }
