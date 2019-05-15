@@ -14,16 +14,15 @@ namespace Common
         public enum CommandType
         {
             ERROR,                      
-                                        
-            // Events with no data:     
-            PROXY,                      // (V)
-            FIREWALL,                   // (V)
-                                        
+           
             // Events with extra data:  
             ECHO,                       // (V)
-            ADD_URL,                    // (V)
             CHANGE_PASSWORD,            // (V)
             LOCK,                       // (V)
+
+            ALLOWED_COMMAND,
+            ADMIN_COMMAND,
+            RESET_PASS,
         }
 
         public enum CommandActions
@@ -98,18 +97,13 @@ namespace Common
             }
         }
 
-       
-
         public delegate string endCommandMethod(CommandInfo cmd);
         public static Dictionary<CommandType, endCommandMethod> serverHelpers = 
             new Dictionary<CommandType, endCommandMethod>()
         {
             { CommandType.ECHO, Echo_Server },
-            { CommandType.PROXY, Proxy_Server},
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
-            { CommandType.FIREWALL, Firewall_Server},
             { CommandType.LOCK, Lock_Server},
-            {CommandType.ADD_URL, ADDURL_Server }
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
@@ -148,25 +142,6 @@ namespace Common
         {
             return cmdInfo.data + " " + DateTime.Now;
         }
-
-       
-
-
-        // === === === === === FIREWALL === === === === === === 
-
-        public async static Task<string> Firewall_client(bool start)
-        {
-            return await runCommand(CommandType.FIREWALL, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
-        }
-
-        public static string Firewall_Server(CommandInfo cmdInfo)
-        {
-            TaskInfo result = (cmdInfo.data == CommandActions.START.ToString()) ?
-                SystemUtils.StartFirewall() : SystemUtils.StopFirewall();
-
-            return chopString("OP:" + cmdInfo.data + "->" + result.success.ToString() + ", " + result.eventReason);
-        }
-
 
         // === === === === === CHANGE_PASSWORD === === === === === === 
 
@@ -309,45 +284,7 @@ namespace Common
             return chopString(result);
         }
 
-
-        // === === === === === ADD URL            === === === === === === 
-
-        public async static Task<string> ADDURL_Client(string url)
-        {
-            return await runCommand(CommandType.ADD_URL, url);
-        }
-
-        public static string ADDURL_Server(CommandInfo cmdInfo)
-        {
-            string result = "Unkown addurl result";
-
-            TaskInfo unlockedStatus = isLocked();
-            if (!unlockedStatus) // Only if not already locked!
-            {
-                if (!string.IsNullOrEmpty(cmdInfo.data) && cmdInfo.data.IndexOf('.') > -1)
-                {
-                    try
-                    {
-                        File.AppendAllText(Config.Instance.whitelistFile.FullName, cmdInfo.data  +Environment.NewLine);
-                        result = "Sucess! restart proxy/use command!";
-                    }
-                    catch (Exception ex)
-                    {
-                        result = ex.Message;
-                    }
-                }
-                else
-                {
-                    result = "unkown url format '" + cmdInfo.data + "'";
-                }
-            }
-            else
-            {
-                result = LockedFormat(unlockedStatus);
-            }
-
-            return chopString(result);
-        }
+        // === === === === === LOCK            === === === === === === 
     }
 
 }
