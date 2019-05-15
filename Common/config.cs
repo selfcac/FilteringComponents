@@ -48,9 +48,13 @@ namespace Common
         }
 
         public ConfigCOmmand[] ALLOWED_COMMANDS = new ConfigCOmmand[] {
-            new ConfigCOmmand() {name = "Start firewall" , path = "", arg ="" }
+            new ConfigCOmmand() {name = "Start firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state on" },
+            new ConfigCOmmand() {name = "Stop firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state off" },
+            new ConfigCOmmand() {name = "Enable protection" , path = "enable.bat", arg ="" },
         };
-        public string[] ADMIN_COMMANDS = new[] { "disable all.bat" };
+        public ConfigCOmmand[] ADMIN_COMMANDS = new ConfigCOmmand[] {
+            new ConfigCOmmand() {name = "Stop protection" , path = "enable.bat", arg ="" },
+        };
 
         public string ADMIN_USB_USERNAME = "YoniH";
         public string ADMIN_PASS_RESET_FILE = "userkey.psw";
