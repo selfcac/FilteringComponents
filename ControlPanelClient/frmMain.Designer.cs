@@ -44,6 +44,7 @@
             this.btnStartFirewall = new System.Windows.Forms.Button();
             this.btnStopFireWall = new System.Windows.Forms.Button();
             this.btnIsLocked = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
             this.SuspendLayout();
@@ -112,6 +113,7 @@
             // 
             // grpAdmin
             // 
+            this.grpAdmin.Controls.Add(this.button1);
             this.grpAdmin.Controls.Add(this.btnRandom);
             this.grpAdmin.Controls.Add(this.label3);
             this.grpAdmin.Controls.Add(this.btnLockAdmin);
@@ -144,7 +146,6 @@
             this.grpUser.Controls.Add(this.textBox1);
             this.grpUser.Controls.Add(this.label7);
             this.grpUser.Controls.Add(this.label6);
-            this.grpUser.Controls.Add(this.btnEcho);
             this.grpUser.Controls.Add(this.btnStartFirewall);
             this.grpUser.Controls.Add(this.btnStopFireWall);
             this.grpUser.Location = new System.Drawing.Point(20, 18);
@@ -189,10 +190,10 @@
             // 
             // btnEcho
             // 
-            this.btnEcho.Location = new System.Drawing.Point(147, 110);
+            this.btnEcho.Location = new System.Drawing.Point(155, 186);
             this.btnEcho.Margin = new System.Windows.Forms.Padding(5);
             this.btnEcho.Name = "btnEcho";
-            this.btnEcho.Size = new System.Drawing.Size(282, 35);
+            this.btnEcho.Size = new System.Drawing.Size(138, 35);
             this.btnEcho.TabIndex = 18;
             this.btnEcho.Text = "Echo Check";
             this.btnEcho.UseVisualStyleBackColor = true;
@@ -231,6 +232,16 @@
             this.btnIsLocked.UseVisualStyleBackColor = true;
             this.btnIsLocked.Click += new System.EventHandler(this.btnIsLocked_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(438, 58);
+            this.button1.Margin = new System.Windows.Forms.Padding(5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(125, 35);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Reset to 1234";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -239,6 +250,7 @@
             this.Controls.Add(this.btnIsLocked);
             this.Controls.Add(this.grpUser);
             this.Controls.Add(this.grpAdmin);
+            this.Controls.Add(this.btnEcho);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(5);
@@ -272,6 +284,7 @@
         private System.Windows.Forms.Button btnStopFireWall;
         private System.Windows.Forms.Button btnIsLocked;
         private System.Windows.Forms.Button btnRandom;
+        private System.Windows.Forms.Button button1;
     }
 }
 

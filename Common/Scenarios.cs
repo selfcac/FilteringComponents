@@ -13,8 +13,8 @@ namespace Common
     {
         public enum CommandType
         {
-            ERROR,                      
-           
+            ERROR,
+
             // Events with extra data:  
             ECHO,                       // (V)
             CHANGE_PASSWORD,            // (V)
@@ -98,12 +98,16 @@ namespace Common
         }
 
         public delegate string endCommandMethod(CommandInfo cmd);
-        public static Dictionary<CommandType, endCommandMethod> serverHelpers = 
+        public static Dictionary<CommandType, endCommandMethod> serverHelpers =
             new Dictionary<CommandType, endCommandMethod>()
         {
             { CommandType.ECHO, Echo_Server },
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
             { CommandType.LOCK, Lock_Server},
+
+            { CommandType.LOCK, Lock_Server},
+            { CommandType.LOCK, Lock_Server},
+            { CommandType.RESET_PASS, ResetPass_Server},
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
@@ -165,7 +169,7 @@ namespace Common
                     if (!string.IsNullOrEmpty(cmdInfo.data))
                     {
                         File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
-                        result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USERNAME, cmdInfo.data);
+                        result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, cmdInfo.data);
                     }
                 }
                 catch (Exception ex)
@@ -198,7 +202,7 @@ namespace Common
                         {
                             isLocked = TaskInfo.Fail("Lock expired");
                         }
-                    } 
+                    }
                 }
                 else
                 {
@@ -253,7 +257,7 @@ namespace Common
                             if (date > DateTime.Now)
                             {
                                 string unlockPath = Config.Instance.unlockFile.FullName;
-                                File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Locking until '" + date.ToString() + "'"  +Environment.NewLine);
+                                File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Locking until '" + date.ToString() + "'" + Environment.NewLine);
                                 if (File.Exists(unlockPath))
                                     File.Delete(unlockPath);
                                 File.WriteAllText(unlockPath, date.ToString());
@@ -278,13 +282,65 @@ namespace Common
                 {
                     result = "Failed lock: " + ex.Message;
                 }
-                
+
             }
 
             return chopString(result);
         }
 
-        // === === === === === LOCK            === === === === === === 
-    }
+        // === === === === === RESET_PASS            === === === === === === 
 
+        public async static Task<string> ResetPass_Client(string filename)
+        {
+            return await runCommand(CommandType.RESET_PASS, filename);
+        }
+
+        public static string ResetPass_Server(CommandInfo cmdInfo)
+        {
+            string defaultPass = "1234";
+            TaskInfo result = TaskInfo.Fail("Init");
+            try
+            {
+                FileInfo passFile = new FileInfo(Config.Instance.ADMIN_PASS_RESET_FILE);
+                FileInfo userFile = new FileInfo(cmdInfo.data);
+
+                if (!passFile.Exists)
+                {
+                    result = TaskInfo.Fail("Can't load password file from config");
+                }
+                else if (!userFile.Exists)
+                {
+                    result = TaskInfo.Fail("Can't load file from user path");
+                }
+                else if (passFile.Length != userFile.Length)
+                {
+                    result = TaskInfo.Fail("File length mismatch. Expecting: " + passFile.Length +"B" );
+                }
+                else if (!File.ReadAllBytes(passFile.FullName).SequenceEqual(File.ReadAllBytes(userFile.FullName)))
+                {
+                    result = TaskInfo.Fail("Files are different!");
+                }
+                else
+                {
+                    File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + defaultPass + "'" + Environment.NewLine);
+                    result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, defaultPass);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = TaskInfo.Fail(ex.Message);
+            }
+
+            return chopString("Reset to " + defaultPass + "? " + result.success.ToString() + ", " + result.eventReason);
+        }
+
+        // === === === === === Allowed_Command            === === === === === === 
+
+        public async static Task<string> Allowed_command_client(bool start)
+        {
+            return await runCommand(CommandType.FIREWALL, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
+        }
+
+
+    }
 }
