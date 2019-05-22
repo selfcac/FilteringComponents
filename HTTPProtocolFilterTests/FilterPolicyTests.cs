@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace HTTPProtocolFilter.Tests
 {
@@ -541,7 +542,7 @@ namespace HTTPProtocolFilter.Tests
         {
             FilterPolicy filter = new FilterPolicy()
             {
-                BlockedPhrases = new List<PhraseFilter>() {},
+                BlockedPhrases = new List<PhraseFilter>() { },
                 AllowedDomains = new List<DomainPolicy>()
                 {
                     new DomainPolicy()
@@ -591,7 +592,13 @@ namespace HTTPProtocolFilter.Tests
             Console.WriteLine(reason);
         }
 
+        //[TestMethod()]
+        //public void googleBodyPPVC()
+        //{
+        //    string content = File.ReadAllText(@"C:\Users\Yoni\Desktop\selfcac\UiTests\ppvc google body.html");
+        //    areTrue(FilterPolicy.getWords(content).Contains("pvc"));
 
+        //}
     }
     
 }

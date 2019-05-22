@@ -384,6 +384,10 @@ namespace HTTPProtocolFilter
             return allowed;
         }
 
+        public bool isBodyBlocked(string content, out string reason)
+        {
+            return !isContentAllowed(content, BlockPhraseScope.BODY, out reason);
+        }
 
         public void reloadPolicy(string filename)
         {
