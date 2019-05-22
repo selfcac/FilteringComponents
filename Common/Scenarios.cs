@@ -336,10 +336,10 @@ namespace Common
 
         // === === === === === Allowed_Command            === === === === === === 
 
-        public async static Task<string> Allowed_command_client(bool start)
-        {
-            return await runCommand(CommandType.FIREWALL, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
-        }
+       // public async static Task<string> Allowed_command_client(bool start)
+       // {
+       //     //return await runCommand(CommandType.FIREWALL, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
+       // }
 
 
     }

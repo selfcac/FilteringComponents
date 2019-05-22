@@ -51,18 +51,18 @@ namespace ControlPanelClient
 
         private async void btnStartProxy_Click(object sender, EventArgs e)
         {
-            await doCommand(async () =>
-            {
-                return await Common.Scenarios.Proxy_Client(start: true);
-            });
+            //await doCommand(async () =>
+            //{
+            //    return await Common.Scenarios.Proxy_Client(start: true);
+            //});
         }
 
         private async void btnStopProxy_Click(object sender, EventArgs e)
         {
-            await doCommand(async () =>
-            {
-                return await Common.Scenarios.Proxy_Client(start: false);
-            });
+            //await doCommand(async () =>
+            //{
+            //    return await Common.Scenarios.Proxy_Client(start: false);
+            //});
         }
 
         private async void btnChangePassword_Click(object sender, EventArgs e)
@@ -76,18 +76,18 @@ namespace ControlPanelClient
 
         private async void btnStartFirewall_Click(object sender, EventArgs e)
         {
-            await doCommand(async () =>
-            {
-                return await Common.Scenarios.Firewall_client(start: true);
-            });
+            //await doCommand(async () =>
+            //{
+            //    return await Common.Scenarios.Firewall_client(start: true);
+            //});
         }
 
         private async void btnStopFireWall_Click(object sender, EventArgs e)
         {
-            await doCommand(async () =>
-            {
-                return await Common.Scenarios.Firewall_client(start: false);
-            });
+            //await doCommand(async () =>
+            //{
+            //    return await Common.Scenarios.Firewall_client(start: false);
+            //});
         }
 
         private async void btnIsLocked_Click(object sender, EventArgs e)
