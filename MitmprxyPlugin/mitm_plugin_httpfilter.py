@@ -44,9 +44,10 @@ class PluginConfig:
     TimeBlockObj = None;
     BlockHTMLTemplate = "<unloaded-template>";
 
+
 def writeBlockLog(tag, url, referer, mimetype, reason):
     jsonObj = { "time":str(datetime.datetime.now()), "tag":tag, "url":url, "referer":referer, "mimetype":mimetype, "reason":reason};
-    _log(f"Blocks {tag} {mimetype} {url}")
+    _log(f"Blocks {tag} {mimetype}\n{reason}\n{url}")
     with open(PluginConfig.BlockLogPath, "a") as f:
         json.dump(jsonObj,f)
         f.write('\n')
@@ -79,7 +80,7 @@ def init():
 
         with open(PluginConfig.BlockHtmlPath,'r',encoding="utf-8") as file:
             PluginConfig.BlockHTMLTemplate = file.read()
-            
+        
         _log("All C# DLLs Loaded")
         return True;
     except Exception as ex:
@@ -200,12 +201,14 @@ def processResponse(flow, mimetype):
                 blockWithReason(flow,reason);
             else:
                 try:
-                    htmlResponse = flow.response.content.decode('utf8')
-                    (bodyblocked, reason) = _filter.isBodyBlocked(htmlResponse, None);
-                    if bodyblocked:
-                        writeBlockLog("block-resp-bdy",url, referer, mimetype, reason);
-                        blockWithReason(flow,reason);
+                    if not flow.response.content is None:
+                        htmlResponse = flow.response.content.decode('utf8')
+                        (bodyblocked, reason) = _filter.isBodyBlocked(htmlResponse, None);
+                        if bodyblocked:
+                            writeBlockLog("block-resp-bdy",url, referer, mimetype, reason);
+                            blockWithReason(flow,reason);
                 except Exception as ex:
+                    _err("Error in body processing: " + str(ex))
                     pass
 
 
