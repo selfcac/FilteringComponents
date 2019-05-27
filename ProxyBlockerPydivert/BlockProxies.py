@@ -84,9 +84,9 @@ def logDrop(packet, tag):
 
 def dropHTTPUdp(state):
     global logDrop;
-    with pydivert.WinDivert("outbound and udp and (udp.DstPort == 80 || udp.DstPort == 443)") as w:
+    with pydivert.WinDivert("outbound and ((udp and (udp.DstPort == 80 || udp.DstPort == 443)) || (tcp and tcp.DstPort=3389))") as w:
         for packet in w:
-            logDrop(packet, "UDP-QUICk");
+            logDrop(packet, "UDP-QUICk\RDP");
             # Drop so no w.send(packet)
 
 def windivertWorker(safeDivert):
