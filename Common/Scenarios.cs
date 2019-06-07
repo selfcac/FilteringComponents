@@ -24,6 +24,8 @@ namespace Common
             ADD_URL,                    // (V)
             CHANGE_PASSWORD,            // (V)
             LOCK,                       // (V)
+
+            RESTART_SERVICES
         }
 
         public enum CommandActions
@@ -109,7 +111,8 @@ namespace Common
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
             { CommandType.FIREWALL, Firewall_Server},
             { CommandType.LOCK, Lock_Server},
-            {CommandType.ADD_URL, ADDURL_Server }
+            {CommandType.ADD_URL, ADDURL_Server },
+            {CommandType.RESTART_SERVICES, RestartServices_Server }
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
@@ -362,6 +365,23 @@ namespace Common
 
             return chopString(result);
         }
+
+
+        // === === === === === Restart Services === === === === === === 
+
+        public async static Task<string> RestartServices_client()
+        {
+            return await runCommand(CommandType.RESTART_SERVICES, "");
+        }
+
+        public static string RestartServices_Server(CommandInfo cmdInfo)
+        {
+            TaskInfo result =  SystemUtils.RestartServices("Yoni_D*") ; //TODO - Read from config
+
+            return chopString("OP:" + cmdInfo.data + "->" + result.success.ToString() + ", " + result.eventReason);
+        }
+
+        //powershell -command "Restart-Service -Name Yoni_*"
     }
 
 }

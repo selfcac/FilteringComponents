@@ -148,5 +148,13 @@ namespace ControlPanelClient
                 return await Common.Scenarios.ChangePass_Client(randomPass(20));
             });
         }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.RestartServices_client();
+            });
+        }
     }
 }

@@ -44,6 +44,7 @@
             this.btnStartFirewall = new System.Windows.Forms.Button();
             this.btnStopFireWall = new System.Windows.Forms.Button();
             this.btnIsLocked = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
             this.SuspendLayout();
@@ -119,7 +120,7 @@
             this.grpAdmin.Controls.Add(this.dateLockUntil);
             this.grpAdmin.Controls.Add(this.btnChangePassword);
             this.grpAdmin.Controls.Add(this.label4);
-            this.grpAdmin.Location = new System.Drawing.Point(20, 244);
+            this.grpAdmin.Location = new System.Drawing.Point(20, 296);
             this.grpAdmin.Margin = new System.Windows.Forms.Padding(5);
             this.grpAdmin.Name = "grpAdmin";
             this.grpAdmin.Padding = new System.Windows.Forms.Padding(5);
@@ -222,7 +223,7 @@
             // 
             // btnIsLocked
             // 
-            this.btnIsLocked.Location = new System.Drawing.Point(20, 186);
+            this.btnIsLocked.Location = new System.Drawing.Point(20, 242);
             this.btnIsLocked.Margin = new System.Windows.Forms.Padding(5);
             this.btnIsLocked.Name = "btnIsLocked";
             this.btnIsLocked.Size = new System.Drawing.Size(125, 35);
@@ -231,11 +232,23 @@
             this.btnIsLocked.UseVisualStyleBackColor = true;
             this.btnIsLocked.Click += new System.EventHandler(this.btnIsLocked_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(20, 197);
+            this.button1.Margin = new System.Windows.Forms.Padding(5);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(205, 35);
+            this.button1.TabIndex = 18;
+            this.button1.Text = "Restart Yoni_* Services";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 471);
+            this.ClientSize = new System.Drawing.Size(622, 537);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.btnIsLocked);
             this.Controls.Add(this.grpUser);
             this.Controls.Add(this.grpAdmin);
@@ -272,6 +285,7 @@
         private System.Windows.Forms.Button btnStopFireWall;
         private System.Windows.Forms.Button btnIsLocked;
         private System.Windows.Forms.Button btnRandom;
+        private System.Windows.Forms.Button button1;
     }
 }
 

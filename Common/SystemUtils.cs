@@ -103,6 +103,9 @@ namespace Common
             return result;
         }
 
+
+
+
         public static C.TaskInfo ChangeUserPassword(string username, string newPassword)
         {
             C.TaskInfo result = C.TaskInfo.Fail("Init");
@@ -140,6 +143,7 @@ namespace Common
             //proc.StartInfo.RedirectStandardOutput = true;
             //proc.StartInfo.CreateNoWindow = true;
             proc.Start();
+            proc.WaitForExit();
         }
 
         public static C.TaskInfo StartFirewall()
@@ -165,6 +169,23 @@ namespace Common
             {
                 runCmdProcess("netsh.exe", "advfirewall set allprofiles state off");
                 result = C.TaskInfo.Success("Firewall started...");
+            }
+            catch (Exception ex)
+            {
+                result = C.TaskInfo.Fail(ex.Message);
+            }
+
+            return result;
+        }
+
+
+        public static C.TaskInfo RestartServices(string NamePattern)
+        {
+            C.TaskInfo result = C.TaskInfo.Fail("Init");
+            try
+            {
+                runCmdProcess("powershell.exe", "-command \"Restart-Service -Name " + NamePattern + "\"");
+                result = C.TaskInfo.Success("Services " + NamePattern + " restarted.");
             }
             catch (Exception ex)
             {
