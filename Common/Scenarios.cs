@@ -215,7 +215,7 @@ namespace Common
                     result = TaskInfo.Fail(ex.Message);
                 }
 
-                return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
+                return chopString("Password changed? (" + Config.Instance.ADMIN_USERNAME + ") " + result.success.ToString() + ", " + result.eventReason);
             }
 
         }

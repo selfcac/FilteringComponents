@@ -5,12 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Web.Script.Serialization;
+using System.Xml.Serialization;
 
 namespace Common
 {
     public class Config : JSONBaseClass
     {
+        [ScriptIgnore(), XmlIgnore()]
         static Config _instance = null;
 
         public static FileInfo configFile = new FileInfo("config.json");
@@ -20,6 +22,7 @@ namespace Common
         public FileInfo whitelistFile = new FileInfo("whitelist.txt");
         public FileInfo blocklogFile = new FileInfo("log_block.txt");
 
+        [ScriptIgnore(), XmlIgnore()]
         public static Config Instance {
             get
             {
@@ -39,7 +42,12 @@ namespace Common
                         }
                     }
                     else
-                        (_instance = new Config()).ToFile(configFile.FullName);
+                    {
+                        _instance = new Config();
+                         var result = _instance.ToFile(configFile.FullName);
+                        Console.WriteLine("Saved new config to " + configFile.FullName + ", result: "  +
+                            result.success + ", reason: " + result.eventReason);
+                    }
 
                 }
                 return _instance;
