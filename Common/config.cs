@@ -53,9 +53,10 @@ namespace Common
             new ConfigCommand() {name = "Restart Divert Services", path = "powershell.exe",arg = "-command \"Restart-Service -Name Yoni_D*\""}
         };
         public ConfigCommand[] ADMIN_COMMANDS = new ConfigCommand[] {
-            new ConfigCommand() {name = "Stop protection" , path = "enable.bat", arg ="" },
+            new ConfigCommand() {name = "Stop protection" , path = "disable.bat", arg ="" },
         };
 
+        public string ECHO_SALT = "Salt"; // To see config is being used
         public string ADMIN_USB_USERNAME = "YoniH";
         public string ADMIN_PASS_RESET_FILE = "userkey.psw";
 

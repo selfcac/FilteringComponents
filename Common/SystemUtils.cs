@@ -140,23 +140,15 @@ namespace Common
             //proc.StartInfo.RedirectStandardOutput = true;
             //proc.StartInfo.CreateNoWindow = true;
             proc.Start();
+            proc.WaitForExit();
         }
 
-        public static C.TaskInfo StartFirewall()
-        {
-            string process = "netsh.exe";
-            string args = "advfirewall set allprofiles state on";
-            string name = "Firewall";
-            return  RunProcessInfo(process, name ,args);
-
-        }
-
-        private static C.TaskInfo RunProcessInfo(string name, string process, string args)
+        public static C.TaskInfo RunProcessInfo(string name, string process, string args)
         {
             C.TaskInfo result = C.TaskInfo.Fail("Init");
             try
             {
-                runCmdProcess(process, args );
+                runCmdProcess(process, args);
                 result = C.TaskInfo.Success("Completed '" + name + "' without errors");
             }
             catch (Exception ex)
@@ -166,6 +158,15 @@ namespace Common
 
             return result;
         }
+
+        public static C.TaskInfo StartFirewall()
+        {
+            string process = "netsh.exe";
+            string args = "advfirewall set allprofiles state on";
+            string name = "Firewall";
+            return  RunProcessInfo(process, name ,args);
+
+        }        
 
         public static C.TaskInfo StopFirewall()
         {

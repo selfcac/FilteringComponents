@@ -15,10 +15,9 @@ namespace Common
         {
             ERROR,
 
-            // Events with extra data:  
-            ECHO,                       // (V)
-            CHANGE_PASSWORD,            // (V)
-            LOCK,                       // (V)
+            ECHO,                       
+            CHANGE_PASSWORD,            
+            LOCK,                       
 
             ALLOWED_COMMAND,
             ADMIN_COMMAND,
@@ -105,8 +104,9 @@ namespace Common
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
             { CommandType.LOCK, Lock_Server},
 
-            { CommandType.LOCK, Lock_Server},
-            { CommandType.LOCK, Lock_Server},
+            { CommandType.ALLOWED_COMMAND, Allowed_command_server},
+            { CommandType.ADMIN_COMMAND, Admin_command_server},
+
             { CommandType.RESET_PASS, ResetPass_Server},
         };
 
@@ -144,7 +144,7 @@ namespace Common
 
         public static string Echo_Server(CommandInfo cmdInfo)
         {
-            return cmdInfo.data + " " + DateTime.Now;
+            return cmdInfo.data + " " + Config.Instance.ECHO_SALT  + ", " + DateTime.Now;
         }
 
         // === === === === === CHANGE_PASSWORD === === === === === === 
@@ -168,7 +168,7 @@ namespace Common
                 {
                     if (!string.IsNullOrEmpty(cmdInfo.data))
                     {
-                        File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
+                        File.AppendAllText(Config.Instance.auditFile, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
                         result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, cmdInfo.data);
                     }
                 }
@@ -189,10 +189,10 @@ namespace Common
             TaskInfo isLocked = TaskInfo.Fail("Init"); // unlocked on error by default
             try
             {
-                if (File.Exists(Config.Instance.unlockFile.FullName))
+                if (File.Exists(Config.Instance.unlockFile))
                 {
                     DateTime unlock = DateTime.Now.Subtract(TimeSpan.FromMinutes(1));
-                    if (DateTime.TryParse(File.ReadAllText(Config.Instance.unlockFile.FullName), out unlock))
+                    if (DateTime.TryParse(File.ReadAllText(Config.Instance.unlockFile), out unlock))
                     {
                         if (unlock > DateTime.Now)
                         {
@@ -256,8 +256,8 @@ namespace Common
                         {
                             if (date > DateTime.Now)
                             {
-                                string unlockPath = Config.Instance.unlockFile.FullName;
-                                File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Locking until '" + date.ToString() + "'" + Environment.NewLine);
+                                string unlockPath = Config.Instance.unlockFile;
+                                File.AppendAllText(Config.Instance.auditFile, "(*) Locking until '" + date.ToString() + "'" + Environment.NewLine);
                                 if (File.Exists(unlockPath))
                                     File.Delete(unlockPath);
                                 File.WriteAllText(unlockPath, date.ToString());
@@ -322,7 +322,7 @@ namespace Common
                 }
                 else
                 {
-                    File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + defaultPass + "'" + Environment.NewLine);
+                    File.AppendAllText(Config.Instance.auditFile, "(*) Password '" + defaultPass + "'" + Environment.NewLine);
                     result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, defaultPass);
                 }
             }
@@ -336,10 +336,65 @@ namespace Common
 
         // === === === === === Allowed_Command            === === === === === === 
 
-       // public async static Task<string> Allowed_command_client(bool start)
-       // {
-       //     //return await runCommand(CommandType.FIREWALL, start ? CommandActions.START.ToString() : CommandActions.STOP.ToString());
-       // }
+        public async static Task<string> Allowed_command_client(int index)
+        {
+           return await runCommand(CommandType.ALLOWED_COMMAND, index.ToString());
+        }
+
+        public static string Allowed_command_server(CommandInfo cmdInfo)
+        {
+            TaskInfo result = TaskInfo.Fail("Index not int: " + cmdInfo.data);
+
+            int commandIndex = -1;
+            if (
+                int.TryParse(cmdInfo.data,out commandIndex) 
+                && commandIndex > -1)
+            {
+                result = TaskInfo.Fail("Index out of range : " + commandIndex);
+                if (commandIndex < Config.Instance.ALLOWED_COMMANDS.Length)
+                {
+                    ConfigCommand command = Config.Instance.ALLOWED_COMMANDS[commandIndex];
+                    result = SystemUtils.RunProcessInfo(command.name, command.path, command.arg);
+                }
+            }
+
+            return chopString("Run allowed_cmd? " + result.success.ToString() + ", " + result.eventReason);
+        }
+
+        // === === === === === Admin_Command            === === === === === === 
+
+        public async static Task<string> Admin_command_client(int index)
+        {
+            return await runCommand(CommandType.ADMIN_COMMAND, index.ToString());
+        }
+
+        public static string Admin_command_server(CommandInfo cmdInfo)
+        {
+            TaskInfo result = TaskInfo.Fail("Index not int: " + cmdInfo.data);
+
+            TaskInfo unlockedStatus = isLocked();
+            if (unlockedStatus)
+            {
+                return LockedFormat(unlockedStatus);
+            }
+            else
+            {
+                int commandIndex = -1;
+                if (
+                    int.TryParse(cmdInfo.data, out commandIndex)
+                    && commandIndex > -1)
+                {
+                    result = TaskInfo.Fail("Index out of range : " + commandIndex);
+                    if (commandIndex < Config.Instance.ADMIN_COMMANDS.Length)
+                    {
+                        ConfigCommand command = Config.Instance.ADMIN_COMMANDS[commandIndex];
+                        result = SystemUtils.RunProcessInfo(command.name, command.path, command.arg);
+                    }
+                }
+            }
+
+            return chopString("Run admin_cmd? " + result.success.ToString() + ", " + result.eventReason);
+        }
 
 
     }
