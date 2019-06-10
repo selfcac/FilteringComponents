@@ -186,7 +186,7 @@ namespace Common
 
         static TaskInfo isLocked()
         {
-            TaskInfo isLocked = TaskInfo.Fail("Init"); // unlocked on error by default
+            TaskInfo isLocked = TaskInfo.Fail("No issue (init)"); // unlocked on error by default
             try
             {
                 if (File.Exists(Config.Instance.unlockFile))
