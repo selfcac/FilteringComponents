@@ -12,14 +12,13 @@ namespace Common
     public class Config : JSONBaseClass
     {
         static Config _instance = null;
-
-        public static FileInfo configFile = new FileInfo("config.json");
-        public FileInfo unlockFile = new FileInfo("lock.txt");
-        public FileInfo auditFile = new FileInfo("log_audit.txt");
+        public string unlockFile = new FileInfo("lock.txt").FullName;
+        public string auditFile = new FileInfo("log_audit.txt").FullName;
 
         public static Config Instance {
             get
             {
+                FileInfo configFile = new FileInfo("config.json");
                 if (_instance == null)
                 {
                     // Create or load config from file.
