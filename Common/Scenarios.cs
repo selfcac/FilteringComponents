@@ -35,7 +35,7 @@ namespace Common
 
         public static TcpClient getTcpClient()
         {
-            TcpClient client = new TcpClient("127.0.0.1", Config.Instance.ControlPanelPort);
+            TcpClient client = new TcpClient("127.0.0.1", Config.Instance().ControlPanelPort);
             client.ReceiveTimeout = 1000;
             client.SendTimeout = 1000;
 
@@ -162,8 +162,8 @@ namespace Common
         public static string Proxy_Server(CommandInfo cmdInfo)
         {
             TaskInfo result = (cmdInfo.data == CommandActions.START.ToString()) ?
-                SystemUtils.StartService(Config.Instance.PROXY_SERVICE_NAME) :
-                SystemUtils.StopService(Config.Instance.PROXY_SERVICE_NAME);
+                SystemUtils.StartService(Config.Instance().PROXY_SERVICE_NAME) :
+                SystemUtils.StopService(Config.Instance().PROXY_SERVICE_NAME);
 
             return chopString("OP:" + cmdInfo.data + "->" + result.success.ToString() + ", " + result.eventReason);
         }
@@ -206,8 +206,8 @@ namespace Common
                 {
                     if (!string.IsNullOrEmpty(cmdInfo.data))
                     {
-                        File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
-                        result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USERNAME, cmdInfo.data);
+                        File.AppendAllText(Config.Instance().auditFile.FullName, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
+                        result = SystemUtils.ChangeUserPassword(Config.Instance().ADMIN_USERNAME, cmdInfo.data);
                     }
                 }
                 catch (Exception ex)
@@ -215,7 +215,7 @@ namespace Common
                     result = TaskInfo.Fail(ex.Message);
                 }
 
-                return chopString("Password changed? (" + Config.Instance.ADMIN_USERNAME + ") " + result.success.ToString() + ", " + result.eventReason);
+                return chopString("Password changed? (" + Config.Instance().ADMIN_USERNAME + ") " + result.success.ToString() + ", " + result.eventReason);
             }
 
         }
@@ -227,10 +227,10 @@ namespace Common
             TaskInfo isLocked = TaskInfo.Fail("Init"); // unlocked on error by default
             try
             {
-                if (File.Exists(Config.Instance.unlockFile.FullName))
+                if (File.Exists(Config.Instance().unlockFile.FullName))
                 {
                     DateTime unlock = DateTime.Now.Subtract(TimeSpan.FromMinutes(1));
-                    if (DateTime.TryParse(File.ReadAllText(Config.Instance.unlockFile.FullName), out unlock))
+                    if (DateTime.TryParse(File.ReadAllText(Config.Instance().unlockFile.FullName), out unlock))
                     {
                         if (unlock > DateTime.Now)
                         {
@@ -294,8 +294,8 @@ namespace Common
                         {
                             if (date > DateTime.Now)
                             {
-                                string unlockPath = Config.Instance.unlockFile.FullName;
-                                File.AppendAllText(Config.Instance.auditFile.FullName, "(*) Locking until '" + date.ToString() + "'"  +Environment.NewLine);
+                                string unlockPath = Config.Instance().unlockFile.FullName;
+                                File.AppendAllText(Config.Instance().auditFile.FullName, "(*) Locking until '" + date.ToString() + "'"  +Environment.NewLine);
                                 if (File.Exists(unlockPath))
                                     File.Delete(unlockPath);
                                 File.WriteAllText(unlockPath, date.ToString());
@@ -345,7 +345,7 @@ namespace Common
                 {
                     try
                     {
-                        File.AppendAllText(Config.Instance.whitelistFile.FullName, cmdInfo.data  +Environment.NewLine);
+                        File.AppendAllText(Config.Instance().whitelistFile.FullName, cmdInfo.data  +Environment.NewLine);
                         result = "Sucess! restart proxy/use command!";
                     }
                     catch (Exception ex)

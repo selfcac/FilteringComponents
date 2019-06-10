@@ -13,7 +13,7 @@ namespace Common
     public class Config : JSONBaseClass
     {
         [ScriptIgnore(), XmlIgnore()]
-        static Config _instance = null;
+        private static Config _instance = null;
 
         public static FileInfo configFile = new FileInfo("config.json");
         public FileInfo unlockFile = new FileInfo("lock.txt");
@@ -22,10 +22,8 @@ namespace Common
         public FileInfo whitelistFile = new FileInfo("whitelist.txt");
         public FileInfo blocklogFile = new FileInfo("log_block.txt");
 
-        [ScriptIgnore(), XmlIgnore()]
-        public static Config Instance {
-            get
-            {
+        
+        public static Config Instance () { 
                 if (_instance == null)
                 {
                     // Create or load config from file.
@@ -44,19 +42,15 @@ namespace Common
                     else
                     {
                         _instance = new Config();
-                         var result = _instance.ToFile(configFile.FullName);
-                        Console.WriteLine("Saved new config to " + configFile.FullName + ", result: "  +
+                        var result = _instance.ToFile(configFile.FullName);
+                        Console.WriteLine("Saved new config to " + configFile.FullName + ", result: " +
                             result.success + ", reason: " + result.eventReason);
                     }
 
                 }
                 return _instance;
-            }
-            set
-            {
-                _instance = value;
-            }
         }
+        
 
         public string PROXY_SERVICE_NAME = "w3logsvc";
         public string ADMIN_USERNAME = "YoniH";
