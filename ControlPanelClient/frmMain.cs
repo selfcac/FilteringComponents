@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,10 +42,15 @@ namespace ControlPanelClient
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            //string port = Common.Config.Instance.ProxyPort.ToString();
-            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_SHOW);
-            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_CLEAR);
-            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_DISTINCT);
+            foreach(var cmd in Common.Config.Instance.ALLOWED_COMMANDS)
+            {
+                cbAllowedCMD.Items.Add(cmd.name);
+            }
+
+            foreach (var cmd in Common.Config.Instance.ADMIN_COMMANDS)
+            {
+                cbAdminCMD.Items.Add(cmd.name);
+            }
         }
 
         private async void btnEcho_Click(object sender, EventArgs e)
@@ -102,6 +108,31 @@ namespace ControlPanelClient
             });
         }
 
-       
+        private async void btnResetUSB_Click(object sender, EventArgs e)
+        {
+            if (dlgUserReset.ShowDialog() == DialogResult.OK && File.Exists(dlgUserReset.FileName))
+            {
+                await doCommand(async () =>
+                {
+                    return await Common.Scenarios.ResetPass_Client(dlgUserReset.FileName);
+                });
+            }
+        }
+
+        private async void btnAllowedRun_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.Allowed_command_client(cbAllowedCMD.SelectedIndex);
+            });
+        }
+
+        private async void btnAdminRun_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.Admin_command_client(cbAdminCMD.SelectedIndex);
+            });
+        }
     }
 }

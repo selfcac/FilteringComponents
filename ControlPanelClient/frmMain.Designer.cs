@@ -35,17 +35,18 @@
             this.dateLockUntil = new System.Windows.Forms.DateTimePicker();
             this.btnLockAdmin = new System.Windows.Forms.Button();
             this.grpAdmin = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnAdminRun = new System.Windows.Forms.Button();
             this.btnRandom = new System.Windows.Forms.Button();
+            this.cbAdminCMD = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.btnResetUSB = new System.Windows.Forms.Button();
             this.grpUser = new System.Windows.Forms.GroupBox();
+            this.btnAllowedRun = new System.Windows.Forms.Button();
+            this.cbAllowedCMD = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.btnEcho = new System.Windows.Forms.Button();
             this.btnIsLocked = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.dlgUserReset = new System.Windows.Forms.OpenFileDialog();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
             this.SuspendLayout();
@@ -115,9 +116,9 @@
             // grpAdmin
             // 
             this.grpAdmin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
-            this.grpAdmin.Controls.Add(this.button3);
+            this.grpAdmin.Controls.Add(this.btnAdminRun);
             this.grpAdmin.Controls.Add(this.btnRandom);
-            this.grpAdmin.Controls.Add(this.comboBox2);
+            this.grpAdmin.Controls.Add(this.cbAdminCMD);
             this.grpAdmin.Controls.Add(this.label2);
             this.grpAdmin.Controls.Add(this.label3);
             this.grpAdmin.Controls.Add(this.btnLockAdmin);
@@ -134,15 +135,16 @@
             this.grpAdmin.TabStop = false;
             this.grpAdmin.Text = "Time locked actions";
             // 
-            // button1
+            // btnAdminRun
             // 
-            this.button1.Location = new System.Drawing.Point(156, 29);
-            this.button1.Margin = new System.Windows.Forms.Padding(5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(273, 35);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "Reset to 1234 (Need USB)";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnAdminRun.Location = new System.Drawing.Point(433, 50);
+            this.btnAdminRun.Margin = new System.Windows.Forms.Padding(5);
+            this.btnAdminRun.Name = "btnAdminRun";
+            this.btnAdminRun.Size = new System.Drawing.Size(125, 35);
+            this.btnAdminRun.TabIndex = 21;
+            this.btnAdminRun.Text = "Run!";
+            this.btnAdminRun.UseVisualStyleBackColor = true;
+            this.btnAdminRun.Click += new System.EventHandler(this.btnAdminRun_Click);
             // 
             // btnRandom
             // 
@@ -155,12 +157,43 @@
             this.btnRandom.UseVisualStyleBackColor = true;
             this.btnRandom.Click += new System.EventHandler(this.btnRandom_Click);
             // 
+            // cbAdminCMD
+            // 
+            this.cbAdminCMD.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAdminCMD.FormattingEnabled = true;
+            this.cbAdminCMD.Location = new System.Drawing.Point(8, 54);
+            this.cbAdminCMD.Name = "cbAdminCMD";
+            this.cbAdminCMD.Size = new System.Drawing.Size(415, 28);
+            this.cbAdminCMD.TabIndex = 23;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.Color.Blue;
+            this.label2.Location = new System.Drawing.Point(10, 31);
+            this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(181, 20);
+            this.label2.TabIndex = 22;
+            this.label2.Text = "Restricted Commands:";
+            // 
+            // btnResetUSB
+            // 
+            this.btnResetUSB.Location = new System.Drawing.Point(156, 29);
+            this.btnResetUSB.Margin = new System.Windows.Forms.Padding(5);
+            this.btnResetUSB.Name = "btnResetUSB";
+            this.btnResetUSB.Size = new System.Drawing.Size(273, 35);
+            this.btnResetUSB.TabIndex = 13;
+            this.btnResetUSB.Text = "Reset to 1234 (Need USB)";
+            this.btnResetUSB.UseVisualStyleBackColor = true;
+            this.btnResetUSB.Click += new System.EventHandler(this.btnResetUSB_Click);
+            // 
             // grpUser
             // 
-            this.grpUser.Controls.Add(this.button2);
-            this.grpUser.Controls.Add(this.comboBox1);
+            this.grpUser.Controls.Add(this.btnAllowedRun);
+            this.grpUser.Controls.Add(this.cbAllowedCMD);
             this.grpUser.Controls.Add(this.label1);
-            this.grpUser.Controls.Add(this.button1);
+            this.grpUser.Controls.Add(this.btnResetUSB);
             this.grpUser.Controls.Add(this.btnEcho);
             this.grpUser.Location = new System.Drawing.Point(20, 18);
             this.grpUser.Margin = new System.Windows.Forms.Padding(5);
@@ -170,7 +203,37 @@
             this.grpUser.TabIndex = 17;
             this.grpUser.TabStop = false;
             this.grpUser.Text = "Unlocked actions";
-            
+            // 
+            // btnAllowedRun
+            // 
+            this.btnAllowedRun.Location = new System.Drawing.Point(433, 96);
+            this.btnAllowedRun.Margin = new System.Windows.Forms.Padding(5);
+            this.btnAllowedRun.Name = "btnAllowedRun";
+            this.btnAllowedRun.Size = new System.Drawing.Size(125, 35);
+            this.btnAllowedRun.TabIndex = 13;
+            this.btnAllowedRun.Text = "Run!";
+            this.btnAllowedRun.UseVisualStyleBackColor = true;
+            this.btnAllowedRun.Click += new System.EventHandler(this.btnAllowedRun_Click);
+            // 
+            // cbAllowedCMD
+            // 
+            this.cbAllowedCMD.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbAllowedCMD.FormattingEnabled = true;
+            this.cbAllowedCMD.Location = new System.Drawing.Point(8, 100);
+            this.cbAllowedCMD.Name = "cbAllowedCMD";
+            this.cbAllowedCMD.Size = new System.Drawing.Size(415, 28);
+            this.cbAllowedCMD.TabIndex = 20;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.Color.Blue;
+            this.label1.Location = new System.Drawing.Point(10, 77);
+            this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(162, 20);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Allowed Commands:";
             // 
             // btnEcho
             // 
@@ -194,65 +257,10 @@
             this.btnIsLocked.UseVisualStyleBackColor = true;
             this.btnIsLocked.Click += new System.EventHandler(this.btnIsLocked_Click);
             // 
-            // label1
+            // dlgUserReset
             // 
-            this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.Color.Blue;
-            this.label1.Location = new System.Drawing.Point(10, 77);
-            this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(162, 20);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Allowed Commands:";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(8, 100);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(415, 28);
-            this.comboBox1.TabIndex = 20;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(433, 96);
-            this.button2.Margin = new System.Windows.Forms.Padding(5);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(125, 35);
-            this.button2.TabIndex = 13;
-            this.button2.Text = "Run!";
-            this.button2.UseVisualStyleBackColor = true;
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(433, 50);
-            this.button3.Margin = new System.Windows.Forms.Padding(5);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(125, 35);
-            this.button3.TabIndex = 21;
-            this.button3.Text = "Run!";
-            this.button3.UseVisualStyleBackColor = true;
-            // 
-            // comboBox2
-            // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(8, 54);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(415, 28);
-            this.comboBox2.TabIndex = 23;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.ForeColor = System.Drawing.Color.Blue;
-            this.label2.Location = new System.Drawing.Point(10, 31);
-            this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(181, 20);
-            this.label2.TabIndex = 22;
-            this.label2.Text = "Restricted Commands:";
+            this.dlgUserReset.Filter = "Password File (.psw)|*.psw";
+            this.dlgUserReset.Title = "Open admin password file";
             // 
             // frmMain
             // 
@@ -290,13 +298,14 @@
         private System.Windows.Forms.Button btnEcho;
         private System.Windows.Forms.Button btnIsLocked;
         private System.Windows.Forms.Button btnRandom;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Button btnResetUSB;
+        private System.Windows.Forms.Button btnAllowedRun;
+        private System.Windows.Forms.ComboBox cbAllowedCMD;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.Button btnAdminRun;
+        private System.Windows.Forms.ComboBox cbAdminCMD;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.OpenFileDialog dlgUserReset;
     }
 }
 
