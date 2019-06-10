@@ -50,6 +50,7 @@ namespace Common
             new ConfigCOmmand() {name = "Start firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state on" },
             new ConfigCOmmand() {name = "Stop firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state off" },
             new ConfigCOmmand() {name = "Enable protection" , path = "enable.bat", arg ="" },
+            new ConfigCOmmand() {name = "Restart Divert Services", path = "powershell.exe",arg = "-command \"Restart-Service -Name Yoni_D*\""}
         };
         public ConfigCOmmand[] ADMIN_COMMANDS = new ConfigCOmmand[] {
             new ConfigCOmmand() {name = "Stop protection" , path = "enable.bat", arg ="" },
