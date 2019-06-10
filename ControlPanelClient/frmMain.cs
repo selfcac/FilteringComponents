@@ -15,9 +15,7 @@ namespace ControlPanelClient
         public frmMain()
         {
             InitializeComponent();
-        }
-
-       
+        } 
 
         public static string evilPayLoad()
         {
@@ -41,28 +39,20 @@ namespace ControlPanelClient
             MessageBox.Show(result);
         }
 
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            //string port = Common.Config.Instance.ProxyPort.ToString();
+            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_SHOW);
+            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_CLEAR);
+            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_DISTINCT);
+        }
+
         private async void btnEcho_Click(object sender, EventArgs e)
         {
             await doCommand(async () =>
             {
                 return await Common.Scenarios.Echo_Client();
             });
-        }
-
-        private async void btnStartProxy_Click(object sender, EventArgs e)
-        {
-            //await doCommand(async () =>
-            //{
-            //    return await Common.Scenarios.Proxy_Client(start: true);
-            //});
-        }
-
-        private async void btnStopProxy_Click(object sender, EventArgs e)
-        {
-            //await doCommand(async () =>
-            //{
-            //    return await Common.Scenarios.Proxy_Client(start: false);
-            //});
         }
 
         private async void btnChangePassword_Click(object sender, EventArgs e)
@@ -72,22 +62,6 @@ namespace ControlPanelClient
                 return await Common.Scenarios.ChangePass_Client(txtNewPassword.Text);
             });
             txtNewPassword.Text = "";
-        }
-
-        private async void btnStartFirewall_Click(object sender, EventArgs e)
-        {
-            //await doCommand(async () =>
-            //{
-            //    return await Common.Scenarios.Firewall_client(start: true);
-            //});
-        }
-
-        private async void btnStopFireWall_Click(object sender, EventArgs e)
-        {
-            //await doCommand(async () =>
-            //{
-            //    return await Common.Scenarios.Firewall_client(start: false);
-            //});
         }
 
         private async void btnIsLocked_Click(object sender, EventArgs e)
@@ -104,30 +78,9 @@ namespace ControlPanelClient
             {
                 return await Common.Scenarios.Lock_Client(false, dateLockUntil.Value);
             });
-        }
+        }       
 
-        private async void btnAddWhiteList_Click(object sender, EventArgs e)
-        {
-            //await doCommand(async () =>
-            //{
-            //    return await Common.Scenarios.ADDURL_Client(txtWhitelist.Text);
-            //});
-        }
-
-        private void frmMain_Load(object sender, EventArgs e)
-        {
-            //string port = Common.Config.Instance.ProxyPort.ToString();
-            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_SHOW);
-            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_CLEAR);
-            //cbUrlBlock.Items.Add("http://127.0.0.1:" + port + Common.ProxyCommands.LOG_DISTINCT);
-        }
-
-        private void btnDeleteLog_Click(object sender, EventArgs e)
-        {
-            //System.Diagnostics.Process.Start(cbUrlBlock.SelectedItem.ToString());
-        }
-
-        string passSource = "abcdefghijklmnopqrstuvwxyz0123456789";
+        string passSource = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!~@$*";
         string randomPass(int len)
         {
             Random rnd = new Random();
@@ -148,5 +101,7 @@ namespace ControlPanelClient
                 return await Common.Scenarios.ChangePass_Client(randomPass(20));
             });
         }
+
+       
     }
 }
