@@ -10,59 +10,63 @@ using System.Xml.Serialization;
 
 namespace Common
 {
+    public static class ConfigLoaded
+    {
+        public static Config _instance = null;
+    }
+
     public class Config : JSONBaseClass
     {
-        [ScriptIgnore(), XmlIgnore()]
-        private static Config _instance = null;
 
-        public static FileInfo configFile = new FileInfo("config.json");
-        public FileInfo unlockFile = new FileInfo("lock.txt");
-        public FileInfo auditFile = new FileInfo("log_audit.txt");
+        public string unlockFile = new FileInfo("lock.txt").FullName;
+        public string auditFile = new FileInfo("log_audit.txt").FullName;
 
-        public FileInfo whitelistFile = new FileInfo("whitelist.txt");
-        public FileInfo blocklogFile = new FileInfo("log_block.txt");
+        public string whitelistFile = new FileInfo("whitelist.txt").FullName;
+        public string blocklogFile = new FileInfo("log_block.txt").FullName;
 
-        
-        public static Config Instance () { 
-                if (_instance == null)
+
+        public static Config Instance()
+        {
+            FileInfo configFile = new FileInfo("config.json");
+            if (ConfigLoaded._instance == null)
+            {
+                // Create or load config from file.
+                if (configFile.Exists)
                 {
-                    // Create or load config from file.
-                    if (configFile.Exists)
+                    ConnectionHelpers.TaskInfo task = FromFile<Config>(configFile.FullName);
+                    if (task)
                     {
-                        ConnectionHelpers.TaskInfo task = FromFile<Config>(configFile.FullName);
-                        if (task)
-                        {
-                            _instance = (task as ConnectionHelpers.TaskInfoResult<Config>).result;
-                        }
-                        else
-                        {
-                            _instance = new Config();
-                        }
+                        ConfigLoaded._instance = (task as ConnectionHelpers.TaskInfoResult<Config>).result;
                     }
                     else
                     {
-                        _instance = new Config();
-                        var result = _instance.ToFile(configFile.FullName);
-                        Console.WriteLine("Saved new config to " + configFile.FullName + ", result: " +
-                            result.success + ", reason: " + result.eventReason);
+                        ConfigLoaded._instance = new Config();
                     }
-
                 }
-                return _instance;
+                else
+                {
+                    ConfigLoaded._instance = new Config();
+                    var result = ConfigLoaded._instance.ToFile(configFile.FullName);
+                    Console.WriteLine("Saved new config to " + configFile.FullName + ", result: " +
+                        result.success + ", reason: " + result.eventReason);
+                }
+
+            }
+            return ConfigLoaded._instance;
         }
-        
+
 
         public string PROXY_SERVICE_NAME = "w3logsvc";
         public string ADMIN_USERNAME = "YoniH";
 
-               
+
         public int ProxyPort = 9011;
         public int ControlPanelPort = 9012;
 
         public bool proxyMappingMode = false;
 
-        public TimeBlock[] blockedTimes = new TimeBlock[] { new TimeBlock( 23, 00,8 * 60) };
-       
+        //public TimeBlock[] blockedTimes = new TimeBlock[] { new TimeBlock(23, 00, 8 * 60) };
+
     }
 
     public class TimeBlock
@@ -84,10 +88,10 @@ namespace Common
             int endTotalMinutes = (startTotalMinutes + LengthMinutes) % (24 * 60);
 
             int time = ((hour % 24) * 60 + minute);
-            
-            if ( endTotalMinutes < startTotalMinutes ) // from one day to other
+
+            if (endTotalMinutes < startTotalMinutes) // from one day to other
             {
-                if (time  <= endTotalMinutes  ^ time >= startTotalMinutes)
+                if (time <= endTotalMinutes ^ time >= startTotalMinutes)
                 {
                     return true;
                 }

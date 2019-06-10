@@ -206,7 +206,7 @@ namespace Common
                 {
                     if (!string.IsNullOrEmpty(cmdInfo.data))
                     {
-                        File.AppendAllText(Config.Instance().auditFile.FullName, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
+                        File.AppendAllText(Config.Instance().auditFile, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
                         result = SystemUtils.ChangeUserPassword(Config.Instance().ADMIN_USERNAME, cmdInfo.data);
                     }
                 }
@@ -227,10 +227,10 @@ namespace Common
             TaskInfo isLocked = TaskInfo.Fail("Init"); // unlocked on error by default
             try
             {
-                if (File.Exists(Config.Instance().unlockFile.FullName))
+                if (File.Exists(Config.Instance().unlockFile))
                 {
                     DateTime unlock = DateTime.Now.Subtract(TimeSpan.FromMinutes(1));
-                    if (DateTime.TryParse(File.ReadAllText(Config.Instance().unlockFile.FullName), out unlock))
+                    if (DateTime.TryParse(File.ReadAllText(Config.Instance().unlockFile), out unlock))
                     {
                         if (unlock > DateTime.Now)
                         {
@@ -294,8 +294,8 @@ namespace Common
                         {
                             if (date > DateTime.Now)
                             {
-                                string unlockPath = Config.Instance().unlockFile.FullName;
-                                File.AppendAllText(Config.Instance().auditFile.FullName, "(*) Locking until '" + date.ToString() + "'"  +Environment.NewLine);
+                                string unlockPath = Config.Instance().unlockFile;
+                                File.AppendAllText(Config.Instance().auditFile, "(*) Locking until '" + date.ToString() + "'"  +Environment.NewLine);
                                 if (File.Exists(unlockPath))
                                     File.Delete(unlockPath);
                                 File.WriteAllText(unlockPath, date.ToString());
@@ -345,7 +345,7 @@ namespace Common
                 {
                     try
                     {
-                        File.AppendAllText(Config.Instance().whitelistFile.FullName, cmdInfo.data  +Environment.NewLine);
+                        File.AppendAllText(Config.Instance().whitelistFile, cmdInfo.data  +Environment.NewLine);
                         result = "Sucess! restart proxy/use command!";
                     }
                     catch (Exception ex)

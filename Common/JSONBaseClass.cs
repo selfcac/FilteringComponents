@@ -19,7 +19,9 @@ namespace Common
             {
                 //string json = JsonConvert.SerializeObject(this, Formatting.Indented);
                 string json =
-                    new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(this);
+                    new System.Web.Script.Serialization.JavaScriptSerializer()
+                    { RecursionLimit = 100 }
+                    .Serialize(this);
 
                 if (File.Exists(filename))
                     File.Delete(filename); // O.W might write only in the beginning of the file.
