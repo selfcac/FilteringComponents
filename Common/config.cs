@@ -61,7 +61,6 @@ namespace Common
         public string ADMIN_PASS_RESET_FILE = "userkey.psw";
 
         public int ControlPanelPort = 9012;
-        public bool proxyMappingMode = false;
     }
 
     public class ConfigCommand
