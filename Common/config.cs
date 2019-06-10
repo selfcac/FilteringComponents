@@ -46,14 +46,14 @@ namespace Common
             }
         }
 
-        public ConfigCOmmand[] ALLOWED_COMMANDS = new ConfigCOmmand[] {
-            new ConfigCOmmand() {name = "Start firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state on" },
-            new ConfigCOmmand() {name = "Stop firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state off" },
-            new ConfigCOmmand() {name = "Enable protection" , path = "enable.bat", arg ="" },
-            new ConfigCOmmand() {name = "Restart Divert Services", path = "powershell.exe",arg = "-command \"Restart-Service -Name Yoni_D*\""}
+        public ConfigCommand[] ALLOWED_COMMANDS = new ConfigCommand[] {
+            new ConfigCommand() {name = "Start firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state on" },
+            new ConfigCommand() {name = "Stop firewall" , path = "netsh.exe", arg ="advfirewall set allprofiles state off" },
+            new ConfigCommand() {name = "Enable protection" , path = "enable.bat", arg ="" },
+            new ConfigCommand() {name = "Restart Divert Services", path = "powershell.exe",arg = "-command \"Restart-Service -Name Yoni_D*\""}
         };
-        public ConfigCOmmand[] ADMIN_COMMANDS = new ConfigCOmmand[] {
-            new ConfigCOmmand() {name = "Stop protection" , path = "enable.bat", arg ="" },
+        public ConfigCommand[] ADMIN_COMMANDS = new ConfigCommand[] {
+            new ConfigCommand() {name = "Stop protection" , path = "enable.bat", arg ="" },
         };
 
         public string ADMIN_USB_USERNAME = "YoniH";
@@ -63,7 +63,7 @@ namespace Common
         public bool proxyMappingMode = false;
     }
 
-    public class ConfigCOmmand
+    public class ConfigCommand
     {
         public string name;
         public string path;
