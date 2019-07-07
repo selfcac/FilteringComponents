@@ -134,5 +134,16 @@ namespace ControlPanelClient
                 return await Common.Scenarios.Admin_command_client(cbAdminCMD.SelectedIndex);
             });
         }
+
+        private async void btnResetUnlock_Click(object sender, EventArgs e)
+        {
+            if (dlgUserReset.ShowDialog() == DialogResult.OK && File.Exists(dlgUserReset.FileName))
+            {
+                await doCommand(async () =>
+                {
+                    return await Common.Scenarios.RESET_UNLOCK_Client(dlgUserReset.FileName);
+                });
+            }
+        }
     }
 }

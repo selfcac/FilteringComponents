@@ -47,8 +47,11 @@
             this.btnEcho = new System.Windows.Forms.Button();
             this.btnIsLocked = new System.Windows.Forms.Button();
             this.dlgUserReset = new System.Windows.Forms.OpenFileDialog();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnResetUnlock = new System.Windows.Forms.Button();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label3
@@ -126,7 +129,7 @@
             this.grpAdmin.Controls.Add(this.dateLockUntil);
             this.grpAdmin.Controls.Add(this.btnChangePassword);
             this.grpAdmin.Controls.Add(this.label4);
-            this.grpAdmin.Location = new System.Drawing.Point(20, 232);
+            this.grpAdmin.Location = new System.Drawing.Point(20, 327);
             this.grpAdmin.Margin = new System.Windows.Forms.Padding(5);
             this.grpAdmin.Name = "grpAdmin";
             this.grpAdmin.Padding = new System.Windows.Forms.Padding(5);
@@ -179,21 +182,21 @@
             // 
             // btnResetUSB
             // 
-            this.btnResetUSB.Location = new System.Drawing.Point(156, 29);
+            this.btnResetUSB.Location = new System.Drawing.Point(46, 27);
             this.btnResetUSB.Margin = new System.Windows.Forms.Padding(5);
             this.btnResetUSB.Name = "btnResetUSB";
-            this.btnResetUSB.Size = new System.Drawing.Size(273, 35);
+            this.btnResetUSB.Size = new System.Drawing.Size(247, 35);
             this.btnResetUSB.TabIndex = 13;
-            this.btnResetUSB.Text = "Reset to 1234 (Need USB)";
+            this.btnResetUSB.Text = "Make admin pass 1234";
             this.btnResetUSB.UseVisualStyleBackColor = true;
             this.btnResetUSB.Click += new System.EventHandler(this.btnResetUSB_Click);
             // 
             // grpUser
             // 
+            this.grpUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.grpUser.Controls.Add(this.btnAllowedRun);
             this.grpUser.Controls.Add(this.cbAllowedCMD);
             this.grpUser.Controls.Add(this.label1);
-            this.grpUser.Controls.Add(this.btnResetUSB);
             this.grpUser.Controls.Add(this.btnEcho);
             this.grpUser.Location = new System.Drawing.Point(20, 18);
             this.grpUser.Margin = new System.Windows.Forms.Padding(5);
@@ -248,7 +251,7 @@
             // 
             // btnIsLocked
             // 
-            this.btnIsLocked.Location = new System.Drawing.Point(20, 182);
+            this.btnIsLocked.Location = new System.Drawing.Point(264, 183);
             this.btnIsLocked.Margin = new System.Windows.Forms.Padding(5);
             this.btnIsLocked.Name = "btnIsLocked";
             this.btnIsLocked.Size = new System.Drawing.Size(125, 35);
@@ -262,11 +265,35 @@
             this.dlgUserReset.Filter = "Password File (.psw)|*.psw";
             this.dlgUserReset.Title = "Open admin password file";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.groupBox1.Controls.Add(this.btnResetUnlock);
+            this.groupBox1.Controls.Add(this.btnResetUSB);
+            this.groupBox1.Location = new System.Drawing.Point(20, 231);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(583, 85);
+            this.groupBox1.TabIndex = 18;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "USB Actions";
+            // 
+            // btnResetUnlock
+            // 
+            this.btnResetUnlock.Location = new System.Drawing.Point(303, 27);
+            this.btnResetUnlock.Margin = new System.Windows.Forms.Padding(5);
+            this.btnResetUnlock.Name = "btnResetUnlock";
+            this.btnResetUnlock.Size = new System.Drawing.Size(255, 35);
+            this.btnResetUnlock.TabIndex = 14;
+            this.btnResetUnlock.Text = "Reset unlock date";
+            this.btnResetUnlock.UseVisualStyleBackColor = true;
+            this.btnResetUnlock.Click += new System.EventHandler(this.btnResetUnlock_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 512);
+            this.ClientSize = new System.Drawing.Size(622, 602);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.grpUser);
             this.Controls.Add(this.grpAdmin);
             this.Controls.Add(this.btnIsLocked);
@@ -282,6 +309,7 @@
             this.grpAdmin.PerformLayout();
             this.grpUser.ResumeLayout(false);
             this.grpUser.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -306,6 +334,8 @@
         private System.Windows.Forms.ComboBox cbAdminCMD;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.OpenFileDialog dlgUserReset;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.Button btnResetUnlock;
     }
 }
 

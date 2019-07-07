@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using static Common.ConnectionHelpers;
 
@@ -11,17 +10,25 @@ namespace Common
 {
     public static class Scenarios
     {
+        static string defaultPass = "1234";
+
         public enum CommandType
         {
             ERROR,
 
-            ECHO,                       
+            // User actions:
+            ECHO,           
+            ALLOWED_COMMAND,
+            
+            // Actions given usb (reset file *.psw)
+            RESET_PASS_USB,
+            RESET_UNLOCK_USB,
+
+            // Admin actions:
             CHANGE_PASSWORD,            
             LOCK,                       
-
-            ALLOWED_COMMAND,
             ADMIN_COMMAND,
-            RESET_PASS,
+
         }
 
         public enum CommandActions
@@ -107,7 +114,8 @@ namespace Common
             { CommandType.ALLOWED_COMMAND, Allowed_command_server},
             { CommandType.ADMIN_COMMAND, Admin_command_server},
 
-            { CommandType.RESET_PASS, ResetPass_Server},
+            { CommandType.RESET_PASS_USB, ResetPass_Server},
+            {CommandType.RESET_UNLOCK_USB, RESET_UNLOCK_Server },
         };
 
         public static endCommandMethod HandleCommand(CommandType type)
@@ -164,22 +172,29 @@ namespace Common
             else
             {
                 TaskInfo result = TaskInfo.Fail("Can't change to empty password");
-                try
-                {
-                    if (!string.IsNullOrEmpty(cmdInfo.data))
-                    {
-                        File.AppendAllText(Config.Instance.auditFile, "(*) Password '" + cmdInfo.data + "'" + Environment.NewLine);
-                        result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, cmdInfo.data);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    result = TaskInfo.Fail(ex.Message);
-                }
+                result = _changePassword(cmdInfo.data, result);
 
                 return chopString("Password changed? " + result.success.ToString() + ", " + result.eventReason);
             }
 
+        }
+
+        private static TaskInfo _changePassword(string password, TaskInfo result)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(password))
+                {
+                    File.AppendAllText(Config.Instance.auditFile, "(*) Password '" + password + "'" + Environment.NewLine);
+                    result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, password);
+                }
+            }
+            catch (Exception ex)
+            {
+                result = TaskInfo.Fail(ex.Message);
+            }
+
+            return result;
         }
 
         // === === === === === LOCK            === === === === === === 
@@ -256,12 +271,7 @@ namespace Common
                         {
                             if (date > DateTime.Now)
                             {
-                                string unlockPath = Config.Instance.unlockFile;
-                                File.AppendAllText(Config.Instance.auditFile, "(*) Locking until '" + date.ToString() + "'" + Environment.NewLine);
-                                if (File.Exists(unlockPath))
-                                    File.Delete(unlockPath);
-                                File.WriteAllText(unlockPath, date.ToString());
-                                result = "Sucess! Locked to " + date.ToString();
+                                result = _LockDate(date);
                             }
                             else
                             {
@@ -288,43 +298,36 @@ namespace Common
             return chopString(result);
         }
 
+        private static string _LockDate(DateTime date)
+        {
+            string result;
+            string unlockPath = Config.Instance.unlockFile;
+            File.AppendAllText(Config.Instance.auditFile, "(*) Locking until '" + date.ToString() + "'" + Environment.NewLine);
+            if (File.Exists(unlockPath))
+                File.Delete(unlockPath);
+            File.WriteAllText(unlockPath, date.ToString());
+            result = "Sucess! Locked to " + date.ToString();
+            return result;
+        }
+
         // === === === === === RESET_PASS            === === === === === === 
 
         public async static Task<string> ResetPass_Client(string filename)
         {
-            return await runCommand(CommandType.RESET_PASS, filename);
+            return await runCommand(CommandType.RESET_PASS_USB, filename);
         }
 
         public static string ResetPass_Server(CommandInfo cmdInfo)
         {
-            string defaultPass = "1234";
             TaskInfo result = TaskInfo.Fail("Init");
             try
             {
-                FileInfo passFile = new FileInfo(Config.Instance.ADMIN_PASS_RESET_FILE);
-                FileInfo userFile = new FileInfo(cmdInfo.data);
+                string userFilePath = cmdInfo.data;
+                Func<TaskInfo> onUsbValidates = new Func<TaskInfo>(
+                    () => { return _changePassword(defaultPass, result); }
+                );
 
-                if (!passFile.Exists)
-                {
-                    result = TaskInfo.Fail("Can't load password file from config");
-                }
-                else if (!userFile.Exists)
-                {
-                    result = TaskInfo.Fail("Can't load file from user path");
-                }
-                else if (passFile.Length != userFile.Length)
-                {
-                    result = TaskInfo.Fail("File length mismatch. Expecting: " + passFile.Length +"B" );
-                }
-                else if (!File.ReadAllBytes(passFile.FullName).SequenceEqual(File.ReadAllBytes(userFile.FullName)))
-                {
-                    result = TaskInfo.Fail("Files are different!");
-                }
-                else
-                {
-                    File.AppendAllText(Config.Instance.auditFile, "(*) Password '" + defaultPass + "'" + Environment.NewLine);
-                    result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, defaultPass);
-                }
+                result = ValidateUsbResetFile(userFilePath, onUsbValidates);
             }
             catch (Exception ex)
             {
@@ -332,6 +335,36 @@ namespace Common
             }
 
             return chopString("Reset to " + defaultPass + "? " + result.success.ToString() + ", " + result.eventReason);
+        }
+
+        private static TaskInfo ValidateUsbResetFile(string userFilePath, Func<TaskInfo> onUsbValidates)
+        {
+            TaskInfo result;
+            FileInfo passFile = new FileInfo(Config.Instance.ADMIN_PASS_RESET_FILE);
+            FileInfo userFile = new FileInfo(userFilePath);
+
+            if (!passFile.Exists)
+            {
+                result = TaskInfo.Fail("Can't load password file from config");
+            }
+            else if (!userFile.Exists)
+            {
+                result = TaskInfo.Fail("Can't load file from user path");
+            }
+            else if (passFile.Length != userFile.Length)
+            {
+                result = TaskInfo.Fail("File length mismatch. Expecting: " + passFile.Length + "B");
+            }
+            else if (!File.ReadAllBytes(passFile.FullName).SequenceEqual(File.ReadAllBytes(userFile.FullName)))
+            {
+                result = TaskInfo.Fail("Files are different!");
+            }
+            else
+            {
+                result = onUsbValidates();
+            }
+
+            return result;
         }
 
         // === === === === === Allowed_Command            === === === === === === 
@@ -396,6 +429,38 @@ namespace Common
             return chopString("Run admin_cmd? " + result.success.ToString() + ", " + result.eventReason);
         }
 
+        // === === === === === RESET_UNLOCK            === === === === === === 
+
+        public async static Task<string> RESET_UNLOCK_Client(string filename)
+        {
+            return await runCommand(CommandType.RESET_UNLOCK_USB, filename);
+        }
+
+        public static string RESET_UNLOCK_Server(CommandInfo cmdInfo)
+        {
+            TaskInfo result = TaskInfo.Fail("Init");
+            try
+            {
+                string userFilePath = cmdInfo.data;
+                Func<TaskInfo> onUsbValidates = new Func<TaskInfo>(
+                    () => {
+                        string _date_result = _LockDate(DateTime.Now.Subtract(TimeSpan.FromDays(2)));
+                        return new TaskInfo()
+                        {
+                            success =true, eventReason = _date_result
+                        };
+                    }
+                );
+
+                result = ValidateUsbResetFile(userFilePath, onUsbValidates);
+            }
+            catch (Exception ex)
+            {
+                result = TaskInfo.Fail(ex.Message);
+            }
+
+            return chopString("Unlock? " + result.success.ToString() + ", " + result.eventReason);
+        }
 
     }
 }
