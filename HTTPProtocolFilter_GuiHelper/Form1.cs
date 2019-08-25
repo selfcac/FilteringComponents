@@ -379,8 +379,6 @@ namespace HTTPProtocolFilter_GuiHelper
             refreshDomains();
         }
 
-        
-
         private void deleteDomainToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
@@ -401,12 +399,11 @@ namespace HTTPProtocolFilter_GuiHelper
                 txtDomainPattern.Text = d.DomainFormat;
                 cbDomainType.SelectedIndex = (int)d.Type;
                 cbBlockDomain.Checked = d.DomainBlocked;
+                cbReferrer.Checked = d.AllowRefering;
 
                 refreshEPs();
             }
         }
-
-
 
         private void lbxEp_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -431,8 +428,6 @@ namespace HTTPProtocolFilter_GuiHelper
             }
         }
 
-
-
         private void btnDApply_Click(object sender, EventArgs e)
         {
             DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
@@ -441,6 +436,7 @@ namespace HTTPProtocolFilter_GuiHelper
                 d.DomainFormat = txtDomainPattern.Text;
                 d.Type = (AllowDomainType)cbDomainType.SelectedIndex;
                 d.DomainBlocked = cbBlockDomain.Checked;
+                d.AllowRefering = cbReferrer.Checked;
 
                 mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
                 refreshDomains();

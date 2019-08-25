@@ -599,6 +599,14 @@ namespace HTTPProtocolFilter.Tests
         //    areTrue(FilterPolicy.getWords(content).Contains("pvc"));
 
         //}
+
+        [TestMethod()]
+        public void PhraseBug()
+        {
+            string url = "https://www.youtube.com/results?search_query=fetish&pbj=1";
+            areTrue(FilterPolicy.getWords(url).Contains("fetish"));
+
+        }
     }
-    
+
 }

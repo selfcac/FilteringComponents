@@ -49,6 +49,7 @@
             this.getBlockedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.getAllowedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblLogStatus = new System.Windows.Forms.ToolStripMenuItem();
+            this.rtbItemInfo = new System.Windows.Forms.RichTextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
@@ -103,7 +104,7 @@
             this.deleteSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.dlgSave = new System.Windows.Forms.SaveFileDialog();
-            this.rtbItemInfo = new System.Windows.Forms.RichTextBox();
+            this.cbReferrer = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -328,6 +329,16 @@
             this.lblLogStatus.Size = new System.Drawing.Size(67, 19);
             this.lblLogStatus.Text = "<Status>";
             // 
+            // rtbItemInfo
+            // 
+            this.rtbItemInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.rtbItemInfo.Location = new System.Drawing.Point(4, 561);
+            this.rtbItemInfo.Name = "rtbItemInfo";
+            this.rtbItemInfo.ReadOnly = true;
+            this.rtbItemInfo.Size = new System.Drawing.Size(467, 204);
+            this.rtbItemInfo.TabIndex = 9;
+            this.rtbItemInfo.Text = "";
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -404,6 +415,7 @@
             // 
             // gpEditDomain
             // 
+            this.gpEditDomain.Controls.Add(this.cbReferrer);
             this.gpEditDomain.Controls.Add(this.cbBlockDomain);
             this.gpEditDomain.Controls.Add(this.btnDApply);
             this.gpEditDomain.Controls.Add(this.cbDomainType);
@@ -422,7 +434,7 @@
             // cbBlockDomain
             // 
             this.cbBlockDomain.AutoSize = true;
-            this.cbBlockDomain.Location = new System.Drawing.Point(11, 162);
+            this.cbBlockDomain.Location = new System.Drawing.Point(10, 151);
             this.cbBlockDomain.Name = "cbBlockDomain";
             this.cbBlockDomain.Size = new System.Drawing.Size(117, 22);
             this.cbBlockDomain.TabIndex = 9;
@@ -496,7 +508,7 @@
             this.tabPage4.Location = new System.Drawing.Point(28, 4);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(420, 300);
+            this.tabPage4.Size = new System.Drawing.Size(420, 304);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "Allow Ep";
             // 
@@ -513,7 +525,7 @@
             this.gpEditAllowEp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gpEditAllowEp.Location = new System.Drawing.Point(3, 3);
             this.gpEditAllowEp.Name = "gpEditAllowEp";
-            this.gpEditAllowEp.Size = new System.Drawing.Size(414, 294);
+            this.gpEditAllowEp.Size = new System.Drawing.Size(414, 298);
             this.gpEditAllowEp.TabIndex = 1;
             this.gpEditAllowEp.TabStop = false;
             this.gpEditAllowEp.Text = "Allow EP";
@@ -606,7 +618,7 @@
             this.tabPage5.Location = new System.Drawing.Point(28, 4);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(420, 300);
+            this.tabPage5.Size = new System.Drawing.Size(420, 304);
             this.tabPage5.TabIndex = 2;
             this.tabPage5.Text = "Block Ep";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -625,7 +637,7 @@
             this.gpEditBlockEp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gpEditBlockEp.Location = new System.Drawing.Point(3, 3);
             this.gpEditBlockEp.Name = "gpEditBlockEp";
-            this.gpEditBlockEp.Size = new System.Drawing.Size(414, 294);
+            this.gpEditBlockEp.Size = new System.Drawing.Size(414, 298);
             this.gpEditBlockEp.TabIndex = 2;
             this.gpEditBlockEp.TabStop = false;
             this.gpEditBlockEp.Text = "Block EP";
@@ -759,7 +771,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(466, 733);
+            this.tabPage2.Size = new System.Drawing.Size(466, 738);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Phrases";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -777,7 +789,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(458, 701);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(458, 706);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // lbxPhrases
@@ -788,7 +800,7 @@
             this.lbxPhrases.Location = new System.Drawing.Point(4, 4);
             this.lbxPhrases.Margin = new System.Windows.Forms.Padding(4);
             this.lbxPhrases.Name = "lbxPhrases";
-            this.lbxPhrases.Size = new System.Drawing.Size(450, 342);
+            this.lbxPhrases.Size = new System.Drawing.Size(450, 345);
             this.lbxPhrases.Sorted = true;
             this.lbxPhrases.TabIndex = 0;
             this.lbxPhrases.SelectedIndexChanged += new System.EventHandler(this.lbxPhrases_SelectedIndexChanged);
@@ -803,11 +815,11 @@
             this.gpEditPhrase.Controls.Add(this.label2);
             this.gpEditPhrase.Controls.Add(this.label1);
             this.gpEditPhrase.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gpEditPhrase.Location = new System.Drawing.Point(4, 354);
+            this.gpEditPhrase.Location = new System.Drawing.Point(4, 357);
             this.gpEditPhrase.Margin = new System.Windows.Forms.Padding(4);
             this.gpEditPhrase.Name = "gpEditPhrase";
             this.gpEditPhrase.Padding = new System.Windows.Forms.Padding(4);
-            this.gpEditPhrase.Size = new System.Drawing.Size(450, 343);
+            this.gpEditPhrase.Size = new System.Drawing.Size(450, 345);
             this.gpEditPhrase.TabIndex = 1;
             this.gpEditPhrase.TabStop = false;
             this.gpEditPhrase.Text = "Edit phrase";
@@ -922,15 +934,15 @@
             // 
             this.dlgSave.Filter = "JSON\\Text File|*.json;*.txt|Any File|*.*";
             // 
-            // rtbItemInfo
+            // cbReferrer
             // 
-            this.rtbItemInfo.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.rtbItemInfo.Location = new System.Drawing.Point(4, 561);
-            this.rtbItemInfo.Name = "rtbItemInfo";
-            this.rtbItemInfo.ReadOnly = true;
-            this.rtbItemInfo.Size = new System.Drawing.Size(467, 204);
-            this.rtbItemInfo.TabIndex = 9;
-            this.rtbItemInfo.Text = "";
+            this.cbReferrer.AutoSize = true;
+            this.cbReferrer.Location = new System.Drawing.Point(10, 179);
+            this.cbReferrer.Name = "cbReferrer";
+            this.cbReferrer.Size = new System.Drawing.Size(211, 22);
+            this.cbReferrer.TabIndex = 10;
+            this.cbReferrer.Text = "Allow links from this domain";
+            this.cbReferrer.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -1062,6 +1074,7 @@
         private System.Windows.Forms.Button btnDelBlockEp;
         private System.Windows.Forms.Button btnAddBlockEP;
         private System.Windows.Forms.RichTextBox rtbItemInfo;
+        private System.Windows.Forms.CheckBox cbReferrer;
     }
 }
 

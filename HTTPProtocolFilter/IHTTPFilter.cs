@@ -55,8 +55,8 @@ namespace HTTPProtocolFilter
 
     public class DomainPolicy
     {
-        // only if true, checke if allowed ep, if 0 just check blocked, o.w check allow then block
-        public bool DomainBlocked; 
+        public bool DomainBlocked = false; // only if true, checke if allowed ep, if 0 just check blocked, o.w check allow then block
+        public bool AllowRefering = false;
 
         public AllowDomainType Type;
         public string DomainFormat;
