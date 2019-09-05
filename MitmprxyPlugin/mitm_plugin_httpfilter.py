@@ -19,7 +19,9 @@ import clr
 # Mitmproxy
 from mitmproxy import ctx
 from mitmproxy import http
-from mitmproxy.proxy import config
+
+# Bypass programs:
+import hashlib
 
 class PluginConfig:
     #DLLs:
@@ -44,6 +46,13 @@ class PluginConfig:
     TimeBlockObj = None;
     BlockHTMLTemplate = "<unloaded-template>";
 
+    # Browser pass:
+    BypassHeaderPass = "123123";
+
+def hash_string(hash_string):
+    sha_signature = \
+        hashlib.sha256(hash_string.encode()).hexdigest()
+    return sha_signature
 
 def writeBlockLog(tag, url, referer, mimetype, reason):
     jsonObj = { "time":str(datetime.datetime.now()), "tag":tag, "url":url, "referer":referer, "mimetype":mimetype, "reason":reason};
@@ -116,6 +125,22 @@ def make_google_safe(flow):
     if host.find("google") > -1:
         flow.request.query["safe"] = "active"
 
+def check_bypass_pass(flow):
+    byPassed = False;
+
+    url = flow.request.pretty_url.lower()
+
+    pass_hash = findInHeaders(flow.request.headers, "mitm-secret");
+    computed_pass_hash = hash_string(url + PluginConfig.BypassHeaderPass).lower() 
+
+    if pass_hash != "":
+        if computed_pass_hash == pass_hash.lower():
+            byPassed = True;
+        else:
+            _log("[HASH] " + url + "  Got:" + pass_hash + " Need:" + computed_pass_hash)
+    return byPassed;
+
+
 def shouldFilterRequest(flow): # return (Filter? , accept-type)
     acceptvalue = findInHeaders(flow.request.headers, "accept").lower();
     if acceptvalue == "":
@@ -128,6 +153,13 @@ def shouldFilterRequest(flow): # return (Filter? , accept-type)
     return (False, acceptvalue);
 
 def shouldFilterResponse(flow): # return (Filter? , nosniff?, content-type)
+
+    # Putting here bypass will avoid time-blocking. I know. It would stop on request.
+    #       but only here the changes make the content stream. (vs. processResponse())
+    if check_bypass_pass(flow):
+        _log ("[BYPASS-RES] " + flow.request.pretty_url)
+        return (False,False,None);
+
     contenttype = findInHeaders(flow.response.headers, "content-type").lower();
     if contenttype == "":
         return (False,False,None);
@@ -171,6 +203,10 @@ def processRequest(flow, mimetype):
             # No time block reason!
             _log(f"Request time block url: {url}")
         else:
+            if check_bypass_pass(flow):
+                _log ("[BYPASS-REQ] " + flow.request.pretty_url)
+                return;
+
             (whitelisted, reason) = _filter.isWhitelistedURL(host,path, None);
             if not whitelisted:
                 writeBlockLog("block-req-url",url, referer, mimetype, reason);
@@ -255,6 +291,8 @@ class MitmFilterPlugin():
 
     def response(self, flow):
         # If we are here - block! (also we get here from custom response)
+        if  flow.response.stream:
+            return;
         
         status_code = flow.response.status_code;
         if status_code == 202:
