@@ -378,7 +378,7 @@ namespace HTTPProtocolFilter
             }
             else
             {
-                reason = "Doamin <*" + host + "*> is not whitelisted";
+                reason = "Domain <*" + host + "*> is not whitelisted";
             }
 
             return allowed;
