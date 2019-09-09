@@ -265,7 +265,7 @@ namespace HTTPProtocolFilter
             switch(ep.Type)
             {
                 case AllowEPType.CONTAIN:
-                    match = epPath.IndexOf(ep.EpFormat) > -1; // not using contain cause HTTP is ASCII only
+                    match = epPath.IndexOf(ep.EpFormat.ToLower()) > -1; // not using contain cause HTTP is ASCII only
                     break;
 
                 case AllowEPType.REGEX:
@@ -273,7 +273,7 @@ namespace HTTPProtocolFilter
                     break;
 
                 case AllowEPType.STARTWITH:
-                    match = epPath.StartsWith(ep.EpFormat);
+                    match = epPath.StartsWith(ep.EpFormat.ToLower());
                     break;
             }
 

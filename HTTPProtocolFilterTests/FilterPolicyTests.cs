@@ -607,6 +607,13 @@ namespace HTTPProtocolFilter.Tests
             areTrue(FilterPolicy.getWords(url).Contains("fetish"));
 
         }
+
+        [TestMethod()]
+        public void checkEPRuleMatchTest_LowerText()
+        {
+            areTrue(FilterPolicy.checkEPRuleMatch(new EPPolicy() { EpFormat = "/LOWER", Type = AllowEPType.STARTWITH }, "/lower"));
+            areTrue(FilterPolicy.checkEPRuleMatch(new EPPolicy() { EpFormat = "LOWER", Type = AllowEPType.CONTAIN }, "/lower-some"));
+        }
     }
 
 }
