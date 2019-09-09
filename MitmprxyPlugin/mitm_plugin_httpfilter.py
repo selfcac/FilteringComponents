@@ -45,7 +45,7 @@ class PluginConfig:
     FilterObj = None;
     TimeBlockObj = None;
     BlockHTMLTemplate = "<unloaded-template>";
-
+    
     # Browser pass:
     BypassHeaderPass = "123123";
 
@@ -89,7 +89,7 @@ def init():
 
         with open(PluginConfig.BlockHtmlPath,'r',encoding="utf-8") as file:
             PluginConfig.BlockHTMLTemplate = file.read()
-        
+            
         _log("All C# DLLs Loaded")
         return True;
     except Exception as ex:
@@ -111,20 +111,60 @@ def findInHeaders(headers, headername):
 def make_google_safe(flow):
     host = flow.request.pretty_host.lower()
 
-    #if host.find("google") > -1:
-    #    path = flow.request.path;
-    #    _log("Adding safe=active to : " + path)
-    #    if path.find("?") > -1:
-    #        path += "&";
-    #    else:
-    #        path += "?"
-    #    path += "safe=active";
-
     # Native way:
     # https://github.com/mitmproxy/mitmproxy/blob/master/examples/simple/modify_querystring.py
     if host.find("google") > -1:
         flow.request.query["safe"] = "active"
 
+
+def applyF2Cookie(original):
+    #### TEST: original = "VISITOR_INFO1_LIVE=k0Fsssssk0Sg;  SAPISID=BH; YSC=ASDsa16; s_gl=ASDACCE==; PrEf=f1=50000000&F2=55&hl=en&al=iw; cvdm=grid&f5=30000&f4=4000000;"
+    new_cookie = "";
+
+    try:
+        # Split into cookies
+        k = original.replace('; ',';').split(';')
+        # Get "pref" cookie
+        p = [x for x in k if x.lower().find("pref")==0]
+        # Remove "pref="
+        pv = (p[0])[p[0].find('=')+1:]
+        # Make dictionary from values in "pref"
+        pvDict = {i[0].lower(): i[1] for i in [x.split('=') for x in pv.split('&')]}
+        # Apply filter:
+        pvDict["f2"] = "8000000"
+        p_new = "PREF=" + '&'.join([key +"="+pvDict[key] for key in pvDict])
+        # Get other cookies
+        k_new = [x for x in k if x.lower().find("pref")!=0]
+        k_new.append(p_new)
+        # Get new cookie with new pref
+        new_cookie = '; '.join(k_new)
+    except Exception as ex:
+        _err(ex);
+       
+    return new_cookie
+
+def make_youtube_safe(flow):
+    isRelevant = False;
+    isChanged = False;
+
+    host = flow.request.pretty_host.lower()
+
+    if host.find("youtube.com") > -1:
+        isRelevant = True;
+        cookie = findInHeaders(flow.request.headers, "cookie");
+        if cookie != "":
+            isChanged = True;
+            flow.request.headers["cookie"] = applyF2Cookie(cookie);
+        else:
+            isChanged = False;
+    
+    if isRelevant:
+        if isChanged:
+            _log("Youtube Filtered!!!");
+        else:
+            _log("Youtube not filtered :(")
+
+            
 def check_bypass_pass(flow):
     byPassed = False;
 
@@ -139,7 +179,6 @@ def check_bypass_pass(flow):
         else:
             _log("[HASH] " + url + "  Got:" + pass_hash + " Need:" + computed_pass_hash)
     return byPassed;
-
 
 def shouldFilterRequest(flow): # return (Filter? , accept-type)
     acceptvalue = findInHeaders(flow.request.headers, "accept").lower();
@@ -258,8 +297,10 @@ class MitmFilterPlugin():
         query = flow.request.query # (x in query)? ==> query[x]
         
         make_google_safe(flow);
+        make_youtube_safe(flow);
     
         shouldFilter, req_type = shouldFilterRequest(flow);
+
         if shouldFilter:
             processRequest(flow, req_type);
         else:
