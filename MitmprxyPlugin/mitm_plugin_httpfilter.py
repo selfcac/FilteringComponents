@@ -298,6 +298,9 @@ class MitmFilterPlugin():
         
         make_google_safe(flow);
         make_youtube_safe(flow);
+
+        # Disable websocket compression (not in mitm yet)
+        flow.request.headers["Sec-WebSocket-Extensions"] = ""
     
         shouldFilter, req_type = shouldFilterRequest(flow);
 
