@@ -26,16 +26,21 @@ import clr
 import pydivert
 
 import threading
+import traceback
 
 class ScriptConfig:
-    #DLLs:
+    # DLLs:
     CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
     CSNetworkHelper = r"C:\Users\Yoni\Desktop\selfcac\PortsOwners\PortOwnersDLL\bin\x86\Debug\PortOwnersDLL.dll"
     CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\Common.dll"
     CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
 
-    #Policies:
-    TimePolicyPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json"
+    # Policies:
+     TimePolicyPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json"
+
+    # Windivert filters:
+    catchTcp = "outbound and tcp and tcp.DstPort != 80 and tcp.DstPort != 443 and tcp.DstPort != 445 and tcp.SrcPort != 445 and tcp.PayloadLength > 7"
+    dropProblematic = "outbound and ((udp and (udp.DstPort == 80 || udp.DstPort == 443)) || (tcp and tcp.DstPort=3389))"
 
     # Global objects:
     TimeBlockObj = None;
@@ -56,7 +61,7 @@ class SafeAccessDivert(object):
             self.lock.release()
 
     def reinjectPacket(self, packet):
-        self.value.send(packet);
+        self.value.send(packet, recalculate_checksum=True);
 
 __print__ = print;
 printLock = threading.Lock();
@@ -67,15 +72,18 @@ def log( text):
     with printLock:
         __print__(llog)
 
+def logPacket(packet):
+    log(getAddressString(packet))
+
 def protectProcess():
     pprotectDLL = LoadLibrary(ScriptConfig.CSProtectProcessPath,'net')
     pprotectDLL._lib.ProcessTerminationProtection.ProcessProtect.ProtectCurrentFromUsers();
 
 def getAddressString(packet):
     if packet.tcp != None:
-        return "[TCP] " + packet.src_addr + ":" + str(packet.src_port) + "->" + packet.dst_addr + ":" + str(packet.dst_port);
+        return "[TCP] size: " + str(len(packet.payload)) + ", " + packet.src_addr + ":" + str(packet.src_port) + "->" + packet.dst_addr + ":" + str(packet.dst_port);
     else:
-        return "[UDP] "+ packet.src_addr + ":" + str(packet.src_port) + "->" + packet.dst_addr + ":" + str(packet.dst_port);
+        return "[UDP] size: " + str(len(packet.payload)) + ", " + packet.src_addr + ":" + str(packet.src_port) + "->" + packet.dst_addr + ":" + str(packet.dst_port);
 
 def logDrop(packet, tag):
     global log, getAddressString
@@ -84,15 +92,30 @@ def logDrop(packet, tag):
 
 def dropHTTPUdp(state):
     global logDrop;
-    with pydivert.WinDivert("outbound and ((udp and (udp.DstPort == 80 || udp.DstPort == 443)) || (tcp and tcp.DstPort=3389))") as w:
-        for packet in w:
-            logDrop(packet, "UDP-QUICk\RDP");
-            # Drop so no w.send(packet)
+    with pydivert.WinDivert(ScriptConfig.dropProblematic) as w:
+        while keepThreadOpen:
+            try:
+                for packet in w:
+                    logDrop(packet, "UDP-QUICk\RDP");
+            except Exception as ex:
+                if not packet is None:
+                    logPacket(packet);
+                log(str(ex));
+                traceback.print_tb(ex.__traceback__)
 
+
+keepThreadOpen = True
 def windivertWorker(safeDivert):
-    while True:
-        packet = safeDivert.getNextPacket();
-        handlePacket(packet, safeDivert);
+    while keepThreadOpen:
+        packet = None
+        try:
+            packet = safeDivert.getNextPacket();
+            handlePacket(packet, safeDivert);
+        except Exception as ex:
+            if not packet is None:
+                logPacket(packet);
+            log(str(ex));
+            traceback.print_tb(ex.__traceback__)
 
 def isPacketSOCKS(packet):
     return ScriptConfig.proxyDetectHelper.IsSocksProxyConnect(packet.payload)
@@ -120,10 +143,16 @@ def handlePacket(packet, safeDivert):
             if not packet.dst_addr == "127.0.0.1": 
                 isBlocked =True;
     
+    # Ignore time block when admin or local:
+    if isAdmin or packet.dst_addr == "127.0.0.1":
+        isTimeBlocked = False;
+
     if not isBlocked and not isTimeBlocked:
+
         #debug data:
         #if packet.dst_addr == "127.0.0.1": 
         #    print("Admin? " + str(isAdmin) + " HTTPS? " + str(isHTTPS) + " " + getAddressString(packet) )
+        # logPacket(packet);
         safeDivert.reinjectPacket(packet);
     else:
         if isTimeBlocked:
@@ -159,12 +188,12 @@ try:
     ScriptConfig.netHelper.Start(5); # Update ip tables every 5 sec
 
     # Dropping  QUIC ProtoolFilter (UDP)
-    # run as adeamon so it will close when program ends.
+    # run as daemon so it will close when program ends.
     udpThread = threading.Thread(target=dropHTTPUdp, args=(0,), daemon=True);
     udpThread.start();
 
     # Processing all other outbound ports (both SOCKS and HTTPs can be identified in the first 8 bytes)
-    maindivert = pydivert.WinDivert("outbound and tcp and tcp.DstPort != 80 and tcp.DstPort != 443 and tcp.PayloadLength > 7")
+    maindivert = pydivert.WinDivert(ScriptConfig.catchTcp)
     try:
         log("Starting main divert");
         maindivert.open();
@@ -183,17 +212,19 @@ try:
             #for i in range(0, len(my_threads)):
             #    my_threads[i].join();
             while True:
-                time.sleep(1);
+                time.sleep(10);
                 with printLock:
                     sys.stdout.flush()
         except KeyboardInterrupt:
+            keepThreadOpen = False
             print("Ctrl-C");
         
-        
+        keepThreadOpen = False
         log("Existing....")
     except Exception as ex:
         log("Error diverting: " + str(ex))
     finally:
+        keepThreadOpen = False
         ScriptConfig.netHelper.Stop();
         maindivert.close();
 
