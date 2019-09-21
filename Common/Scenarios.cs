@@ -240,7 +240,7 @@ namespace Common
 
         public async static Task<string> Lock_Client(bool check, DateTime lockTime)
         {
-            return await runCommand(CommandType.LOCK, check ? CommandActions.CHECK.ToString() : lockTime.ToString());
+            return await runCommand(CommandType.LOCK, check ? CommandActions.CHECK.ToString() : lockTime.ToString(System.Globalization.DateTimeFormatInfo.InvariantInfo));
         }
 
         public static string Lock_Server(CommandInfo cmdInfo)
@@ -265,7 +265,9 @@ namespace Common
                 try
                 {
                     DateTime date = DateTime.Now.Subtract(TimeSpan.FromMinutes(1));
-                    if (DateTime.TryParse(cmdInfo.data, out date))
+                    if (DateTime.TryParse(cmdInfo.data,
+                        System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.AssumeLocal,
+                        out date))
                     {
                         if (!unlockedStatus) // Only if not already locked!
                         {
