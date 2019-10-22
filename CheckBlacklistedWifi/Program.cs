@@ -82,7 +82,7 @@ namespace CheckBlacklistedWifi
 
                 string nearByWifisCMDResult = getCMDOutput("netsh", "wlan show networks mode=bssid");
 
-                List<string> wifi_data = Utils.getWifiParsed(nearByWifisCMDResult);
+                List<string> current_near_wifis = Utils.getWifiParsed(nearByWifisCMDResult);
 
                 // Logic:
                 //      if in block zone (by finding 1 result of blocked bssid) save all new bssid.
@@ -90,35 +90,22 @@ namespace CheckBlacklistedWifi
 
                 if (blockFile.Exists)
                 {
-
-                    if (wifi_data.Count > 0)
-                    {
-                        List<string> ruleset = File.ReadAllLines(blockFile.FullName).ToList();
-
-                        if (WifiHelper.fastBlockZoneCheck(wifi_data, ruleset, (text) => log(text))) 
-                        {
-                            // Update all rules with bad ones:
-                            File.WriteAllLines(blockFile.FullName, ruleset);
-
+                    List<string> latest_ruleset = File.ReadAllLines(blockFile.FullName).ToList();
+                    WifiZoneFlow(current_near_wifis, latest_ruleset,
+                        () => {
                             if (isExe)
                                 startProcess(lastArgument);
                             else
                                 setService(true, lastArgument);
-                        }
-                        else
-                        {
+                        },
+                        () => {
                             if (!isExe) setService(false, lastArgument);
+                        },
+                        (new_rules) =>
+                        {
+                            File.WriteAllLines(blockFile.FullName, new_rules);
                         }
-                    }
-                    else
-                    {
-                        log("Found 0 wifis, assume blockzone");
-
-                        if (isExe)
-                            startProcess(lastArgument);
-                        else
-                            setService(true, lastArgument);
-                    }
+                        );
 
                 }
                 else
@@ -129,6 +116,36 @@ namespace CheckBlacklistedWifi
             catch (Exception ex)
             {
                 log(ex.ToString());
+            }
+        }
+
+        private static void WifiZoneFlow(
+            List<string> current_near_wifis,
+            List<string> latest_ruleset,
+            Action insideBlockZone, Action outsideBlockZone, Action<List<string>> updateRules
+            )
+        {
+            if (current_near_wifis.Count > 0)
+            {
+
+                if (WifiHelper.fastBlockZoneCheck(current_near_wifis, latest_ruleset, (text) => log(text)))
+                {
+                    // Update all rules with bad ones:
+                    
+                    // TODO: get new rules by call not changing them
+
+                    updateRules?.Invoke(latest_ruleset);
+                    insideBlockZone?.Invoke();
+                }
+                else
+                {
+                    outsideBlockZone?.Invoke();
+                }
+            }
+            else
+            {
+                log("Found 0 wifis, assume blockzone");
+                insideBlockZone?.Invoke();
             }
         }
     }
