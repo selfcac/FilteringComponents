@@ -57,6 +57,7 @@
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.gpEditDomain = new System.Windows.Forms.GroupBox();
+            this.cbReferrer = new System.Windows.Forms.CheckBox();
             this.cbBlockDomain = new System.Windows.Forms.CheckBox();
             this.btnDApply = new System.Windows.Forms.Button();
             this.cbDomainType = new System.Windows.Forms.ComboBox();
@@ -104,7 +105,9 @@
             this.deleteSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.dlgSave = new System.Windows.Forms.SaveFileDialog();
-            this.cbReferrer = new System.Windows.Forms.CheckBox();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTxtFind = new System.Windows.Forms.ToolStripTextBox();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -139,7 +142,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip1.Size = new System.Drawing.Size(965, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(1205, 25);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -184,7 +187,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(965, 777);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1205, 777);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // groupBox1
@@ -194,11 +197,11 @@
             this.groupBox1.Controls.Add(this.menuStrip2);
             this.groupBox1.Controls.Add(this.rtbItemInfo);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(486, 4);
+            this.groupBox1.Location = new System.Drawing.Point(606, 4);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(475, 769);
+            this.groupBox1.Size = new System.Drawing.Size(595, 769);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "<< Simulator >>";
@@ -210,7 +213,7 @@
             this.lbxSimulated.ItemHeight = 18;
             this.lbxSimulated.Location = new System.Drawing.Point(4, 46);
             this.lbxSimulated.Name = "lbxSimulated";
-            this.lbxSimulated.Size = new System.Drawing.Size(467, 491);
+            this.lbxSimulated.Size = new System.Drawing.Size(587, 491);
             this.lbxSimulated.TabIndex = 7;
             this.lbxSimulated.SelectedIndexChanged += new System.EventHandler(this.lbxSimulated_SelectedIndexChanged);
             // 
@@ -219,12 +222,13 @@
             this.menuStrip5.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.menuStrip5.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip5.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addToolStripMenuItem,
             this.newDomainToolStripMenuItem,
             this.domainEPToolStripMenuItem,
             this.subdomainsToolStripMenuItem});
             this.menuStrip5.Location = new System.Drawing.Point(4, 537);
             this.menuStrip5.Name = "menuStrip5";
-            this.menuStrip5.Size = new System.Drawing.Size(467, 24);
+            this.menuStrip5.Size = new System.Drawing.Size(587, 24);
             this.menuStrip5.TabIndex = 6;
             this.menuStrip5.Text = "menuStrip5";
             // 
@@ -232,8 +236,8 @@
             // 
             this.newDomainToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.newDomainToolStripMenuItem.Name = "newDomainToolStripMenuItem";
-            this.newDomainToolStripMenuItem.Size = new System.Drawing.Size(88, 20);
-            this.newDomainToolStripMenuItem.Text = "New Domain";
+            this.newDomainToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.newDomainToolStripMenuItem.Text = "Domain";
             this.newDomainToolStripMenuItem.Click += new System.EventHandler(this.newDomainToolStripMenuItem_Click);
             // 
             // domainEPToolStripMenuItem
@@ -263,7 +267,7 @@
             this.menuStrip2.Location = new System.Drawing.Point(4, 21);
             this.menuStrip2.Name = "menuStrip2";
             this.menuStrip2.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip2.Size = new System.Drawing.Size(467, 25);
+            this.menuStrip2.Size = new System.Drawing.Size(587, 25);
             this.menuStrip2.TabIndex = 1;
             this.menuStrip2.Text = "menuStrip2";
             // 
@@ -335,7 +339,7 @@
             this.rtbItemInfo.Location = new System.Drawing.Point(4, 561);
             this.rtbItemInfo.Name = "rtbItemInfo";
             this.rtbItemInfo.ReadOnly = true;
-            this.rtbItemInfo.Size = new System.Drawing.Size(467, 204);
+            this.rtbItemInfo.Size = new System.Drawing.Size(587, 204);
             this.rtbItemInfo.TabIndex = 9;
             this.rtbItemInfo.Text = "";
             // 
@@ -348,7 +352,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(474, 769);
+            this.tabControl1.Size = new System.Drawing.Size(594, 769);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -359,7 +363,7 @@
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(466, 738);
+            this.tabPage1.Size = new System.Drawing.Size(586, 738);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Domains\\Ep";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -371,21 +375,21 @@
             this.tableLayoutPanel3.Controls.Add(this.panel2, 0, 1);
             this.tableLayoutPanel3.Controls.Add(this.lbxDomains, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 28);
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(4, 31);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 55F));
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(458, 706);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(578, 703);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.tabControl2);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(3, 391);
+            this.panel2.Location = new System.Drawing.Point(3, 389);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(452, 312);
+            this.panel2.Size = new System.Drawing.Size(572, 311);
             this.panel2.TabIndex = 2;
             // 
             // tabControl2
@@ -399,7 +403,7 @@
             this.tabControl2.Multiline = true;
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(452, 312);
+            this.tabControl2.Size = new System.Drawing.Size(572, 311);
             this.tabControl2.TabIndex = 2;
             // 
             // tabPage3
@@ -408,7 +412,7 @@
             this.tabPage3.Location = new System.Drawing.Point(28, 4);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(420, 304);
+            this.tabPage3.Size = new System.Drawing.Size(540, 303);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "Domain";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -426,10 +430,20 @@
             this.gpEditDomain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gpEditDomain.Location = new System.Drawing.Point(3, 3);
             this.gpEditDomain.Name = "gpEditDomain";
-            this.gpEditDomain.Size = new System.Drawing.Size(414, 298);
+            this.gpEditDomain.Size = new System.Drawing.Size(534, 297);
             this.gpEditDomain.TabIndex = 0;
             this.gpEditDomain.TabStop = false;
             this.gpEditDomain.Text = "Edit Domain";
+            // 
+            // cbReferrer
+            // 
+            this.cbReferrer.AutoSize = true;
+            this.cbReferrer.Location = new System.Drawing.Point(10, 179);
+            this.cbReferrer.Name = "cbReferrer";
+            this.cbReferrer.Size = new System.Drawing.Size(211, 22);
+            this.cbReferrer.TabIndex = 10;
+            this.cbReferrer.Text = "Allow links from this domain";
+            this.cbReferrer.UseVisualStyleBackColor = true;
             // 
             // cbBlockDomain
             // 
@@ -508,7 +522,7 @@
             this.tabPage4.Location = new System.Drawing.Point(28, 4);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage4.Size = new System.Drawing.Size(420, 304);
+            this.tabPage4.Size = new System.Drawing.Size(540, 303);
             this.tabPage4.TabIndex = 1;
             this.tabPage4.Text = "Allow Ep";
             // 
@@ -525,14 +539,14 @@
             this.gpEditAllowEp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gpEditAllowEp.Location = new System.Drawing.Point(3, 3);
             this.gpEditAllowEp.Name = "gpEditAllowEp";
-            this.gpEditAllowEp.Size = new System.Drawing.Size(414, 298);
+            this.gpEditAllowEp.Size = new System.Drawing.Size(534, 297);
             this.gpEditAllowEp.TabIndex = 1;
             this.gpEditAllowEp.TabStop = false;
             this.gpEditAllowEp.Text = "Allow EP";
             // 
             // btnDelAllowEP
             // 
-            this.btnDelAllowEP.Location = new System.Drawing.Point(130, 0);
+            this.btnDelAllowEP.Location = new System.Drawing.Point(497, 155);
             this.btnDelAllowEP.Name = "btnDelAllowEP";
             this.btnDelAllowEP.Size = new System.Drawing.Size(31, 34);
             this.btnDelAllowEP.TabIndex = 12;
@@ -542,7 +556,7 @@
             // 
             // btnAddAllowEP
             // 
-            this.btnAddAllowEP.Location = new System.Drawing.Point(93, 0);
+            this.btnAddAllowEP.Location = new System.Drawing.Point(460, 156);
             this.btnAddAllowEP.Name = "btnAddAllowEP";
             this.btnAddAllowEP.Size = new System.Drawing.Size(31, 34);
             this.btnAddAllowEP.TabIndex = 11;
@@ -557,7 +571,7 @@
             this.lbxAllowEp.ItemHeight = 18;
             this.lbxAllowEp.Location = new System.Drawing.Point(3, 20);
             this.lbxAllowEp.Name = "lbxAllowEp";
-            this.lbxAllowEp.Size = new System.Drawing.Size(408, 130);
+            this.lbxAllowEp.Size = new System.Drawing.Size(528, 130);
             this.lbxAllowEp.TabIndex = 10;
             this.lbxAllowEp.SelectedIndexChanged += new System.EventHandler(this.lbxEp_SelectedIndexChanged);
             // 
@@ -618,7 +632,7 @@
             this.tabPage5.Location = new System.Drawing.Point(28, 4);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(420, 304);
+            this.tabPage5.Size = new System.Drawing.Size(540, 303);
             this.tabPage5.TabIndex = 2;
             this.tabPage5.Text = "Block Ep";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -637,14 +651,14 @@
             this.gpEditBlockEp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gpEditBlockEp.Location = new System.Drawing.Point(3, 3);
             this.gpEditBlockEp.Name = "gpEditBlockEp";
-            this.gpEditBlockEp.Size = new System.Drawing.Size(414, 298);
+            this.gpEditBlockEp.Size = new System.Drawing.Size(534, 297);
             this.gpEditBlockEp.TabIndex = 2;
             this.gpEditBlockEp.TabStop = false;
             this.gpEditBlockEp.Text = "Block EP";
             // 
             // btnDelBlockEp
             // 
-            this.btnDelBlockEp.Location = new System.Drawing.Point(129, 0);
+            this.btnDelBlockEp.Location = new System.Drawing.Point(500, 155);
             this.btnDelBlockEp.Name = "btnDelBlockEp";
             this.btnDelBlockEp.Size = new System.Drawing.Size(31, 34);
             this.btnDelBlockEp.TabIndex = 14;
@@ -654,7 +668,7 @@
             // 
             // btnAddBlockEP
             // 
-            this.btnAddBlockEP.Location = new System.Drawing.Point(92, 0);
+            this.btnAddBlockEP.Location = new System.Drawing.Point(463, 155);
             this.btnAddBlockEP.Name = "btnAddBlockEP";
             this.btnAddBlockEP.Size = new System.Drawing.Size(31, 34);
             this.btnAddBlockEP.TabIndex = 13;
@@ -669,7 +683,7 @@
             this.lbxBlockEp.ItemHeight = 18;
             this.lbxBlockEp.Location = new System.Drawing.Point(3, 20);
             this.lbxBlockEp.Name = "lbxBlockEp";
-            this.lbxBlockEp.Size = new System.Drawing.Size(408, 130);
+            this.lbxBlockEp.Size = new System.Drawing.Size(528, 130);
             this.lbxBlockEp.TabIndex = 10;
             this.lbxBlockEp.SelectedIndexChanged += new System.EventHandler(this.lbxEpBlock_SelectedIndexChanged);
             // 
@@ -731,7 +745,7 @@
             this.lbxDomains.ItemHeight = 18;
             this.lbxDomains.Location = new System.Drawing.Point(3, 3);
             this.lbxDomains.Name = "lbxDomains";
-            this.lbxDomains.Size = new System.Drawing.Size(452, 382);
+            this.lbxDomains.Size = new System.Drawing.Size(572, 380);
             this.lbxDomains.Sorted = true;
             this.lbxDomains.TabIndex = 3;
             this.lbxDomains.SelectedIndexChanged += new System.EventHandler(this.lbxDomains_SelectedIndexChanged);
@@ -741,17 +755,19 @@
             this.menuStrip4.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addDomainToolStripMenuItem,
-            this.deleteDomainToolStripMenuItem});
+            this.deleteDomainToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.menuTxtFind});
             this.menuStrip4.Location = new System.Drawing.Point(4, 4);
             this.menuStrip4.Name = "menuStrip4";
-            this.menuStrip4.Size = new System.Drawing.Size(458, 24);
+            this.menuStrip4.Size = new System.Drawing.Size(578, 27);
             this.menuStrip4.TabIndex = 0;
             this.menuStrip4.Text = "menuStrip4";
             // 
             // addDomainToolStripMenuItem
             // 
             this.addDomainToolStripMenuItem.Name = "addDomainToolStripMenuItem";
-            this.addDomainToolStripMenuItem.Size = new System.Drawing.Size(86, 20);
+            this.addDomainToolStripMenuItem.Size = new System.Drawing.Size(86, 23);
             this.addDomainToolStripMenuItem.Text = "Add Domain";
             this.addDomainToolStripMenuItem.Click += new System.EventHandler(this.addDomainToolStripMenuItem_Click);
             // 
@@ -759,7 +775,7 @@
             // 
             this.deleteDomainToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.deleteDomainToolStripMenuItem.Name = "deleteDomainToolStripMenuItem";
-            this.deleteDomainToolStripMenuItem.Size = new System.Drawing.Size(97, 20);
+            this.deleteDomainToolStripMenuItem.Size = new System.Drawing.Size(97, 23);
             this.deleteDomainToolStripMenuItem.Text = "Delete Domain";
             this.deleteDomainToolStripMenuItem.Click += new System.EventHandler(this.deleteDomainToolStripMenuItem_Click);
             // 
@@ -934,21 +950,31 @@
             // 
             this.dlgSave.Filter = "JSON\\Text File|*.json;*.txt|Any File|*.*";
             // 
-            // cbReferrer
+            // toolStripMenuItem1
             // 
-            this.cbReferrer.AutoSize = true;
-            this.cbReferrer.Location = new System.Drawing.Point(10, 179);
-            this.cbReferrer.Name = "cbReferrer";
-            this.cbReferrer.Size = new System.Drawing.Size(211, 22);
-            this.cbReferrer.TabIndex = 10;
-            this.cbReferrer.Text = "Allow links from this domain";
-            this.cbReferrer.UseVisualStyleBackColor = true;
+            this.toolStripMenuItem1.Enabled = false;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(45, 23);
+            this.toolStripMenuItem1.Text = "Find:";
+            // 
+            // menuTxtFind
+            // 
+            this.menuTxtFind.Name = "menuTxtFind";
+            this.menuTxtFind.Size = new System.Drawing.Size(100, 23);
+            this.menuTxtFind.TextChanged += new System.EventHandler(this.menuTxtFind_TextChanged);
+            // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Enabled = false;
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.addToolStripMenuItem.Text = "Add:";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(965, 802);
+            this.ClientSize = new System.Drawing.Size(1205, 802);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
@@ -1075,6 +1101,9 @@
         private System.Windows.Forms.Button btnAddBlockEP;
         private System.Windows.Forms.RichTextBox rtbItemInfo;
         private System.Windows.Forms.CheckBox cbReferrer;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripTextBox menuTxtFind;
+        private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
     }
 }
 

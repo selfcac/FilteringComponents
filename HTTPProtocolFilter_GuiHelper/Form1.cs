@@ -348,19 +348,28 @@ namespace HTTPProtocolFilter_GuiHelper
         #region Domains and EP
         private void refreshDomains()
         {
+            int lastIndex = lbxDomains.SelectedIndex;
             lbxDomains.DataSource = null;
-            lbxDomains.DataSource = mainPolicy.AllowedDomains;
+            lbxDomains.DataSource = mainPolicy.AllowedDomains.Where(d => d.DomainFormat.Contains(menuTxtFind.Text)).ToList();
+            lbxDomains.SelectedIndex = Math.Min(lbxDomains.Items.Count - 1, lastIndex);
         }
 
         private void refreshEPs()
         {
             if (lbxDomains.SelectedItem != null)
             {
+                int lastIndexA = lbxAllowEp.SelectedIndex;
+                int lastIndexB = lbxBlockEp.SelectedIndex;
+
+
                 lbxAllowEp.DataSource = null;
                 lbxAllowEp.DataSource = ((DomainPolicy)lbxDomains.SelectedItem).AllowEP;
 
                 lbxBlockEp.DataSource = null;
                 lbxBlockEp.DataSource = ((DomainPolicy)lbxDomains.SelectedItem).BlockEP;
+
+                lbxAllowEp.SelectedIndex = Math.Min (lbxAllowEp.Items.Count-1, lastIndexA);
+                lbxBlockEp.SelectedIndex = Math.Min(lbxBlockEp.Items.Count - 1, lastIndexB);
             }
         }
 
@@ -512,13 +521,27 @@ namespace HTTPProtocolFilter_GuiHelper
         private void btnDelBlockEp_Click(object sender, EventArgs e)
         {
             DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
-            EPPolicy ep = lbxAllowEp.SelectedItem as EPPolicy;
+            EPPolicy ep = lbxBlockEp.SelectedItem as EPPolicy;
             if (d != null && ep != null)
             {
                 d.BlockEP.Remove(ep);
                 refreshDomains();
                 refreshEPs();
             }
+        }
+
+        private void menuTxtFind_TextChanged(object sender, EventArgs e)
+        {
+            if (menuTxtFind.Text.Length > 0)
+            {
+                menuTxtFind.BackColor = Color.Yellow;
+            }
+            else
+            {
+                menuTxtFind.BackColor = Color.White;
+            }
+            refreshDomains();
+            
         }
     }
 }
