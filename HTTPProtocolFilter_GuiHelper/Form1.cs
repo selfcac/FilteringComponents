@@ -375,17 +375,20 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void addDomainToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            mainPolicy.AllowedDomains.Add(new DomainPolicy()
+           if (!string.IsNullOrEmpty(menuTxtNewDomain.Text))
             {
-                DomainFormat = "Enter.Domain",
-                Type = AllowDomainType.EXACT,
-                AllowEP = new List<EPPolicy>(),
-                BlockEP = new List<EPPolicy>(),
-            });
+                mainPolicy.AllowedDomains.Add(new DomainPolicy()
+                {
+                    DomainFormat = menuTxtNewDomain.Text,
+                    Type = AllowDomainType.EXACT,
+                    AllowEP = new List<EPPolicy>(),
+                    BlockEP = new List<EPPolicy>(),
+                });
 
-            mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
+                mainPolicy.AllowedDomains = mainPolicy.AllowedDomains;
 
-            refreshDomains();
+                refreshDomains();
+            }
         }
 
         private void deleteDomainToolStripMenuItem_Click(object sender, EventArgs e)
@@ -442,7 +445,7 @@ namespace HTTPProtocolFilter_GuiHelper
             DomainPolicy d = lbxDomains.SelectedItem as DomainPolicy;
             if (d != null)
             {
-                d.DomainFormat = txtDomainPattern.Text;
+                d.DomainFormat = txtDomainPattern.Text.Trim(new[] { ' ', '.' });
                 d.Type = (AllowDomainType)cbDomainType.SelectedIndex;
                 d.DomainBlocked = cbBlockDomain.Checked;
                 d.AllowRefering = cbReferrer.Checked;
@@ -532,16 +535,7 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void menuTxtFind_TextChanged(object sender, EventArgs e)
         {
-            if (menuTxtFind.Text.Length > 0)
-            {
-                menuTxtFind.BackColor = Color.Yellow;
-            }
-            else
-            {
-                menuTxtFind.BackColor = Color.White;
-            }
-            refreshDomains();
-            
+
         }
     }
 }

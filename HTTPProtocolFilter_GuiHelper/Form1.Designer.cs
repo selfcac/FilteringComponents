@@ -108,6 +108,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTxtFind = new System.Windows.Forms.ToolStripTextBox();
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTxtNewDomain = new System.Windows.Forms.ToolStripTextBox();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -754,10 +755,11 @@
             // 
             this.menuStrip4.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip4.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuTxtNewDomain,
             this.addDomainToolStripMenuItem,
-            this.deleteDomainToolStripMenuItem,
             this.toolStripMenuItem1,
-            this.menuTxtFind});
+            this.menuTxtFind,
+            this.deleteDomainToolStripMenuItem});
             this.menuStrip4.Location = new System.Drawing.Point(4, 4);
             this.menuStrip4.Name = "menuStrip4";
             this.menuStrip4.Size = new System.Drawing.Size(578, 27);
@@ -767,12 +769,13 @@
             // addDomainToolStripMenuItem
             // 
             this.addDomainToolStripMenuItem.Name = "addDomainToolStripMenuItem";
-            this.addDomainToolStripMenuItem.Size = new System.Drawing.Size(86, 23);
-            this.addDomainToolStripMenuItem.Text = "Add Domain";
+            this.addDomainToolStripMenuItem.Size = new System.Drawing.Size(110, 23);
+            this.addDomainToolStripMenuItem.Text = "<- [Add Domain]";
             this.addDomainToolStripMenuItem.Click += new System.EventHandler(this.addDomainToolStripMenuItem_Click);
             // 
             // deleteDomainToolStripMenuItem
             // 
+            this.deleteDomainToolStripMenuItem.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.deleteDomainToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.deleteDomainToolStripMenuItem.Name = "deleteDomainToolStripMenuItem";
             this.deleteDomainToolStripMenuItem.Size = new System.Drawing.Size(97, 23);
@@ -787,7 +790,7 @@
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(466, 738);
+            this.tabPage2.Size = new System.Drawing.Size(586, 738);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Phrases";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -805,7 +808,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(458, 706);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(578, 706);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // lbxPhrases
@@ -816,7 +819,7 @@
             this.lbxPhrases.Location = new System.Drawing.Point(4, 4);
             this.lbxPhrases.Margin = new System.Windows.Forms.Padding(4);
             this.lbxPhrases.Name = "lbxPhrases";
-            this.lbxPhrases.Size = new System.Drawing.Size(450, 345);
+            this.lbxPhrases.Size = new System.Drawing.Size(570, 345);
             this.lbxPhrases.Sorted = true;
             this.lbxPhrases.TabIndex = 0;
             this.lbxPhrases.SelectedIndexChanged += new System.EventHandler(this.lbxPhrases_SelectedIndexChanged);
@@ -835,7 +838,7 @@
             this.gpEditPhrase.Margin = new System.Windows.Forms.Padding(4);
             this.gpEditPhrase.Name = "gpEditPhrase";
             this.gpEditPhrase.Padding = new System.Windows.Forms.Padding(4);
-            this.gpEditPhrase.Size = new System.Drawing.Size(450, 345);
+            this.gpEditPhrase.Size = new System.Drawing.Size(570, 345);
             this.gpEditPhrase.TabIndex = 1;
             this.gpEditPhrase.TabStop = false;
             this.gpEditPhrase.Text = "Edit phrase";
@@ -923,7 +926,7 @@
             this.deleteSelectedToolStripMenuItem});
             this.menuStrip3.Location = new System.Drawing.Point(4, 4);
             this.menuStrip3.Name = "menuStrip3";
-            this.menuStrip3.Size = new System.Drawing.Size(458, 24);
+            this.menuStrip3.Size = new System.Drawing.Size(578, 24);
             this.menuStrip3.TabIndex = 1;
             this.menuStrip3.Text = "menuStrip3";
             // 
@@ -961,7 +964,6 @@
             // 
             this.menuTxtFind.Name = "menuTxtFind";
             this.menuTxtFind.Size = new System.Drawing.Size(100, 23);
-            this.menuTxtFind.TextChanged += new System.EventHandler(this.menuTxtFind_TextChanged);
             // 
             // addToolStripMenuItem
             // 
@@ -969,6 +971,12 @@
             this.addToolStripMenuItem.Name = "addToolStripMenuItem";
             this.addToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.addToolStripMenuItem.Text = "Add:";
+            // 
+            // menuTxtNewDomain
+            // 
+            this.menuTxtNewDomain.Name = "menuTxtNewDomain";
+            this.menuTxtNewDomain.Size = new System.Drawing.Size(100, 23);
+            this.menuTxtNewDomain.Text = "aaa.com";
             // 
             // Form1
             // 
@@ -1104,6 +1112,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripTextBox menuTxtFind;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox menuTxtNewDomain;
     }
 }
 
