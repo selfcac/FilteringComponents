@@ -89,28 +89,61 @@ namespace HTTPProtocolFilter_GuiHelper
         private void getBlockedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            lbxSimulated.Items.Clear();
             var linq = blockLogs.Where((log) => !filter.isWhitelistedURL(new Uri(log.url), out _));
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
+            refreshLogs(linq);
+        }
+
+        private void refreshLogs(IEnumerable<LogClass> linq, int take = 1000)
+        {
+            int skipInput = 0;
+            int actualSkip = 0;
+            int linqCount = linq.Count();
+
+            if (take > linqCount)
+            {
+                take = linqCount;
+            }
+
+            if (int.TryParse(menuTxtSkip.Text, out skipInput))
+            {
+                menuTxtSkip.BackColor = Color.Yellow;
+            }
+            else
+            {
+                menuTxtSkip.BackColor = Color.White;
+            }
+            if (skipInput > 0)
+            {
+                if (take < linqCount) // otherwise (>=) skip is irrelivent
+                {
+                    if (take + skipInput >= linqCount)
+                    {
+                        actualSkip = linqCount - take; // Take the last batch 
+                    }
+                    else
+                    {
+                        actualSkip = skipInput;
+                    }
+                }
+            }
+
+            lbxSimulated.Items.Clear();
             lbxSimulated.Items.AddRange(
-                linq.Take(1000).ToArray<object>()
+                linq.Skip(actualSkip).Take(take).ToArray<object>()
             );
+
+            lblLogStatus.Text = string.Format("{0}/{1}", actualSkip + take, linqCount );
         }
 
         private void getAllowedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IHTTPFilter filter = mainPolicy;
-            lbxSimulated.Items.Clear();
             var linq = blockLogs.Where((log) => filter.isWhitelistedURL(new Uri(log.url), out _));
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
-            lbxSimulated.Items.AddRange(
-                linq.Take(1000).ToArray<object>()
-            );
+            refreshLogs(linq);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            lbxSimulated.Items.Clear();
             var linq = blockLogs.Where(
                 (log) =>
                 {
@@ -120,15 +153,11 @@ namespace HTTPProtocolFilter_GuiHelper
                 }
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
-            lbxSimulated.Items.AddRange(
-                linq.Take(1000).ToArray<object>()
-            );
+            refreshLogs(linq);
         }
 
         private void orderedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            lbxSimulated.Items.Clear();
             var linq = blockLogs.Where(
                 (log) => {
                     Uri uri = new Uri(log.url);
@@ -139,15 +168,11 @@ namespace HTTPProtocolFilter_GuiHelper
                 (log) => new Uri(log.url).Host
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
-            lbxSimulated.Items.AddRange(
-                linq.Take(1000).ToArray<object>()
-            );
+            refreshLogs(linq);
         }
 
         private void orderedGroupedToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            lbxSimulated.Items.Clear();
             var linq = blockLogs.Where(
                 (log) => {
                     Uri uri = new Uri(log.url);
@@ -160,15 +185,11 @@ namespace HTTPProtocolFilter_GuiHelper
                 (key, hosts) => hosts.First()
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
-            lbxSimulated.Items.AddRange(
-                linq.Take(1000).ToArray<object>()
-            );
+            refreshLogs(linq);
         }
 
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            lbxSimulated.Items.Clear();
             var linq = blockLogs.Where(
                 (log) =>
                 {
@@ -178,10 +199,7 @@ namespace HTTPProtocolFilter_GuiHelper
                 }
                 );
 
-            lblLogStatus.Text = string.Format("{0}/{1}", linq.Count(), blockLogs.Count);
-            lbxSimulated.Items.AddRange(
-                linq.Take(2000).ToArray<object>()
-            );
+            refreshLogs(linq);
         }
 
         private void newDomainToolStripMenuItem_Click(object sender, EventArgs e)
@@ -535,6 +553,15 @@ namespace HTTPProtocolFilter_GuiHelper
 
         private void menuTxtFind_TextChanged(object sender, EventArgs e)
         {
+            if (menuTxtFind.Text.Length > 0)
+            {
+                menuTxtFind.BackColor = Color.Yellow;
+            }
+            else
+            {
+                menuTxtFind.BackColor = Color.White;
+            }
+            refreshDomains();
 
         }
     }

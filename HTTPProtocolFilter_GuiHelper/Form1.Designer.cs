@@ -109,6 +109,8 @@
             this.menuTxtFind = new System.Windows.Forms.ToolStripTextBox();
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTxtNewDomain = new System.Windows.Forms.ToolStripTextBox();
+            this.skipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTxtSkip = new System.Windows.Forms.ToolStripTextBox();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -212,9 +214,9 @@
             this.lbxSimulated.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbxSimulated.FormattingEnabled = true;
             this.lbxSimulated.ItemHeight = 18;
-            this.lbxSimulated.Location = new System.Drawing.Point(4, 46);
+            this.lbxSimulated.Location = new System.Drawing.Point(4, 50);
             this.lbxSimulated.Name = "lbxSimulated";
-            this.lbxSimulated.Size = new System.Drawing.Size(587, 491);
+            this.lbxSimulated.Size = new System.Drawing.Size(587, 487);
             this.lbxSimulated.TabIndex = 7;
             this.lbxSimulated.SelectedIndexChanged += new System.EventHandler(this.lbxSimulated_SelectedIndexChanged);
             // 
@@ -261,6 +263,8 @@
             // 
             this.menuStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.skipToolStripMenuItem,
+            this.menuTxtSkip,
             this.simulateUnkownToolStripMenuItem,
             this.getBlockedToolStripMenuItem,
             this.getAllowedToolStripMenuItem,
@@ -268,7 +272,7 @@
             this.menuStrip2.Location = new System.Drawing.Point(4, 21);
             this.menuStrip2.Name = "menuStrip2";
             this.menuStrip2.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.menuStrip2.Size = new System.Drawing.Size(587, 25);
+            this.menuStrip2.Size = new System.Drawing.Size(587, 29);
             this.menuStrip2.TabIndex = 1;
             this.menuStrip2.Text = "menuStrip2";
             // 
@@ -280,7 +284,7 @@
             this.orderedGroupedToolStripMenuItem,
             this.toolStripMenuItem3});
             this.simulateUnkownToolStripMenuItem.Name = "simulateUnkownToolStripMenuItem";
-            this.simulateUnkownToolStripMenuItem.Size = new System.Drawing.Size(112, 19);
+            this.simulateUnkownToolStripMenuItem.Size = new System.Drawing.Size(112, 23);
             this.simulateUnkownToolStripMenuItem.Text = "Simulate Unkown";
             // 
             // toolStripMenuItem2
@@ -315,7 +319,7 @@
             // 
             this.getBlockedToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
             this.getBlockedToolStripMenuItem.Name = "getBlockedToolStripMenuItem";
-            this.getBlockedToolStripMenuItem.Size = new System.Drawing.Size(110, 19);
+            this.getBlockedToolStripMenuItem.Size = new System.Drawing.Size(110, 23);
             this.getBlockedToolStripMenuItem.Text = "Simulate blocked";
             this.getBlockedToolStripMenuItem.Click += new System.EventHandler(this.getBlockedToolStripMenuItem_Click);
             // 
@@ -323,7 +327,7 @@
             // 
             this.getAllowedToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.getAllowedToolStripMenuItem.Name = "getAllowedToolStripMenuItem";
-            this.getAllowedToolStripMenuItem.Size = new System.Drawing.Size(109, 19);
+            this.getAllowedToolStripMenuItem.Size = new System.Drawing.Size(109, 23);
             this.getAllowedToolStripMenuItem.Text = "Simulate allowed";
             this.getAllowedToolStripMenuItem.Click += new System.EventHandler(this.getAllowedToolStripMenuItem_Click);
             // 
@@ -331,7 +335,7 @@
             // 
             this.lblLogStatus.Enabled = false;
             this.lblLogStatus.Name = "lblLogStatus";
-            this.lblLogStatus.Size = new System.Drawing.Size(67, 19);
+            this.lblLogStatus.Size = new System.Drawing.Size(67, 23);
             this.lblLogStatus.Text = "<Status>";
             // 
             // rtbItemInfo
@@ -978,6 +982,18 @@
             this.menuTxtNewDomain.Size = new System.Drawing.Size(100, 23);
             this.menuTxtNewDomain.Text = "aaa.com";
             // 
+            // skipToolStripMenuItem
+            // 
+            this.skipToolStripMenuItem.Enabled = false;
+            this.skipToolStripMenuItem.Name = "skipToolStripMenuItem";
+            this.skipToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
+            this.skipToolStripMenuItem.Text = "Skip:";
+            // 
+            // menuTxtSkip
+            // 
+            this.menuTxtSkip.Name = "menuTxtSkip";
+            this.menuTxtSkip.Size = new System.Drawing.Size(100, 23);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
@@ -1113,6 +1129,8 @@
         private System.Windows.Forms.ToolStripTextBox menuTxtFind;
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox menuTxtNewDomain;
+        private System.Windows.Forms.ToolStripMenuItem skipToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox menuTxtSkip;
     }
 }
 
