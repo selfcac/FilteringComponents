@@ -968,6 +968,7 @@
             // 
             this.menuTxtFind.Name = "menuTxtFind";
             this.menuTxtFind.Size = new System.Drawing.Size(100, 23);
+            this.menuTxtFind.TextChanged += new System.EventHandler(this.menuTxtFind_TextChanged);
             // 
             // addToolStripMenuItem
             // 
