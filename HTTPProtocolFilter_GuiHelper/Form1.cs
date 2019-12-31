@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using HTTPProtocolFilter;
-using HTTPProtocolFilterTests.Utils;
 
 namespace HTTPProtocolFilter_GuiHelper
 {
@@ -64,7 +63,7 @@ namespace HTTPProtocolFilter_GuiHelper
             dlgSave.Title = "Save policy:";
             if (dlgSave.ShowDialog() == DialogResult.OK)
             {
-                mainPolicy.savePolicy(dlgSave.FileName);
+                File.WriteAllText(dlgSave.FileName, mainPolicy.savePolicy());
             }
         }
 
@@ -75,10 +74,10 @@ namespace HTTPProtocolFilter_GuiHelper
             dlgOpen.Title = "Open block log file:";
             if (dlgOpen.ShowDialog() == DialogResult.OK)
             {
-                File.ReadAllLines(dlgOpen.FileName).ForEachDo((line) =>
+                foreach (string line in File.ReadAllLines(dlgOpen.FileName))
                 {
                     blockLogs.Add(LogClass.FromString(line));
-                });
+                }
             }
         }
 

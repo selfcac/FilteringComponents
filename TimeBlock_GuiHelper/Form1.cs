@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -137,16 +138,14 @@ namespace TimeBlock_GuiHelper
             WindowState = FormWindowState.Minimized;
             if (dlgOpen.ShowDialog() == DialogResult.OK)
             {
-                ConnectionHelpers.TaskInfo result =
-                    JSONBaseClass.FromFile<TimeFilterObject>(dlgOpen.FileName);
-                if (result)
+                try
                 {
-                    timeFilter = ((ConnectionHelpers.TaskInfoResult<TimeFilterObject>)result).result;
-                    reColorMatrix();
+                    timeFilter = new TimeFilterObject();
+                    timeFilter.reloadPolicy(File.ReadAllText(dlgOpen.FileName));
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show("Can't open beacuse:\n" + result.eventReason);
+                    MessageBox.Show("Can't open beacuse:\n" + ex.ToString());
                 }
             }
             tmrRestoreMinimize.Enabled = true;
@@ -157,11 +156,13 @@ namespace TimeBlock_GuiHelper
             WindowState = FormWindowState.Minimized;
             if (dlgSave.ShowDialog() == DialogResult.OK)
             {
-                ConnectionHelpers.TaskInfo result =
-                    timeFilter.ToFile(dlgSave.FileName);
-                if (!result)
+                try
                 {
-                    MessageBox.Show("Can't save beacuse:\n" + result.eventReason);
+                    File.WriteAllText(dlgSave.FileName, timeFilter.savePolicy());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Can't save beacuse:\n" + ex.ToString());
                 }
             }
             tmrRestoreMinimize.Enabled = true;

@@ -53,6 +53,13 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonStandard">
+      <HintPath>..\..\FilteringComponentsStandard\HTTPProtocolFilter\bin\Debug\netstandard2.0\CommonStandard.dll</HintPath>
+    </Reference>
+    <Reference Include="HTTPProtocolFilter, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\FilteringComponentsStandard\HTTPProtocolFilter\bin\Debug\netstandard2.0\HTTPProtocolFilter.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
