@@ -102,11 +102,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TimeBlockFilter\TimeBlockFilter.csproj">
-      <Project>{4d07cb79-6e55-48d9-80e3-36effa4813ea}</Project>
-      <Name>TimeBlockFilter</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
