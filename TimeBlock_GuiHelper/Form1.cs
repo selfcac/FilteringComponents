@@ -142,6 +142,7 @@ namespace TimeBlock_GuiHelper
                 {
                     timeFilter = new TimeFilterObject();
                     timeFilter.reloadPolicy(File.ReadAllText(dlgOpen.FileName));
+                    reColorMatrix();
                 }
                 catch (Exception ex)
                 {
