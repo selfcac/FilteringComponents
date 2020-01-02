@@ -25,11 +25,10 @@ import hashlib
 
 class PluginConfig:
     #DLLs:
-    CSCommonStandard =      r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\Common\bin\Debug\CommonStandard.dll"
-    CSCommonPath =          r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\Common\bin\Debug\Common.dll"
-    CSFilterPath =          r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\HTTPProtocolFilter.dll"
-    CSTimeblockPath =       r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
-    CSProtectProcessPath =  r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
+    CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\Common.dll"
+    CSFilterPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\HTTPProtocolFilter.dll"
+    CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
+    CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
 
     #Policies:
     PoilcyPath = r"C:\Users\Yoni\Desktop\selfcac\CitadelCore.Windows.Divert.Proxy\CitadelCore.Windows.Example\bin\Debug\policy.json"
@@ -74,18 +73,10 @@ def init():
         _log("Python version: " + sys.version)
         _log("Exe path: " + sys.executable)
         _log("Command: " + " ".join(sys.argv))
-        
-        _log("1")
-        commonSDDLL = LoadLibrary(PluginConfig.CSCommonStandard,'net')
-        _log("2")
+
         commonDLL = LoadLibrary(PluginConfig.CSCommonPath,'net')
-        #filterDLL = LoadLibrary(PluginConfig.CSFilterPath,'net')
-        _log("3")
-        #timeblockDLL = LoadLibrary(PluginConfig.CSTimeblockPath,'net')
-        #_log("4")
-        LoadLibrary(r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter_GuiHelper\bin\Debug\HTTPProtocolFilter.dll",'net')
-        
-        _log("4")
+        filterDLL = LoadLibrary(PluginConfig.CSFilterPath,'net')
+        timeblockDLL = LoadLibrary(PluginConfig.CSTimeblockPath,'net')
 
         pprotectDLL = LoadLibrary(PluginConfig.CSProtectProcessPath,'net')
         pprotectDLL._lib.ProcessTerminationProtection.ProcessProtect.ProtectCurrentFromUsers();
@@ -95,10 +86,6 @@ def init():
 
         PluginConfig.TimeBlockObj = timeblockDLL._lib.TimeBlockFilter.TimeFilterObject();
         PluginConfig.TimeBlockObj.reloadPolicy(PluginConfig.TimePolicyPath);
-        
-        _log("[GIT][VERSION] Common:\n" + commonDLL._lib.GitInfo.GetInfo())
-        _log("[GIT][VERSION] HTTPFilter:\n" + filterDLL._lib.GitInfo.GetInfo())
-        _log("[GIT][VERSION] TimeFilter:\n" + timeblockDLL._lib.GitInfo.GetInfo())
 
         with open(PluginConfig.BlockHtmlPath,'r',encoding="utf-8") as file:
             PluginConfig.BlockHTMLTemplate = file.read()
