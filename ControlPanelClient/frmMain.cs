@@ -56,7 +56,7 @@ namespace ControlPanelClient
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            rtbLog.Text = Properties.Resources.GitInfo;
+            rtbLog.Text = ">>> this version:\n" + Properties.Resources.GitInfo + ">>> Common:\n" + Common.GitInfo.GetInfo();
 
             foreach(var cmd in Common.Config.Instance.ALLOWED_COMMANDS)
             {

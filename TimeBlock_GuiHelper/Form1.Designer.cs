@@ -230,6 +230,7 @@
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.dlgSave = new System.Windows.Forms.SaveFileDialog();
             this.tmrRestoreMinimize = new System.Windows.Forms.Timer(this.components);
+            this.gitInfoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -242,7 +243,8 @@
             this.loadFromJsonToolStripMenuItem,
             this.saveToJsonToolStripMenuItem,
             this.clearAllToolStripMenuItem,
-            this.setALLToToolStripMenuItem});
+            this.setALLToToolStripMenuItem,
+            this.gitInfoToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(637, 24);
@@ -2398,6 +2400,13 @@
             this.tmrRestoreMinimize.Interval = 500;
             this.tmrRestoreMinimize.Tick += new System.EventHandler(this.tmrRestoreMinimize_Tick);
             // 
+            // gitInfoToolStripMenuItem
+            // 
+            this.gitInfoToolStripMenuItem.Name = "gitInfoToolStripMenuItem";
+            this.gitInfoToolStripMenuItem.Size = new System.Drawing.Size(74, 20);
+            this.gitInfoToolStripMenuItem.Text = "<Git Info>";
+            this.gitInfoToolStripMenuItem.Click += new System.EventHandler(this.gitInfoToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2623,6 +2632,7 @@
         private System.Windows.Forms.OpenFileDialog dlgOpen;
         private System.Windows.Forms.SaveFileDialog dlgSave;
         private System.Windows.Forms.Timer tmrRestoreMinimize;
+        private System.Windows.Forms.ToolStripMenuItem gitInfoToolStripMenuItem;
     }
 }
 

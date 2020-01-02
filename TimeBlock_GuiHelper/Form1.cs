@@ -174,5 +174,10 @@ namespace TimeBlock_GuiHelper
             WindowState = FormWindowState.Normal;
             tmrRestoreMinimize.Enabled = false;
         }
+
+        private void gitInfoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(">>> this version:\n" + Properties.Resources.GitInfo + ">>> Common:\n" + Common.GitInfo.GetInfo());
+        }
     }
 }

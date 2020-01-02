@@ -120,6 +120,7 @@
   <PropertyGroup>
     <PreBuildEvent>SET solutiondir=$(SolutionDir)
 SET projectdir=$(ProjectDir)
+SET arc="$(Platform)"
 
 cmd /c "$(SolutionDir)Batch\GitInfo.bat"</PreBuildEvent>
   </PropertyGroup>

@@ -3,5 +3,6 @@ REM Make sure you have resource path: "Resources\GitInfo.txt"
 
 SET solutiondir=$(SolutionDir)
 SET projectdir=$(ProjectDir)
+SET arc=$(PlatformShortName)
 
 cmd /c "$(ProjectDir)Batch\GitInfo.bat"
