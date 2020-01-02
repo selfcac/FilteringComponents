@@ -56,6 +56,8 @@ namespace ControlPanelClient
 
         private void frmMain_Load(object sender, EventArgs e)
         {
+            rtbLog.Text = Properties.Resources.GitInfo;
+
             foreach(var cmd in Common.Config.Instance.ALLOWED_COMMANDS)
             {
                 cbAllowedCMD.Items.Add(cmd.name);
