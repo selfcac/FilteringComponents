@@ -31,6 +31,25 @@ namespace Common
 
         }
 
+        public enum LOCK_ACTION
+        {
+            START_LOCK,
+            RESET_PASS,
+            RESET_LOCK,
+        }
+
+        public static void logLockAction(LOCK_ACTION action)
+        {
+            try
+            {
+                File.AppendAllLines(Config.Instance.lockingHistoryFile, new[] { DateTime.Now.ToString() + "|" + action.ToString() });
+            }
+            catch (Exception ex)
+            {
+                // fail silently
+            }
+        }
+
         public enum CommandActions
         {
             START, STOP, SHOW, DELETE, CHECK
@@ -185,8 +204,16 @@ namespace Common
             {
                 if (!string.IsNullOrEmpty(password))
                 {
-                    File.AppendAllText(Config.Instance.auditFile, "(*) Password '" + password + "'" + Environment.NewLine);
+                    File.AppendAllLines(Config.Instance.auditFile, new[] {
+                        string.Format("[{0}] Start changing to pass: {1}",DateTime.Now, password)
+                        });
                     result = SystemUtils.ChangeUserPassword(Config.Instance.ADMIN_USB_USERNAME, password);
+                    if (result)
+                    {
+                        File.AppendAllLines(Config.Instance.auditFile, new[] {
+                            string.Format("[{0}] Successfuly changed to pass: {1}",DateTime.Now, password)
+                        });
+                    }
                 }
             }
             catch (Exception ex)
@@ -274,6 +301,7 @@ namespace Common
                             if (date > DateTime.Now)
                             {
                                 result = _LockDate(date);
+                                logLockAction(LOCK_ACTION.START_LOCK);
                             }
                             else
                             {
@@ -330,6 +358,8 @@ namespace Common
                 );
 
                 result = ValidateUsbResetFile(userFilePath, onUsbValidates);
+                if (result)
+                    logLockAction(LOCK_ACTION.RESET_PASS);
             }
             catch (Exception ex)
             {
@@ -455,6 +485,9 @@ namespace Common
                 );
 
                 result = ValidateUsbResetFile(userFilePath, onUsbValidates);
+
+                if (result)
+                    logLockAction(LOCK_ACTION.RESET_LOCK);
             }
             catch (Exception ex)
             {

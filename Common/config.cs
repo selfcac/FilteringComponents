@@ -16,6 +16,7 @@ namespace Common
 
         static Config _instance = null;
         public string unlockFile = new FileInfo("lock.txt").FullName;
+        public string lockingHistoryFile = new FileInfo("lock_log.txt").FullName;
         public string auditFile = new FileInfo("log_audit.txt").FullName;
 
         public static Config Instance {
