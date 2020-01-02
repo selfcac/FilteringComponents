@@ -1,4 +1,5 @@
 ﻿//using Newtonsoft.Json;
+using CommonStandard;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,6 +12,8 @@ namespace Common
 {
     public class Config : JSONBaseClass
     {
+        public DateTime created = DateTime.Now;
+
         static Config _instance = null;
         public string unlockFile = new FileInfo("lock.txt").FullName;
         public string auditFile = new FileInfo("log_audit.txt").FullName;
@@ -24,18 +27,19 @@ namespace Common
                     // Create or load config from file.
                     if (configFile.Exists)
                     {
-                        ConnectionHelpers.TaskInfo task = FromFile<Config>(configFile.FullName);
-                        if (task)
+                        try
                         {
-                            _instance = (task as ConnectionHelpers.TaskInfoResult<Config>).result;
+                            _instance = Config.FromJSONString<Config>(File.ReadAllText(configFile.FullName));
                         }
-                        else
+                        catch (Exception ex)
                         {
                             _instance = new Config();
                         }
                     }
-                    else
-                        (_instance = new Config()).ToFile(configFile.FullName);
+                    else {
+                        _instance = new Config();
+                        File.WriteAllText(configFile.FullName, _instance.ToJSON());
+                    }
 
                 }
                 return _instance;
