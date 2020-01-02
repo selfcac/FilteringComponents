@@ -53,9 +53,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common">
-      <HintPath>..\HTTPProtocolFilter\bin\Debug\Common.dll</HintPath>
-    </Reference>
     <Reference Include="CommonStandard, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\FilteringComponentsStandard\TimeBlockFilter\bin\Debug\netstandard2.0\CommonStandard.dll</HintPath>
@@ -117,6 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\GitInfo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{1ed24440-1c8e-4187-a7c7-e685f967fb14}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

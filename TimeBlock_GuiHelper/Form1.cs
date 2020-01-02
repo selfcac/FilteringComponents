@@ -177,7 +177,14 @@ namespace TimeBlock_GuiHelper
 
         private void gitInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(">>> this version:\n" + Properties.Resources.GitInfo + ">>> Common:\n" + Common.GitInfo.GetInfo());
+            MessageBox.Show(
+                string.Join("\n", new[]
+                {
+                    "(*) This:\n\t" + Properties.Resources.GitInfo,
+                    "(*) TimeFilterStandard:\n\t" + TimeBlockFilter.GitInfo.GetInfo(),
+                    "(*) Common:\n\t" + Common.GitInfo.GetInfo(),
+                }
+            ));
         }
     }
 }
