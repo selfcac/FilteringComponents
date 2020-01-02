@@ -49,6 +49,8 @@
             this.dlgUserReset = new System.Windows.Forms.OpenFileDialog();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnResetUnlock = new System.Windows.Forms.Button();
+            this.rtbLog = new System.Windows.Forms.RichTextBox();
+            this.btnClearLog = new System.Windows.Forms.Button();
             this.grpAdmin.SuspendLayout();
             this.grpUser.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -129,7 +131,7 @@
             this.grpAdmin.Controls.Add(this.dateLockUntil);
             this.grpAdmin.Controls.Add(this.btnChangePassword);
             this.grpAdmin.Controls.Add(this.label4);
-            this.grpAdmin.Location = new System.Drawing.Point(20, 327);
+            this.grpAdmin.Location = new System.Drawing.Point(20, 267);
             this.grpAdmin.Margin = new System.Windows.Forms.Padding(5);
             this.grpAdmin.Name = "grpAdmin";
             this.grpAdmin.Padding = new System.Windows.Forms.Padding(5);
@@ -194,9 +196,11 @@
             // grpUser
             // 
             this.grpUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
+            this.grpUser.Controls.Add(this.btnClearLog);
             this.grpUser.Controls.Add(this.btnAllowedRun);
             this.grpUser.Controls.Add(this.cbAllowedCMD);
             this.grpUser.Controls.Add(this.label1);
+            this.grpUser.Controls.Add(this.btnIsLocked);
             this.grpUser.Controls.Add(this.btnEcho);
             this.grpUser.Location = new System.Drawing.Point(20, 18);
             this.grpUser.Margin = new System.Windows.Forms.Padding(5);
@@ -245,18 +249,18 @@
             this.btnEcho.Name = "btnEcho";
             this.btnEcho.Size = new System.Drawing.Size(138, 35);
             this.btnEcho.TabIndex = 18;
-            this.btnEcho.Text = "Echo Check";
+            this.btnEcho.Text = "🗣 Echo Check";
             this.btnEcho.UseVisualStyleBackColor = true;
             this.btnEcho.Click += new System.EventHandler(this.btnEcho_Click);
             // 
             // btnIsLocked
             // 
-            this.btnIsLocked.Location = new System.Drawing.Point(264, 183);
+            this.btnIsLocked.Location = new System.Drawing.Point(156, 29);
             this.btnIsLocked.Margin = new System.Windows.Forms.Padding(5);
             this.btnIsLocked.Name = "btnIsLocked";
-            this.btnIsLocked.Size = new System.Drawing.Size(125, 35);
+            this.btnIsLocked.Size = new System.Drawing.Size(161, 35);
             this.btnIsLocked.TabIndex = 12;
-            this.btnIsLocked.Text = "Is Unlocked?";
+            this.btnIsLocked.Text = "⏳ Is Unlocked?";
             this.btnIsLocked.UseVisualStyleBackColor = true;
             this.btnIsLocked.Click += new System.EventHandler(this.btnIsLocked_Click);
             // 
@@ -270,7 +274,7 @@
             this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
             this.groupBox1.Controls.Add(this.btnResetUnlock);
             this.groupBox1.Controls.Add(this.btnResetUSB);
-            this.groupBox1.Location = new System.Drawing.Point(20, 231);
+            this.groupBox1.Location = new System.Drawing.Point(21, 174);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(583, 85);
             this.groupBox1.TabIndex = 18;
@@ -288,15 +292,35 @@
             this.btnResetUnlock.UseVisualStyleBackColor = true;
             this.btnResetUnlock.Click += new System.EventHandler(this.btnResetUnlock_Click);
             // 
+            // rtbLog
+            // 
+            this.rtbLog.Location = new System.Drawing.Point(21, 537);
+            this.rtbLog.Name = "rtbLog";
+            this.rtbLog.ReadOnly = true;
+            this.rtbLog.Size = new System.Drawing.Size(583, 119);
+            this.rtbLog.TabIndex = 19;
+            this.rtbLog.Text = "";
+            // 
+            // btnClearLog
+            // 
+            this.btnClearLog.Location = new System.Drawing.Point(433, 29);
+            this.btnClearLog.Margin = new System.Windows.Forms.Padding(5);
+            this.btnClearLog.Name = "btnClearLog";
+            this.btnClearLog.Size = new System.Drawing.Size(125, 35);
+            this.btnClearLog.TabIndex = 21;
+            this.btnClearLog.Text = "Clear log";
+            this.btnClearLog.UseVisualStyleBackColor = true;
+            this.btnClearLog.Click += new System.EventHandler(this.btnClearLog_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 602);
+            this.ClientSize = new System.Drawing.Size(622, 668);
+            this.Controls.Add(this.rtbLog);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.grpUser);
             this.Controls.Add(this.grpAdmin);
-            this.Controls.Add(this.btnIsLocked);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(5);
@@ -336,6 +360,8 @@
         private System.Windows.Forms.OpenFileDialog dlgUserReset;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnResetUnlock;
+        private System.Windows.Forms.Button btnClearLog;
+        private System.Windows.Forms.RichTextBox rtbLog;
     }
 }
 

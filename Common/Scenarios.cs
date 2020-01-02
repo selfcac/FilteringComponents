@@ -10,7 +10,7 @@ namespace Common
 {
     public static class Scenarios
     {
-        static string defaultPass = "1234";
+        static string defaultNewAdminPass = "1234";
 
         public enum CommandType
         {
@@ -326,7 +326,7 @@ namespace Common
             {
                 string userFilePath = cmdInfo.data;
                 Func<TaskInfo> onUsbValidates = new Func<TaskInfo>(
-                    () => { return _changePassword(defaultPass, result); }
+                    () => { return _changePassword(defaultNewAdminPass, result); }
                 );
 
                 result = ValidateUsbResetFile(userFilePath, onUsbValidates);
@@ -336,7 +336,7 @@ namespace Common
                 result = TaskInfo.Fail(ex.Message);
             }
 
-            return chopString("Reset to " + defaultPass + "? " + result.success.ToString() + ", " + result.eventReason);
+            return chopString("Reset to " + defaultNewAdminPass + "? " + result.success.ToString() + ", " + result.eventReason);
         }
 
         private static TaskInfo ValidateUsbResetFile(string userFilePath, Func<TaskInfo> onUsbValidates)

@@ -26,6 +26,19 @@ namespace ControlPanelClient
             return result;
         }
 
+        void log(string text)
+        {
+            string logEntry = string.Format("[{0}] {1}", DateTime.Now, text);
+            if (rtbLog.InvokeRequired)
+            {
+                rtbLog.Invoke(new Action(() => { log(text); }));
+            }
+            else
+            {
+                rtbLog.Text = logEntry + "\n" + rtbLog.Text;
+            }
+        }
+
         async Task doCommand(Func<Task<string>> action)
         {
             string result = "";
@@ -37,7 +50,8 @@ namespace ControlPanelClient
             {
                 result = ex.ToString();
             }
-            MessageBox.Show(result);
+
+            log(result);
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -144,6 +158,11 @@ namespace ControlPanelClient
                     return await Common.Scenarios.RESET_UNLOCK_Client(dlgUserReset.FileName);
                 });
             }
+        }
+
+        private void btnClearLog_Click(object sender, EventArgs e)
+        {
+            rtbLog.Text = "";
         }
     }
 }
