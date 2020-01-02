@@ -37,10 +37,13 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lbxSimulated = new System.Windows.Forms.ListBox();
             this.menuStrip5 = new System.Windows.Forms.MenuStrip();
+            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newDomainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.domainEPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.subdomainsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip2 = new System.Windows.Forms.MenuStrip();
+            this.skipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTxtSkip = new System.Windows.Forms.ToolStripTextBox();
             this.simulateUnkownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.orderedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -87,7 +90,10 @@
             this.label10 = new System.Windows.Forms.Label();
             this.lbxDomains = new System.Windows.Forms.ListBox();
             this.menuStrip4 = new System.Windows.Forms.MenuStrip();
+            this.menuTxtNewDomain = new System.Windows.Forms.ToolStripTextBox();
             this.addDomainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTxtFind = new System.Windows.Forms.ToolStripTextBox();
             this.deleteDomainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -105,12 +111,7 @@
             this.deleteSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.dlgSave = new System.Windows.Forms.SaveFileDialog();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuTxtFind = new System.Windows.Forms.ToolStripTextBox();
-            this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuTxtNewDomain = new System.Windows.Forms.ToolStripTextBox();
-            this.skipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuTxtSkip = new System.Windows.Forms.ToolStripTextBox();
+            this.gitVersionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -141,7 +142,8 @@
             this.clearPolicyToolStripMenuItem,
             this.loadPolicyJsonToolStripMenuItem,
             this.savePolicyJsonToolStripMenuItem,
-            this.loadLogFileToolStripMenuItem});
+            this.loadLogFileToolStripMenuItem,
+            this.gitVersionToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
@@ -235,6 +237,13 @@
             this.menuStrip5.TabIndex = 6;
             this.menuStrip5.Text = "menuStrip5";
             // 
+            // addToolStripMenuItem
+            // 
+            this.addToolStripMenuItem.Enabled = false;
+            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
+            this.addToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.addToolStripMenuItem.Text = "Add:";
+            // 
             // newDomainToolStripMenuItem
             // 
             this.newDomainToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(192)))));
@@ -275,6 +284,18 @@
             this.menuStrip2.Size = new System.Drawing.Size(587, 29);
             this.menuStrip2.TabIndex = 1;
             this.menuStrip2.Text = "menuStrip2";
+            // 
+            // skipToolStripMenuItem
+            // 
+            this.skipToolStripMenuItem.Enabled = false;
+            this.skipToolStripMenuItem.Name = "skipToolStripMenuItem";
+            this.skipToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
+            this.skipToolStripMenuItem.Text = "Skip:";
+            // 
+            // menuTxtSkip
+            // 
+            this.menuTxtSkip.Name = "menuTxtSkip";
+            this.menuTxtSkip.Size = new System.Drawing.Size(100, 23);
             // 
             // simulateUnkownToolStripMenuItem
             // 
@@ -770,12 +791,31 @@
             this.menuStrip4.TabIndex = 0;
             this.menuStrip4.Text = "menuStrip4";
             // 
+            // menuTxtNewDomain
+            // 
+            this.menuTxtNewDomain.Name = "menuTxtNewDomain";
+            this.menuTxtNewDomain.Size = new System.Drawing.Size(100, 23);
+            this.menuTxtNewDomain.Text = "aaa.com";
+            // 
             // addDomainToolStripMenuItem
             // 
             this.addDomainToolStripMenuItem.Name = "addDomainToolStripMenuItem";
             this.addDomainToolStripMenuItem.Size = new System.Drawing.Size(110, 23);
             this.addDomainToolStripMenuItem.Text = "<- [Add Domain]";
             this.addDomainToolStripMenuItem.Click += new System.EventHandler(this.addDomainToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Enabled = false;
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(45, 23);
+            this.toolStripMenuItem1.Text = "Find:";
+            // 
+            // menuTxtFind
+            // 
+            this.menuTxtFind.Name = "menuTxtFind";
+            this.menuTxtFind.Size = new System.Drawing.Size(100, 23);
+            this.menuTxtFind.TextChanged += new System.EventHandler(this.menuTxtFind_TextChanged);
             // 
             // deleteDomainToolStripMenuItem
             // 
@@ -957,43 +997,12 @@
             // 
             this.dlgSave.Filter = "JSON\\Text File|*.json;*.txt|Any File|*.*";
             // 
-            // toolStripMenuItem1
+            // gitVersionToolStripMenuItem
             // 
-            this.toolStripMenuItem1.Enabled = false;
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(45, 23);
-            this.toolStripMenuItem1.Text = "Find:";
-            // 
-            // menuTxtFind
-            // 
-            this.menuTxtFind.Name = "menuTxtFind";
-            this.menuTxtFind.Size = new System.Drawing.Size(100, 23);
-            this.menuTxtFind.TextChanged += new System.EventHandler(this.menuTxtFind_TextChanged);
-            // 
-            // addToolStripMenuItem
-            // 
-            this.addToolStripMenuItem.Enabled = false;
-            this.addToolStripMenuItem.Name = "addToolStripMenuItem";
-            this.addToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.addToolStripMenuItem.Text = "Add:";
-            // 
-            // menuTxtNewDomain
-            // 
-            this.menuTxtNewDomain.Name = "menuTxtNewDomain";
-            this.menuTxtNewDomain.Size = new System.Drawing.Size(100, 23);
-            this.menuTxtNewDomain.Text = "aaa.com";
-            // 
-            // skipToolStripMenuItem
-            // 
-            this.skipToolStripMenuItem.Enabled = false;
-            this.skipToolStripMenuItem.Name = "skipToolStripMenuItem";
-            this.skipToolStripMenuItem.Size = new System.Drawing.Size(44, 23);
-            this.skipToolStripMenuItem.Text = "Skip:";
-            // 
-            // menuTxtSkip
-            // 
-            this.menuTxtSkip.Name = "menuTxtSkip";
-            this.menuTxtSkip.Size = new System.Drawing.Size(100, 23);
+            this.gitVersionToolStripMenuItem.Name = "gitVersionToolStripMenuItem";
+            this.gitVersionToolStripMenuItem.Size = new System.Drawing.Size(91, 19);
+            this.gitVersionToolStripMenuItem.Text = "<Git Version>";
+            this.gitVersionToolStripMenuItem.Click += new System.EventHandler(this.gitVersionToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -1132,6 +1141,7 @@
         private System.Windows.Forms.ToolStripTextBox menuTxtNewDomain;
         private System.Windows.Forms.ToolStripMenuItem skipToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox menuTxtSkip;
+        private System.Windows.Forms.ToolStripMenuItem gitVersionToolStripMenuItem;
     }
 }
 

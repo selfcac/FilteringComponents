@@ -563,5 +563,10 @@ namespace HTTPProtocolFilter_GuiHelper
             refreshDomains();
 
         }
+
+        private void gitVersionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(Properties.Resources.GitInfo);
+        }
     }
 }
