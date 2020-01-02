@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CheckBlacklistedWifiStandard;
 
 namespace CheckBlacklistedWifi
 {
@@ -74,6 +75,18 @@ namespace CheckBlacklistedWifi
         {
             try
             {
+                Console.WriteLine(
+                     string.Join("\n", new[]
+                        {
+                            "(*) This:\n\t" + Properties.Resources.GitInfo,
+                            "(*) Wifi:\n\t" + CheckBlacklistedWifiStandard.GitInfo.GetInfo(),
+                            "(*) Common:\n\t" + Common.GitInfo.GetInfo(),
+                        }
+                    )
+                );
+
+                log("Git Version: " + CheckBlacklistedWifiStandard.GitInfo.GetInfo());
+
                 string lastArgument = 
                     ((args != null && args.Length > 0) ? args : new[] { "no-service" })
                     .Last();
@@ -82,7 +95,7 @@ namespace CheckBlacklistedWifi
 
                 string nearByWifisCMDResult = getCMDOutput("netsh", "wlan show networks mode=bssid");
 
-                List<string> current_near_wifis = Utils.getWifiParsed(nearByWifisCMDResult);
+                List<string> current_near_wifis = Utils.getWifiWindowsCMDParsed(nearByWifisCMDResult);
 
                 // Logic:
                 //      if in block zone (by finding 1 result of blocked bssid) save all new bssid.
@@ -127,14 +140,16 @@ namespace CheckBlacklistedWifi
         {
             if (current_near_wifis.Count > 0)
             {
-
-                if (WifiHelper.fastBlockZoneCheck(current_near_wifis, latest_ruleset, (text) => log(text)))
+                List<string> newRuleSet = new List<string>();
+                string reason = "init";
+                if (WifiHelper.fastBlockZoneCheck(current_near_wifis, latest_ruleset, out newRuleSet, (text) => log(text), out reason ))
                 {
                     // Update all rules with bad ones:
                     
                     // TODO: get new rules by call not changing them
 
                     updateRules?.Invoke(latest_ruleset);
+                    log("Reason blocked: " + reason);
                     insideBlockZone?.Invoke();
                 }
                 else
