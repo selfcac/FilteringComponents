@@ -45,7 +45,7 @@ namespace HTTPProtocolFilter_GuiHelper
             dlgOpen.Title = "Open existing policy:";
             if (dlgOpen.ShowDialog() == DialogResult.OK)
             {
-                mainPolicy.reloadPolicy(dlgOpen.FileName);
+                mainPolicy.reloadPolicy(File.ReadAllText(dlgOpen.FileName));
             }
 
             refreshDomains();
