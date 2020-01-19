@@ -401,6 +401,9 @@ namespace Common
 
         // === === === === === Allowed_Command            === === === === === === 
 
+        static Dictionary<int, DateTime> CommandCooldown = new Dictionary<int, DateTime>();
+        const int COOLDOWN_SEC = 45;
+
         public async static Task<string> Allowed_command_client(int index)
         {
            return await runCommand(CommandType.ALLOWED_COMMAND, index.ToString());
@@ -418,8 +421,20 @@ namespace Common
                 result = TaskInfo.Fail("Index out of range : " + commandIndex);
                 if (commandIndex < Config.Instance.ALLOWED_COMMANDS.Length)
                 {
-                    ConfigCommand command = Config.Instance.ALLOWED_COMMANDS[commandIndex];
-                    result = SystemUtils.RunProcessInfo(command.name, command.path, command.arg);
+                    TimeSpan cooldownLeft = TimeSpan.FromSeconds(0);
+                    if (!CommandCooldown.ContainsKey(commandIndex) 
+                        || 
+                        (cooldownLeft = CommandCooldown[commandIndex] - DateTime.Now ).TotalSeconds > COOLDOWN_SEC )
+                    {
+                        CommandCooldown[commandIndex] = DateTime.Now;
+
+                        ConfigCommand command = Config.Instance.ALLOWED_COMMANDS[commandIndex];
+                        result = SystemUtils.RunProcessInfo(command.name, command.path, command.arg);
+                    }
+                    else
+                    {
+                        result = TaskInfo.Fail("Cooldown, Wait: " + cooldownLeft.TotalSeconds + "sec");
+                    }
                 }
             }
 
