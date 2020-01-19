@@ -424,7 +424,7 @@ namespace Common
                     TimeSpan cooldownLeft = TimeSpan.FromSeconds(0);
                     if (!CommandCooldown.ContainsKey(commandIndex) 
                         || 
-                        (cooldownLeft = CommandCooldown[commandIndex] - DateTime.Now ).TotalSeconds > COOLDOWN_SEC )
+                       Math.Abs((cooldownLeft = CommandCooldown[commandIndex] - DateTime.Now ).TotalSeconds) > COOLDOWN_SEC )
                     {
                         CommandCooldown[commandIndex] = DateTime.Now;
 
