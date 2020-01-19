@@ -56,13 +56,7 @@ namespace ControlPanelClient
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            rtbLog.Text =
-                string.Join("\n", new[]
-                {
-                    "(*) This:\n\t" + Properties.Resources.GitInfo,
-                    "(*) Common:\n\t" + Common.GitInfo.GetInfo(),
-                }
-            );
+            rtbLog.Text = string.Join("\n",GitInfo.AllGitInfo());
 
             foreach (var cmd in Common.Config.Instance.ALLOWED_COMMANDS)
             {

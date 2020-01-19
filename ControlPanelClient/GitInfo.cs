@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Common
+namespace ControlPanelClient
 {
-    public static class GitInfo
+    class GitInfo
     {
         static string[] GitDependencies =
-         CommonStandard.GitInfo.AllGitInfo()
+         Common.GitInfo.AllGitInfo()
         ;
 
         public static string GetInfo()
