@@ -12,8 +12,7 @@ import argparse
 import typing
 import json , datetime
 
-# C# Load
-from msl.loadlib import LoadLibrary
+# All you need for c#:
 import clr
 
 # Mitmproxy
@@ -24,11 +23,21 @@ from mitmproxy import http
 import hashlib
 
 class PluginConfig:
-    #DLLs:
-    CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\Common.dll"
-    CSFilterPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\HTTPProtocolFilter.dll"
-    CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
-    CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
+    # C# DLL:
+    AllCSharpDLLs = [   
+        (   
+            "HTTPProtocolFilter",  
+            r"C:\Users\Yoni\Desktop\selfcac\FilteringComponentsStandard\HTTPProtocolFilter\bin\Debug\netstandard2.0\HTTPProtocolFilter.dll" 
+        ),
+        (
+            "TimeBlockFilter",
+            r"C:\Users\Yoni\Desktop\selfcac\FilteringComponentsStandard\TimeBlockFilter\bin\Debug\netstandard2.0\TimeBlockFilter.dll"
+        ),
+        (
+            "ProcessTerminationProtection",
+            r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
+        )
+    ] 
 
     #Policies:
     PoilcyPath = r"C:\Users\Yoni\Desktop\selfcac\CitadelCore.Windows.Divert.Proxy\CitadelCore.Windows.Example\bin\Debug\policy.json"
@@ -48,6 +57,45 @@ class PluginConfig:
     
     # Browser pass:
     BypassHeaderPass = "123123";
+
+def loadAssemblies(pathList):
+    for t in pathList:
+        path = t[1];
+        if not os.path.exists(path) or not os.path.isfile(path):
+            print("Can't find file: '" + path + "'");
+            continue
+        split = path.rsplit('\\',1);
+        directoryName = split[0];
+        fileName = split[1];
+
+        # Add Directory to search dependent assemblies:
+        sys.path.append(directoryName)
+
+        # Add Assemblie
+        clr.FindAssembly(path)
+        clr.AddReference(t[0])
+
+        print("Loaded " + t[0] + " successfully");
+    print("Done loading CLR (.NET) Assemblies");
+
+def readAllText(path, read_encoding="utf-8"):
+    result = "";
+    with open(path,'r',encoding=read_encoding) as file:
+        result = file.read()
+    return result;
+
+def protectProcess():
+    from ProcessTerminationProtection import ProcessProtect
+    ProcessProtect.ProtectCurrentFromUsers();
+    print("Protected process from users");
+
+def printHTTPVersion():
+    from HTTPProtocolFilter import GitInfo
+    print("HTTP filter version: \n"+ "\n".join(GitInfo.AllGitInfo()))
+
+def printTimeVersion():
+    from TimeBlockFilter import GitInfo
+    print("Time filter version: \n"+ "\n".join(GitInfo.AllGitInfo()))
 
 def hash_string(hash_string):
     sha_signature = \
@@ -74,18 +122,21 @@ def init():
         _log("Exe path: " + sys.executable)
         _log("Command: " + " ".join(sys.argv))
 
-        commonDLL = LoadLibrary(PluginConfig.CSCommonPath,'net')
-        filterDLL = LoadLibrary(PluginConfig.CSFilterPath,'net')
-        timeblockDLL = LoadLibrary(PluginConfig.CSTimeblockPath,'net')
+        loadAssemblies(PluginConfig.AllCSharpDLLs)
+        protectProcess()
 
-        pprotectDLL = LoadLibrary(PluginConfig.CSProtectProcessPath,'net')
-        pprotectDLL._lib.ProcessTerminationProtection.ProcessProtect.ProtectCurrentFromUsers();
+        printHTTPVersion();
+        printTimeVersion();
 
-        PluginConfig.FilterObj = filterDLL._lib.HTTPProtocolFilter.FilterPolicy();
-        PluginConfig.FilterObj.reloadPolicy(PluginConfig.PoilcyPath);
+        from HTTPProtocolFilter import FilterPolicy
+        PluginConfig.FilterObj = FilterPolicy() # (new Class) in python
+        http_policy_content = readAllText(PluginConfig.PoilcyPath);
+        PluginConfig.FilterObj.reloadPolicy(http_policy_content);
 
-        PluginConfig.TimeBlockObj = timeblockDLL._lib.TimeBlockFilter.TimeFilterObject();
-        PluginConfig.TimeBlockObj.reloadPolicy(PluginConfig.TimePolicyPath);
+        from TimeBlockFilter import TimeFilterObject
+        PluginConfig.TimeBlockObj = TimeFilterObject() # (new Class) in python
+        time_policy_content = readAllText(PluginConfig.TimePolicyPath);
+        PluginConfig.TimeBlockObj.reloadPolicy(time_policy_content);
 
         with open(PluginConfig.BlockHtmlPath,'r',encoding="utf-8") as file:
             PluginConfig.BlockHTMLTemplate = file.read()
@@ -163,8 +214,7 @@ def make_youtube_safe(flow):
             _log("Youtube Filtered!!!");
         else:
             _log("Youtube not filtered :(")
-
-            
+        
 def check_bypass_pass(flow):
     byPassed = False;
 
