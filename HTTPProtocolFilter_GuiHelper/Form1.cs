@@ -567,12 +567,7 @@ namespace HTTPProtocolFilter_GuiHelper
         private void gitVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
-                string.Join("\n", new[]
-                {
-                    "(*) This:\n\t" + Properties.Resources.GitInfo,
-                    "(*) HTTPFilterStandard:\n\t" + HTTPProtocolFilter.GitInfo.GetInfo(),
-                    "(*) Common:\n\t" + Common.GitInfo.GetInfo(),
-                }
+                string.Join("\n",GitInfo.AllGitInfo()
             ));
         }
     }

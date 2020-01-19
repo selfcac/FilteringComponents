@@ -26,6 +26,7 @@ namespace LogTailViewer
         private void frmMain_Load(object sender, EventArgs e)
         {
             cbPath.Items.AddRange(allowedLogs);
+            rtbLog.Text = string.Join("\n", GitInfo.AllGitInfo());
         }
 
         private void cbPath_SelectedIndexChanged(object sender, EventArgs e)

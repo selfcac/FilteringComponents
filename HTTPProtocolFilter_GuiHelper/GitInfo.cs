@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ControlPanelClient
+namespace HTTPProtocolFilter_GuiHelper
 {
     public static class GitInfo
     {
         static string[] GitDependencies =
-         Common.GitInfo.AllGitInfo()
-        ;
+         HTTPProtocolFilter.GitInfo.AllGitInfo()
+         .Concat(Common.GitInfo.AllGitInfo())
+         .Concat(CommonStandard.GitInfo.AllGitInfo())
+        .ToArray();
 
         public static string GetInfo()
         {

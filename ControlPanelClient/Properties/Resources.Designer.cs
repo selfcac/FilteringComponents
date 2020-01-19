@@ -59,14 +59,5 @@ namespace ControlPanelClient.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string GitInfo {
-            get {
-                return ResourceManager.GetString("GitInfo", resourceCulture);
-            }
-        }
     }
 }

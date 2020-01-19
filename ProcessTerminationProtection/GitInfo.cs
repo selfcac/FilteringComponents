@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace ControlPanelClient
+namespace ProcessTerminationProtection
 {
     public static class GitInfo
     {
-        static string[] GitDependencies =
-         Common.GitInfo.AllGitInfo()
-        ;
+        static string[] GitDependencies = { };
 
         public static string GetInfo()
         {

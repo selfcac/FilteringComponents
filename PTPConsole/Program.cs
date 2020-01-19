@@ -10,6 +10,8 @@ namespace PTPConsole
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(string.Join("\n", ProcessTerminationProtection.GitInfo.AllGitInfo()));
+
             try
             {
                 foreach(string a in args)

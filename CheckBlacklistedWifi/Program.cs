@@ -76,12 +76,7 @@ namespace CheckBlacklistedWifi
             try
             {
                 Console.WriteLine(
-                     string.Join("\n", new[]
-                        {
-                            "(*) This:\n\t" + Properties.Resources.GitInfo,
-                            "(*) Wifi:\n\t" + CheckBlacklistedWifiStandard.GitInfo.GetInfo(),
-                            "(*) Common:\n\t" + Common.GitInfo.GetInfo(),
-                        }
+                     string.Join("\n", GitInfo.AllGitInfo()
                     )
                 );
 

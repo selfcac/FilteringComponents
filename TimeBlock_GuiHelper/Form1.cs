@@ -178,12 +178,7 @@ namespace TimeBlock_GuiHelper
         private void gitInfoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
-                string.Join("\n", new[]
-                {
-                    "(*) This:\n\t" + Properties.Resources.GitInfo,
-                    "(*) TimeFilterStandard:\n\t" + TimeBlockFilter.GitInfo.GetInfo(),
-                    "(*) Common:\n\t" + Common.GitInfo.GetInfo(),
-                }
+                string.Join("\n", GitInfo.AllGitInfo()
             ));
         }
     }

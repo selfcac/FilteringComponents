@@ -14,6 +14,7 @@ namespace ControlPanelForSafeControl
         {
             Logger log = new Logger("main");
             log.i("Using config created " + Common.Config.Instance.created);
+            log.i("\n" + string.Join("\n", GitInfo.AllGitInfo()));
             log.i("Starting Control panel server...");
 
             TcpServer myServer = new TcpServer();
