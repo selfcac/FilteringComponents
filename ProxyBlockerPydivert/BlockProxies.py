@@ -21,7 +21,6 @@ import typing
 import json , datetime, time
 
 # C# Load
-from msl.loadlib import LoadLibrary
 import clr
 import pydivert
 
@@ -30,13 +29,24 @@ import traceback
 
 class ScriptConfig:
     # DLLs:
-    CSProtectProcessPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
-    CSNetworkHelper = r"C:\Users\Yoni\Desktop\selfcac\PortsOwners\PortOwnersDLL\bin\x86\Debug\PortOwnersDLL.dll"
-    CSCommonPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\HTTPProtocolFilter\bin\Debug\Common.dll"
-    CSTimeblockPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\TimeBlockFilter\bin\Debug\TimeBlockFilter.dll"
+    # C# DLL:
+    AllCSharpDLLs = [   
+        (
+            "TimeBlockFilter",
+            r"C:\Users\Yoni\Desktop\selfcac\FilteringComponentsStandard\TimeBlockFilter\bin\Debug\netstandard2.0\TimeBlockFilter.dll"
+        ),
+        (
+            "ProcessTerminationProtection",
+            r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\ProcessTerminationProtection\bin\Debug\ProcessTerminationProtection.dll"
+        ),
+        (   
+            "PortOwnersDLL",  
+            r"C:\Users\Yoni\Desktop\selfcac\PortsOwners\PortOwnersDLL\bin\x86\Debug\PortOwnersDLL.dll" 
+        )
+    ] 
 
     # Policies:
-     TimePolicyPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json"
+    TimePolicyPath = r"C:\Users\Yoni\Desktop\selfcac\FilteringComponents\MitmprxyPlugin\timeblock.v2.json"
 
     # Windivert filters:
     catchTcp = "outbound and tcp and tcp.DstPort != 80 and tcp.DstPort != 443 and tcp.DstPort != 445 and tcp.SrcPort != 445 and tcp.PayloadLength > 7"
@@ -66,6 +76,41 @@ class SafeAccessDivert(object):
 __print__ = print;
 printLock = threading.Lock();
 
+def loadAssemblies(pathList):
+    for t in pathList:
+        path = t[1];
+        if not os.path.exists(path) or not os.path.isfile(path):
+            print("Can't find file: '" + path + "'");
+            continue
+        split = path.rsplit('\\',1);
+        directoryName = split[0];
+        fileName = split[1];
+
+        # Add Directory to search dependent assemblies:
+        sys.path.append(directoryName)
+
+        # Add Assemblie
+        clr.FindAssembly(path)
+        clr.AddReference(t[0])
+
+        print("Loaded " + t[0] + " successfully");
+    print("Done loading CLR (.NET) Assemblies");
+
+def readAllText(path, read_encoding="utf-8"):
+    result = "";
+    with open(path,'r',encoding=read_encoding) as file:
+        result = file.read()
+    return result;
+
+def protectProcess():
+    from ProcessTerminationProtection import ProcessProtect
+    ProcessProtect.ProtectCurrentFromUsers();
+    print("Protected process from users");
+
+def printTimeVersion():
+    from TimeBlockFilter import GitInfo
+    print("Time filter version: \n"+ "\n".join(GitInfo.AllGitInfo()))
+
 def log( text):
     global __print__, printLock;
     llog = "[" + str(datetime.datetime.now()) +"] "  + text ;
@@ -74,10 +119,6 @@ def log( text):
 
 def logPacket(packet):
     log(getAddressString(packet))
-
-def protectProcess():
-    pprotectDLL = LoadLibrary(ScriptConfig.CSProtectProcessPath,'net')
-    pprotectDLL._lib.ProcessTerminationProtection.ProcessProtect.ProtectCurrentFromUsers();
 
 def getAddressString(packet):
     if packet.tcp != None:
@@ -102,7 +143,6 @@ def dropHTTPUdp(state):
                     logPacket(packet);
                 log(str(ex));
                 traceback.print_tb(ex.__traceback__)
-
 
 keepThreadOpen = True
 def windivertWorker(safeDivert):
@@ -170,21 +210,25 @@ try:
 
     # Stop process kill unless you admin:
     log("Removing kill permission...");
-    protectProcess();
+    
+    loadAssemblies(ScriptConfig.AllCSharpDLLs)
+    protectProcess()
+
+    
 
 
-    netHelperDLL = LoadLibrary(ScriptConfig.CSNetworkHelper,'net')
-    commonDLL = LoadLibrary(ScriptConfig.CSCommonPath,'net')
-    timeblockDLL = LoadLibrary(ScriptConfig.CSTimeblockPath,'net')
+    from TimeBlockFilter import TimeFilterObject
+    ScriptConfig.TimeBlockObj = TimeFilterObject() # (new Class) in python
+    time_policy_content = readAllText(ScriptConfig.TimePolicyPath);
+    ScriptConfig.TimeBlockObj.reloadPolicy(time_policy_content);
 
     log("Starting proxy helper")
-    ScriptConfig.proxyDetectHelper = netHelperDLL._lib.PortsOwners.ProxyDetection();
-
-    ScriptConfig.TimeBlockObj = timeblockDLL._lib.TimeBlockFilter.TimeFilterObject();
-    ScriptConfig.TimeBlockObj.reloadPolicy(ScriptConfig.TimePolicyPath);
+    from PortsOwners import ProxyDetection
+    ScriptConfig.proxyDetectHelper = ProxyDetection();
 
     log("Starting network watcher")
-    ScriptConfig.netHelper = netHelperDLL._lib.PortsOwners.NetworkWatcher();
+    from PortsOwners import NetworkWatcher
+    ScriptConfig.netHelper = NetworkWatcher();
     ScriptConfig.netHelper.Start(5); # Update ip tables every 5 sec
 
     # Dropping  QUIC ProtoolFilter (UDP)
