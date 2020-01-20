@@ -148,8 +148,8 @@ def init():
             
         _log("All C# DLLs Loaded")
 
-        PluginConfig.AdblockObj = AdblockHelpers();
-        _log("All Adblock Loaded")
+        #PluginConfig.AdblockObj = AdblockHelpers();
+        #_log("All Adblock Loaded")
 
         return True;
     except Exception as ex:
@@ -302,7 +302,7 @@ def processRequest(flow, mimetype):
             _log(f"Request time block url: {url}")
         else:
             if check_bypass_pass(flow):
-                if PluginConfig.AdblockObj.should_block(flow.request.pretty_url):
+                if False: #PluginConfig.AdblockObj.should_block(flow.request.pretty_url):
                     blockWithReason(flow,"Divert Filter Adblock Filter");
                 else:
                     _log ("[BYPASS-REQ] " + flow.request.pretty_url)
