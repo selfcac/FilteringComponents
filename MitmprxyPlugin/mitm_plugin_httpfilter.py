@@ -5,6 +5,7 @@
 #pip install git+https://github.com/pythonnet/pythonnet
 #pip install mitmproxy
 #pip install pydivert
+#pip install adblockparser psutil
 
 # System
 import os, sys
@@ -21,6 +22,9 @@ from mitmproxy import http
 
 # Bypass programs:
 import hashlib
+
+#Adblock
+from AdblockHelpers import AdblockHelpers
 
 class PluginConfig:
     # C# DLL:
@@ -54,6 +58,7 @@ class PluginConfig:
     FilterObj = None;
     TimeBlockObj = None;
     BlockHTMLTemplate = "<unloaded-template>";
+    AdblockObj = None;
     
     # Browser pass:
     BypassHeaderPass = "123123";
@@ -142,6 +147,10 @@ def init():
             PluginConfig.BlockHTMLTemplate = file.read()
             
         _log("All C# DLLs Loaded")
+
+        PluginConfig.AdblockObj = AdblockHelpers();
+        _log("All Adblock Loaded")
+
         return True;
     except Exception as ex:
         _err("Problem loading plugin. stopping. Error: " + str(ex))
@@ -221,9 +230,9 @@ def check_bypass_pass(flow):
     url = flow.request.pretty_url.lower()
 
     pass_hash = findInHeaders(flow.request.headers, "mitm-secret");
-    computed_pass_hash = hash_string(url + PluginConfig.BypassHeaderPass).lower() 
 
     if pass_hash != "":
+        computed_pass_hash = hash_string(url + PluginConfig.BypassHeaderPass).lower() 
         if computed_pass_hash == pass_hash.lower():
             byPassed = True;
         else:
@@ -293,8 +302,11 @@ def processRequest(flow, mimetype):
             _log(f"Request time block url: {url}")
         else:
             if check_bypass_pass(flow):
-                _log ("[BYPASS-REQ] " + flow.request.pretty_url)
-                return;
+                if PluginConfig.AdblockObj.should_block(flow.request.pretty_url):
+                    blockWithReason(flow,"Divert Filter Adblock Filter");
+                else:
+                    _log ("[BYPASS-REQ] " + flow.request.pretty_url)
+                    return;
 
             (whitelisted, reason) = _filter.isWhitelistedURL(host,path, None);
             if not whitelisted:

@@ -10,3 +10,4 @@ __pycache__/
 /MitmprxyPlugin/block_log.v2.json
 /ControlPanelClient/Resources/GitInfo.txt
 GitInfo.txt
+/MitmprxyPlugin/adblock_filters/
