@@ -22,32 +22,45 @@ namespace Common
         public static Config Instance {
             get
             {
-                FileInfo configFile = new FileInfo("config.json");
                 if (_instance == null)
                 {
-                    // Create or load config from file.
-                    if (configFile.Exists)
-                    {
-                        try
-                        {
-                            _instance = Config.FromJSONString<Config>(File.ReadAllText(configFile.FullName));
-                        }
-                        catch (Exception ex)
-                        {
-                            _instance = new Config();
-                        }
-                    }
-                    else {
-                        _instance = new Config();
-                        File.WriteAllText(configFile.FullName, _instance.ToJSON());
-                    }
-
+                    RefreshOrInitPolicy();
                 }
                 return _instance;
             }
             set
             {
                 _instance = value;
+            }
+        }
+
+        static public string RefreshOrInitPolicy()
+        {
+            try
+            {
+                FileInfo configFile = new FileInfo("config.json");
+                // Create or load config from file.
+                if (configFile.Exists)
+                {
+                    try
+                    {
+                        _instance = Config.FromJSONString<Config>(File.ReadAllText(configFile.FullName));
+                    }
+                    catch (Exception ex)
+                    {
+                        _instance = new Config();
+                    }
+                }
+                else
+                {
+                    _instance = new Config();
+                    File.WriteAllText(configFile.FullName, _instance.ToJSON());
+                }
+                return "Loaded Successfully";
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
             }
         }
 

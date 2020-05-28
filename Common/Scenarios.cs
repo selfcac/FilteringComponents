@@ -19,6 +19,7 @@ namespace Common
             // User actions:
             ECHO,           
             ALLOWED_COMMAND,
+            REFRESH_CONFIG,
             
             // Actions given usb (reset file *.psw)
             RESET_PASS_USB,
@@ -128,8 +129,9 @@ namespace Common
         {
             { CommandType.ECHO, Echo_Server },
             { CommandType.CHANGE_PASSWORD, ChangePass_Server},
-            { CommandType.LOCK, Lock_Server},
+            { CommandType.REFRESH_CONFIG, RefreshConfig_Server},
 
+            { CommandType.LOCK, Lock_Server},
             { CommandType.ALLOWED_COMMAND, Allowed_command_server},
             { CommandType.ADMIN_COMMAND, Admin_command_server},
 
@@ -510,6 +512,18 @@ namespace Common
             }
 
             return chopString("Unlock? " + result.success.ToString() + ", " + result.eventReason);
+        }
+
+        // === === === === === Refresh Config === === === === === === 
+
+        public async static Task<string> RefreshConfig_Client()
+        {
+            return await runCommand(CommandType.REFRESH_CONFIG, "");
+        }
+
+        public static string RefreshConfig_Server(CommandInfo cmdInfo)
+        {
+            return Config.RefreshOrInitPolicy();
         }
 
     }

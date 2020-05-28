@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common
 {
+
     public static class GitInfo
     {
         static string[] GitDependencies =

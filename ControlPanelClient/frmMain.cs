@@ -166,5 +166,13 @@ namespace ControlPanelClient
         {
             rtbLog.Text = "";
         }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            await doCommand(async () =>
+            {
+                return await Common.Scenarios.RefreshConfig_Client();
+            });
+        }
     }
 }
